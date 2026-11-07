@@ -1,0 +1,7 @@
+node_modules
+dist
+release
+upstream
+.git
+.env
+youtube-response.json

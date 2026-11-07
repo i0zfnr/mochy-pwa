@@ -12,7 +12,11 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-export async function startServer({ port = Number(process.env.PORT || 4173), host = process.env.HOST || (process.env.HOSTNAME === '0.0.0.0' ? '0.0.0.0' : '127.0.0.1'), dev = false } = {}) {
+export async function startServer({
+  port = Number(process.env.PORT || (process.env.NODE_ENV === 'production' ? 8000 : 4173)),
+  host = process.env.HOST || (process.env.NODE_ENV === 'production' || process.env.HOSTNAME === '0.0.0.0' ? '0.0.0.0' : '127.0.0.1'),
+  dev = false,
+} = {}) {
   const root = fileURLToPath(new URL('../dist/', import.meta.url));
   const vite = dev ? await (await import('vite')).createServer({ server: { middlewareMode: true }, appType: 'spa' }) : null;
   const limits = new Map();

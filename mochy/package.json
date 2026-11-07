@@ -1,0 +1,11 @@
+{
+  "name": "mochy-compat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "cd .. && npm install",
+    "build": "cd .. && npm run build",
+    "start": "cd .. && npm start"
+  }
+}

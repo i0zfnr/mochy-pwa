@@ -145,15 +145,15 @@
   contain: strict;
 }
 
-/* Hardware-friendly radial gradient orbs (zero expensive blur filters, 100% GPU composited) */
+/* Hardware-friendly radial gradient orbs driven by beat energy & scale */
 .aurora-orb {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  opacity: calc(0.28 + var(--beat-energy, 0) * 0.12);
-  transition: opacity 0.35s ease;
+  opacity: calc(0.32 + var(--beat-energy, 0) * 0.45);
+  transform: scale(calc(0.96 + var(--beat-energy, 0) * 0.16)) translate3d(0, 0, 0);
+  transition: opacity 0.12s linear, transform 0.14s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
-  transform: translate3d(0, 0, 0);
 }
 
 .aurora-orb.orb-a {
@@ -198,9 +198,66 @@
 .album-atmosphere-shade {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 45%, rgba(12, 16, 24, 0.20) 0%, rgba(6, 9, 14, 0.55) 100%),
-              linear-gradient(180deg, rgba(6, 9, 14, 0.22) 0%, rgba(6, 9, 14, 0.08) 40%, rgba(6, 9, 14, 0.50) 100%);
-  opacity: calc(0.68 - var(--beat-energy, 0) * 0.16);
-  transition: opacity 250ms ease;
+  background: radial-gradient(ellipse at 50% 45%, rgba(12, 16, 24, 0.15) 0%, rgba(6, 9, 14, 0.50) 100%),
+              linear-gradient(180deg, rgba(6, 9, 14, 0.18) 0%, rgba(6, 9, 14, 0.05) 40%, rgba(6, 9, 14, 0.45) 100%);
+  opacity: calc(0.72 - var(--beat-energy, 0) * 0.30);
+  transition: opacity 0.12s linear;
   z-index: 2;
+}
+
+.album-artwork-blur {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: calc(0.38 + var(--beat-energy, 0) * 0.25);
+  filter: blur(24px) saturate(160%) brightness(calc(0.70 + var(--beat-energy, 0) * 0.28));
+  transform: scale(calc(1.02 + var(--beat-energy, 0) * 0.05)) translate3d(0, 0, 0);
+  transition: opacity 0.15s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
+}
+
+
+.beat-intensity-button, .beat-sync-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 30px;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.15s;
+}
+.beat-intensity-button:hover, .beat-sync-button:hover {
+  background: rgba(255, 255, 255, 0.20);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+.beat-intensity-button:active, .beat-sync-button:active {
+  transform: scale(0.96);
+}
+.beat-intensity-button .beat-badge {
+  text-transform: capitalize;
+  padding: 2px 7px;
+  border-radius: 12px;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.beat-intensity-button.aggressive .beat-badge {
+  background: rgba(255, 75, 120, 0.35);
+  color: #ff9bbb;
+}
+.beat-intensity-button.normal .beat-badge {
+  background: rgba(0, 122, 255, 0.30);
+  color: #8ac0ff;
+}
+.beat-intensity-button.low .beat-badge {
+  background: rgba(255, 255, 255, 0.14);
+  color: #e4e4e7;
 }

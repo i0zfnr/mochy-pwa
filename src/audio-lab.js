@@ -41,6 +41,13 @@ export const TRANSITION_PRESETS = [
   { id: 'off', name: 'Off', duration: 0, description: 'Standard cut on track change' },
 ];
 
+export const BEAT_INTENSITIES = [
+  { id: 'low', name: 'Low', multiplier: 0.55, description: 'Subtle, gentle ambient breathing' },
+  { id: 'normal', name: 'Normal', multiplier: 1.0, description: 'Balanced Apple Music rhythm & bounce' },
+  { id: 'aggressive', name: 'Aggressive', multiplier: 1.85, description: 'Deep, dynamic club expansion & luminescence' },
+  { id: 'off', name: 'Off', multiplier: 0, description: 'Static ambient colors without rhythm movement' },
+];
+
 export const DEFAULT_AUDIO_LAB = {
   equalizer: {
     enabled: true,
@@ -51,6 +58,7 @@ export const DEFAULT_AUDIO_LAB = {
   quality: 'auto',
   transition: 'auto',
   audioPass: false,
+  beatIntensity: 'normal',
 };
 
 // Create the Web Audio filter chain for Equalizer and Audio Effects

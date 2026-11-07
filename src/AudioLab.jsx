@@ -164,6 +164,17 @@ export function AudioLab({ settings, onChange, onBack }) {
             </svg>
           </div>
         </div>
+
+        {/* 6. Atmosphere Beat Motion Card */}
+        <div className="al-card card-standard" onClick={() => setActiveModal('beat')} role="button" tabIndex={0}>
+          <div className="al-card-left">
+            <h3 className="al-title-sm">Beat Motion</h3>
+            <p className="al-subtitle">ATMOSPHERE · {(settings.beatIntensity || 'normal').toUpperCase()}</p>
+          </div>
+          <div className="al-card-right">
+            <Sparkles size={22} style={{ opacity: 0.7 }} />
+          </div>
+        </div>
       </div>
 
       {/* --- MODAL: Equalizer --- */}
@@ -383,6 +394,50 @@ export function AudioLab({ settings, onChange, onBack }) {
                   {settings.audioPass ? 'Hardware Direct (Bypass DSP)' : 'Active Lab Pipeline (Equalizer & Surround)'}
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL: Beat Motion --- */}
+      {activeModal === 'beat' && (
+        <div className="modal-backdrop" onClick={() => setActiveModal(null)}>
+          <div className="modal" style={{ width: 440 }} onClick={e => e.stopPropagation()}>
+            <div className="modal-heading">
+              <h2>Beat Motion</h2>
+              <button className="icon-button" onClick={() => setActiveModal(null)} aria-label="Close">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="al-options-list">
+              {[
+                { id: 'low', name: 'Low', description: 'Subtle and gentle ambient breathing' },
+                { id: 'normal', name: 'Normal', description: 'Balanced Apple Music rhythm and bounce' },
+                { id: 'aggressive', name: 'Aggressive', description: 'Deep, dynamic club expansion and luminescence' },
+                { id: 'off', name: 'Off', description: 'Static ambient colors without movement' },
+              ].map(b => {
+                const isSelected = (settings.beatIntensity || 'normal') === b.id;
+                return (
+                  <button
+                    key={b.id}
+                    className={`al-option-item ${isSelected ? 'selected' : ''}`}
+                    onClick={() => {
+                      onChange({ ...settings, beatIntensity: b.id });
+                      setActiveModal(null);
+                    }}
+                  >
+                    <div className="al-option-info">
+                      <strong>{b.name}</strong>
+                      <p>{b.description}</p>
+                    </div>
+                    {isSelected && (
+                      <span className="al-option-check">
+                        <Check size={18} />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

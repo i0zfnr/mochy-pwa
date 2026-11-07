@@ -101,7 +101,7 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
 
 // Local files or explicitly shared tab audio can drive the light field.
 // Highly optimized for maximum battery and 60fps iPad / mobile performance.
-export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
+export function usePlaybackMotion(rootRef, analyserRef, playing, analysable, beatIntensity = 'normal') {
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -110,23 +110,31 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
     let lastTime = 0;
     let data;
 
+    const multipliers = {
+      off: 0,
+      low: 0.55,
+      normal: 1.0,
+      aggressive: 1.85,
+    };
+    const mult = multipliers[beatIntensity] ?? 1.0;
+
     function clear() {
       currentBeatEnergy = 0;
     }
 
     function sample(now) {
       frame = requestAnimationFrame(sample);
-      if (now - lastTime < 38) return; // 26fps keeps main thread free and cool
+      if (now - lastTime < 33) return; // ~30fps for smooth motion & low battery consumption
       lastTime = now;
       const analyser = analyserRef.current?.analyser;
       let energy = 0;
-      if (analyser) {
+      if (analyser && analysable) {
         if (!data || data.length !== analyser.frequencyBinCount) data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
         root.dataset.audioMotion = 'audio';
         let bass = 0;
         for (let i = 0; i < 4; i++) bass += (data[i] || 0) / 255;
-        energy = Math.min(0.38, Math.max(0.04, (bass / 4) * 0.38));
+        energy = Math.min(1.0, Math.max(0.04, (bass / 4) * 1.25 * mult));
       } else {
         root.dataset.audioMotion = 'audio';
         const nowSec = now / 1000;
@@ -136,10 +144,11 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
         const beatPhase = (measureTime % beatPeriod) / beatPeriod;
 
         const isAccent = beatNum === 0 || beatNum === 2;
-        const kickWave = Math.sin(beatPhase * Math.PI) * (isAccent ? 0.20 : 0.12);
-        const kickDecay = Math.exp(-beatPhase * 4.2) * (isAccent ? 0.15 : 0.08);
-        const breathing = Math.sin(nowSec * 1.2) * 0.03 + 0.05;
-        energy = Math.min(0.38, Math.max(0.04, (kickWave + kickDecay) * 0.32 + breathing));
+        const kickWave = Math.sin(beatPhase * Math.PI) * (isAccent ? 0.65 : 0.40);
+        const kickDecay = Math.exp(-beatPhase * 3.8) * (isAccent ? 0.45 : 0.25);
+        const breathing = Math.sin(nowSec * 1.5) * 0.10 + 0.12;
+        const raw = (kickWave + kickDecay) * 0.65 + breathing;
+        energy = Math.min(1.0, Math.max(0.04, raw * mult));
       }
 
       currentBeatEnergy = energy;
@@ -147,10 +156,10 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
 
     function update() {
       cancelAnimationFrame(frame);
-      const active = playing && !document.hidden && !reduced.matches;
+      const active = playing && !document.hidden && !reduced.matches && mult > 0;
       root.dataset.motion = active ? 'playing' : 'paused';
-      root.dataset.audioMotion = active && analysable ? 'audio' : active ? 'activity' : 'idle';
-      if (active && analysable) frame = requestAnimationFrame(sample);
+      root.dataset.audioMotion = active ? 'audio' : 'idle';
+      if (active) frame = requestAnimationFrame(sample);
       else clear();
     }
 
@@ -162,5 +171,5 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
       document.removeEventListener('visibilitychange', update);
       reduced.removeEventListener('change', update);
     };
-  }, [rootRef, analyserRef, playing, analysable]);
+  }, [rootRef, analyserRef, playing, analysable, beatIntensity]);
 }

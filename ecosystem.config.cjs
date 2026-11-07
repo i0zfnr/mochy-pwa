@@ -5,6 +5,7 @@ module.exports = {
     cwd: __dirname,
     script: 'server/start.js',
     interpreter: 'node',
+    filter_env: ['HTTP_', 'CONTENT_', 'REQUEST_', 'REDIRECT_', 'DOCUMENT_', 'SCRIPT_', 'SERVER_', 'PHP_'],
     env: { NODE_ENV: 'production', PORT: process.env.PORT || 8000, HOST: '0.0.0.0' },
     autorestart: true,
     max_restarts: 10,

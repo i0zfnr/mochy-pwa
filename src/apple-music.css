@@ -1546,9 +1546,12 @@
   height: 100%;
   overflow-y: auto;
   scrollbar-width: none;
-  padding: 220px 0 240px;
-  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  padding: 160px 0 220px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 .af-lyrics-scroll::-webkit-scrollbar {
@@ -1567,93 +1570,95 @@
   border: none;
   font-family: var(--am-font-stack);
   font-size: clamp(26px, 3.4vw, 44px);
-  font-weight: 700;
+  font-weight: 700 !important;
   line-height: 1.38;
   letter-spacing: -0.5px;
   color: rgba(255, 255, 255, 0.32);
-  margin-bottom: 30px;
+  margin-bottom: 28px;
   cursor: pointer;
   padding: 6px 0;
-  transition: opacity 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-              filter 0.35s ease,
-              transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.35s ease,
+              text-shadow 0.45s ease;
   transform-origin: left center;
   user-select: none;
+  filter: none !important;
+  will-change: transform, opacity, color;
+  contain: layout style;
 }
 
 .af-lyric-line.active {
   opacity: 1 !important;
-  filter: blur(0px) !important;
-  transform: scale(1.04) translateX(10px) !important;
-  font-weight: 800 !important;
+  transform: scale(1.035) translateX(8px) !important;
+  font-weight: 700 !important;
   color: #FFFFFF !important;
+  text-shadow: 0 0 24px rgba(255, 255, 255, 0.42), 0 0 50px rgba(255, 255, 255, 0.18) !important;
+  filter: none !important;
 }
 
-.af-lyric-line.past {
-  opacity: 0.35;
-  filter: blur(1.2px);
-  transform: scale(0.97);
-  color: rgba(255, 255, 255, 0.38);
+.af-lyric-line[data-distance="1"] {
+  opacity: 0.78 !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  transform: scale(0.99) !important;
+  filter: none !important;
+  text-shadow: none !important;
 }
 
+.af-lyric-line[data-distance="2"] {
+  opacity: 0.52 !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  transform: scale(0.98) !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+.af-lyric-line[data-distance="3"],
+.af-lyric-line.past,
 .af-lyric-line.upcoming {
-  opacity: 0.28;
-  filter: blur(1.8px);
-  transform: scale(0.96);
-  color: rgba(255, 255, 255, 0.32);
+  opacity: 0.3 !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(0.97) !important;
+  filter: none !important;
+  text-shadow: none !important;
 }
 
 .af-lyric-line:hover {
-  opacity: 0.85 !important;
-  filter: blur(0px) !important;
-  transform: scale(1) !important;
+  opacity: 0.9 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  filter: none !important;
+  transform: scale(1) translateX(3px) !important;
 }
 
 /* Individual Vocal Word Sync */
-.af-word {
+.af-word,
+.af-timed-word {
   display: inline-block;
   white-space: pre-wrap;
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
-  transition: color 0.18s ease,
-              transform 0.22s cubic-bezier(0.2, 0.9, 0.2, 1),
-              text-shadow 0.22s ease,
-              filter 0.22s ease;
+  transition: color 0.22s ease,
+              text-shadow 0.25s ease,
+              opacity 0.22s ease,
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: bottom left;
 }
 
 /* Word already vocalized by singer */
-.af-word.sung {
+.af-word.sung,
+.af-timed-word.sung {
   color: #FFFFFF !important;
   opacity: 1 !important;
-  text-shadow: 0 0 25px rgba(255, 255, 255, 0.45);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.45);
   transform: scale(1) translateY(0);
 }
 
-/* Word currently being vocalized in sync */
-.af-word.singing {
-  display: inline-block;
+.af-word.active,
+.af-timed-word.active {
   color: #FFFFFF !important;
-  background: linear-gradient(
-    90deg,
-    #FFFFFF 0%,
-    #FFFFFF var(--word-progress, 0%),
-    rgba(255, 255, 255, 0.45) calc(var(--word-progress, 0%) + 18%),
-    rgba(255, 255, 255, 0.3) 100%
-  ) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  transform: scale(1.08) translateY(-2px);
-  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.95));
-}
-
-/* Word upcoming in current line */
-.af-word.upcoming {
-  color: rgba(255, 255, 255, 0.35);
-  opacity: 0.7;
-  transform: scale(0.98);
+  opacity: 1 !important;
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
 }
 
 .af-lyrics-empty {

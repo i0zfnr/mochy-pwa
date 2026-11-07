@@ -212,13 +212,101 @@ const SectionHead = memo(function SectionHead({ title, subtitle, action, onClick
   );
 });
 
-function LyricItem({ line, position, isCurrent, isPast, activeRef, onSeek, distance = 0 }) {
+const LyricItem = memo(function LyricItem({ line, position, isCurrent, isPast, activeRef, onSeek, distance = 0 }) {
   // LRC gives line times. Only animate words when the source provides word times.
-  return <button ref={activeRef} className={`af-lyric-line ${isCurrent ? 'active' : isPast ? 'past' : 'upcoming'}`}
-    data-distance={Math.min(3, Math.abs(distance))} onClick={() => onSeek(line.time)}>
-    {isCurrent && line.words?.length ? line.words.map((word, i) => <span key={i}
-      className={`af-timed-word ${position >= word.time ? 'sung' : ''}`}>{word.text}</span>) : line.text || '♪'}
-  </button>;
+  return (
+    <button
+      ref={activeRef}
+      className={`af-lyric-line ${isCurrent ? 'active' : isPast ? 'past' : 'upcoming'}`}
+      data-distance={Math.min(3, Math.abs(distance))}
+      onClick={() => onSeek(line.time)}
+    >
+      {isCurrent && line.words?.length ? (
+        line.words.map((word, i) => (
+          <span
+            key={i}
+            className={`af-timed-word af-word ${position >= word.time ? 'sung active' : ''}`}
+          >
+            {word.text}
+          </span>
+        ))
+      ) : (
+        line.text || '♪'
+      )}
+    </button>
+  );
+}, (prev, next) => {
+  if (prev.line !== next.line) return false;
+  if (prev.isCurrent !== next.isCurrent) return false;
+  if (prev.isPast !== next.isPast) return false;
+  if (prev.distance !== next.distance) return false;
+  if (prev.activeRef !== next.activeRef) return false;
+  if (next.isCurrent && next.line.words?.length) {
+    return prev.position === next.position;
+  }
+  return true;
+});
+
+function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled = true) {
+  const isUserInteractingRef = useRef(false);
+  const userScrollTimeoutRef = useRef(null);
+
+  const scrollToActive = useCallback((force = false) => {
+    if (!isEnabled) return;
+    if (isUserInteractingRef.current && !force) return;
+    const container = containerRef.current;
+    const activeEl = activeLineRef.current;
+    if (!container || !activeEl) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const activeRect = activeEl.getBoundingClientRect();
+
+    const relativeTop = activeRect.top - containerRect.top;
+    // Golden ratio offset: active line positioned comfortably at 38% from top of container
+    const targetScrollTop = container.scrollTop + relativeTop - (containerRect.height * 0.38) + (activeRect.height / 2);
+
+    container.scrollTo({
+      top: Math.max(0, targetScrollTop),
+      behavior: 'smooth'
+    });
+  }, [containerRef, activeLineRef, isEnabled]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onUserInteraction = () => {
+      isUserInteractingRef.current = true;
+      if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
+      userScrollTimeoutRef.current = setTimeout(() => {
+        isUserInteractingRef.current = false;
+        scrollToActive();
+      }, 3500);
+    };
+
+    container.addEventListener('wheel', onUserInteraction, { passive: true });
+    container.addEventListener('touchstart', onUserInteraction, { passive: true });
+    container.addEventListener('pointerdown', onUserInteraction, { passive: true });
+
+    return () => {
+      container.removeEventListener('wheel', onUserInteraction);
+      container.removeEventListener('touchstart', onUserInteraction);
+      container.removeEventListener('pointerdown', onUserInteraction);
+      if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
+    };
+  }, [containerRef, scrollToActive]);
+
+  useEffect(() => {
+    if (isEnabled && lyricIndex >= 0) {
+      scrollToActive();
+    }
+  }, [lyricIndex, isEnabled, scrollToActive]);
+
+  return useCallback(() => {
+    isUserInteractingRef.current = false;
+    if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
+    requestAnimationFrame(() => scrollToActive(true));
+  }, [scrollToActive]);
 }
 function LyricsTiming({ delay, onChange }) {
   return <details className="lyrics-timing"><summary><Clock3 size={14}/>Adjust lyric timing{delay !== 0 && <span>{delay > 0 ? '+' : ''}{delay.toFixed(2)}s</span>}</summary>
@@ -267,6 +355,8 @@ function App() {
   const searchedQuery = useRef('');
   const activeLyricRef = useRef(null);
   const panelLyricRef = useRef(null);
+  const fullscreenLyricsRef = useRef(null);
+  const panelLyricsRef = useRef(null);
   const notify = message => setToast(message);
   const player = usePlayer({ notify, onPlayed: track => setHistory(old => [track, ...old.filter(t => t.id !== track.id)].slice(0, 100)), audioLabSettings });
   const current = player.current;
@@ -280,10 +370,6 @@ function App() {
   const lyricDelay = Number(lyricDelays[current?.id]) || 0;
   const lyricPosition = player.position - lyricDelay;
   const lyricDuration = Math.round(player.duration || current?.duration || 0);
-  const seekLyric = value => player.seek(Math.max(0, value + lyricDelay));
-  const setLyricDelay = value => setLyricDelays(old => ({ ...old, [current.id]: Math.round(value * 100) / 100 }));
-  useEffect(() => { readState('lyricDelays', {}).then(value => { setLyricDelays(value); setDelaysReady(true); }).catch(() => setDelaysReady(true)); }, []);
-  useEffect(() => { if (delaysReady) writeState('lyricDelays', lyricDelays).catch(() => {}); }, [delaysReady, lyricDelays]);
   let lyricIndex = -1;
   for (let i = synced.length - 1; i >= 0; i--) {
     if (synced[i].time <= lyricPosition) {
@@ -291,6 +377,16 @@ function App() {
       break;
     }
   }
+  const forceScrollFullscreen = useSmoothLyricScroll(fullscreenLyricsRef, activeLyricRef, lyricIndex, fullScreen);
+  const forceScrollPanel = useSmoothLyricScroll(panelLyricsRef, panelLyricRef, lyricIndex, panel === 'lyrics');
+  const seekLyric = useCallback(value => {
+    player.seek(Math.max(0, value + lyricDelay));
+    forceScrollFullscreen();
+    forceScrollPanel();
+  }, [player, lyricDelay, forceScrollFullscreen, forceScrollPanel]);
+  const setLyricDelay = value => setLyricDelays(old => ({ ...old, [current.id]: Math.round(value * 100) / 100 }));
+  useEffect(() => { readState('lyricDelays', {}).then(value => { setLyricDelays(value); setDelaysReady(true); }).catch(() => setDelaysReady(true)); }, []);
+  useEffect(() => { if (delaysReady) writeState('lyricDelays', lyricDelays).catch(() => {}); }, [delaysReady, lyricDelays]);
   useEffect(() => { (async () => {
     try { const [tracks, savedLikes, savedHistory, savedPlaylists, appearance, cachedFeed, savedAudioLab] = await Promise.all([getLibrary(), readState('likes', []), readState('history', []), readState('playlists', []), readState('appearance', {}), readState('feed', []), readState('audioLabSettings', DEFAULT_AUDIO_LAB)]); setLibrary(tracks); setLikes(savedLikes); setHistory(savedHistory); setPlaylists(savedPlaylists); setShape(appearance.shape || 'rounded'); const activeTheme = (!appearance.theme || appearance.theme === 'mochy') ? 'apple-dark' : appearance.theme; setTheme(activeTheme); setPureBlack(activeTheme === 'pure-black'); setFeed(cachedFeed); if (savedAudioLab) setAudioLabSettings(savedAudioLab); }
     catch { notify('Local storage is unavailable. Check your browser storage settings.'); }
@@ -338,7 +434,7 @@ function App() {
     fetch(`/api/lyrics?title=${encodeURIComponent(current.title)}&artist=${encodeURIComponent(current.artist)}${current.id ? `&id=${encodeURIComponent(current.id)}` : ''}&duration=${lyricDuration}&album=${encodeURIComponent(current.album || '')}`, { signal: controller.signal }).then(async r => { const data = await r.json(); if (!r.ok) throw new Error(data.error); return data; }).then(setLyrics).catch(e => { if (e.name !== 'AbortError') setLyrics({ error: e.message }); }).finally(() => { if (!controller.signal.aborted) setLyricsLoading(false); });
     return () => controller.abort();
   }, [current?.id, panel, fullScreen, lyricDuration]);
-  useEffect(() => { if (fullScreen && activeLyricRef.current) activeLyricRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (panel === 'lyrics' && panelLyricRef.current) panelLyricRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, [lyricIndex, fullScreen, panel]);
+  // Smooth lyric scroll handled by useSmoothLyricScroll
   useEffect(() => { const handler = e => { if (e.key === 'Escape') { if (fullScreen) { setFullScreen(false); return; } setMenu(null); setNewPlaylist(false); setExpanded(false); } if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(e.target.tagName) && !menu && !newPlaylist) { e.preventDefault(); player.toggle(); } }; window.addEventListener('keydown', handler); return () => window.removeEventListener('keydown', handler); });
 
   useEffect(() => { if (page !== 'search') return; const trimmed = query.trim(); if (!trimmed) { searchedQuery.current = ''; setResults([]); setError(''); setLoading(false); request.current?.abort(); return; } if (searchedQuery.current === trimmed) return; const timer = setTimeout(async () => { searchedQuery.current = trimmed; request.current?.abort(); request.current = new AbortController(); const signal = request.current.signal; setLoading(true); setError(''); try { const tracks = await findMusic(trimmed, signal); if (!signal.aborted) setResults(tracks); } catch (e) { if (e.name !== 'AbortError') setError(e.message); } finally { if (!signal.aborted) setLoading(false); } }, 250); return () => clearTimeout(timer); }, [query, page]);
@@ -464,7 +560,7 @@ function App() {
     </main>
     <aside className={`player-panel ${current ? 'has-track' : ''}`}>{current && <AlbumAtmosphere artwork={displayCurrent.cover || ''} compact/>}<div className="player-heading"><span>{panel === 'queue' ? 'UP NEXT' : panel === 'lyrics' ? 'THE WORDS' : 'NOW PLAYING'}</span><IconButton icon={Maximize2} label="Apple Music Full Screen" disabled={!current} onClick={() => setFullScreen(true)}/><IconButton icon={ChevronDown} label="Close expanded player" className="close-player" onClick={() => setExpanded(false)}/><IconButton icon={MoreHorizontal} label="Current song options" disabled={!current} onClick={() => current && setMenu(current)}/></div>
 
-      <div className="player-content">{panel === 'queue' ? <div className="queue-panel"><h2>A little more music.</h2><p>{player.queue.length} songs in your queue</p>{player.queue.map((track, i) => <div className={`queue-item ${i === player.index ? 'selected' : ''}`} key={`${track.id}-${i}`}><button onClick={() => player.start(track, player.queue, i)}><Cover track={track}/><span><strong>{track.title}</strong><small>{track.artist}</small></span></button>{i !== player.index && <IconButton icon={X} label={`Remove ${track.title} from queue`} onClick={() => { player.removeQueueItem(i); }}/>}</div>)}</div> : panel === 'lyrics' ? <div className="lyrics-panel">{!current ? <p>Choose a song to find its words.</p> : lyricsLoading ? <p>Finding the words…</p> : lyrics?.error ? <p>{lyrics.error}</p> : lyrics?.instrumental ? <p>No words needed. This one is instrumental.</p> : synced.length ? synced.map((line, i) => <LyricItem key={i} line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? panelLyricRef : null} onSeek={seekLyric}/>) : <p className="plain-lyrics">{lyrics?.plainLyrics || 'No lyrics found for this recording.'}</p>}<span className="lyrics-credit">Lyrics from {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</span></div> : current ? <><div className={`player-art ${shape}`} onClick={() => current && setFullScreen(true)} role="button" tabIndex={0} title="Click to open Full Screen Lyrics & Album" style={{ cursor: 'pointer' }}><Cover track={displayCurrent}/></div><div className="playing-label">A LITTLE MOMENT, JUST FOR YOU</div><div className="now-title"><div><h2>{current.title}</h2><p>{current.artist}</p></div><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/></div><div className="source-tag"><span/>{current.source === 'local' ? 'On this device · Offline ready' : 'YouTube · Online playback'}</div>{current.source === 'youtube' && <a className="youtube-link" href={`https://www.youtube.com/watch?v=${current.id}`} target="_blank" rel="noreferrer">Open on YouTube<ArrowUpRight size={13}/></a>}</> : <div className="player-empty"><div className="empty-record"><Disc3 size={90} strokeWidth={0.6}/><span>✳</span></div><h2>Let something<br/>good play.</h2><p>Your next little obsession<br/>could be one song away.</p><button className="text-button" onClick={() => navigate('search')}>Find a song<ArrowUpRight size={16}/></button></div>}</div>
+      <div className={`player-content ${panel === 'lyrics' ? 'is-lyrics' : ''}`}>{panel === 'queue' ? <div className="queue-panel"><h2>A little more music.</h2><p>{player.queue.length} songs in your queue</p>{player.queue.map((track, i) => <div className={`queue-item ${i === player.index ? 'selected' : ''}`} key={`${track.id}-${i}`}><button onClick={() => player.start(track, player.queue, i)}><Cover track={track}/><span><strong>{track.title}</strong><small>{track.artist}</small></span></button>{i !== player.index && <IconButton icon={X} label={`Remove ${track.title} from queue`} onClick={() => { player.removeQueueItem(i); }}/>}</div>)}</div> : panel === 'lyrics' ? <div className="lyrics-panel" ref={panelLyricsRef}>{!current ? <p>Choose a song to find its words.</p> : lyricsLoading ? <p>Finding the words…</p> : lyrics?.error ? <p>{lyrics.error}</p> : lyrics?.instrumental ? <p>No words needed. This one is instrumental.</p> : synced.length ? synced.map((line, i) => <LyricItem key={i} line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? panelLyricRef : null} onSeek={seekLyric}/>) : <p className="plain-lyrics">{lyrics?.plainLyrics || 'No lyrics found for this recording.'}</p>}<span className="lyrics-credit">Lyrics from {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</span></div> : current ? <><div className={`player-art ${shape}`} onClick={() => current && setFullScreen(true)} role="button" tabIndex={0} title="Click to open Full Screen Lyrics & Album" style={{ cursor: 'pointer' }}><Cover track={displayCurrent}/></div><div className="playing-label">A LITTLE MOMENT, JUST FOR YOU</div><div className="now-title"><div><h2>{current.title}</h2><p>{current.artist}</p></div><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/></div><div className="source-tag"><span/>{current.source === 'local' ? 'On this device · Offline ready' : 'YouTube · Online playback'}</div>{current.source === 'youtube' && <a className="youtube-link" href={`https://www.youtube.com/watch?v=${current.id}`} target="_blank" rel="noreferrer">Open on YouTube<ArrowUpRight size={13}/></a>}</> : <div className="player-empty"><div className="empty-record"><Disc3 size={90} strokeWidth={0.6}/><span>✳</span></div><h2>Let something<br/>good play.</h2><p>Your next little obsession<br/>could be one song away.</p><button className="text-button" onClick={() => navigate('search')}>Find a song<ArrowUpRight size={16}/></button></div>}</div>
       <div className="player-controls"><div className="seek-bar"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))} disabled={!current}/><div><span>{time(player.position)}</span><span>{time(player.duration)}</span></div></div><div className="transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" disabled={!current} onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} className="play-button" disabled={!current} onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" disabled={!current} onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume"><Volume2 size={16}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div><div className="player-tabs"><button className={panel === 'playing' ? 'selected' : ''} onClick={() => setPanel('playing')}><Disc3 size={17}/>Playing</button><button className={panel === 'lyrics' ? 'selected' : ''} onClick={() => setPanel('lyrics')}><Mic2 size={17}/>Lyrics</button><button className={panel === 'queue' ? 'selected' : ''} onClick={() => setPanel('queue')}><ListMusic size={17}/>Queue</button></div></div></aside>
     {current && <div className="mobile-mini"><button className="mini-track" onClick={() => { setPanel('playing'); setExpanded(true); }}><Cover track={displayCurrent}/><span><strong>{current.title}</strong><small>{current.artist}</small></span></button><IconButton icon={Maximize2} label="Full screen" onClick={() => setFullScreen(true)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/></div>}
     <nav className="mobile-nav">{[[Home, 'Home', 'home'], [Search, 'Search', 'search'], [Library, 'Library', 'library'], [SlidersHorizontal, 'Audio Lab', 'audiolab'], [Settings, 'Settings', 'settings']].map(([Icon, title, key]) => <button key={key} className={page === key ? 'selected' : ''} onClick={() => navigate(key)}><Icon size={21}/><span>{title}</span></button>)}</nav>
@@ -472,7 +568,7 @@ function App() {
     {menu && <div className="modal-backdrop" onClick={() => setMenu(null)}><section className="modal" role="dialog" aria-modal="true" aria-label="Song options" onClick={e => e.stopPropagation()}><div className="modal-heading"><h2>Make it yours.</h2><IconButton icon={X} label="Close song options" onClick={() => setMenu(null)}/></div><div className="menu-track"><Cover track={menu}/><div><strong>{menu.title}</strong><p>{menu.artist}</p></div></div><button className="menu-action" onClick={() => { like(menu); setMenu(null); }}><Heart size={18}/>{likes.includes(menu.id) ? 'Remove from liked songs' : 'Add to liked songs'}</button><button className="menu-action" onClick={() => { save(menu); setMenu(null); notify('Saved to your library'); }}><Library size={18}/>Save to library</button><button className="menu-action" onClick={() => { if (current) player.setQueue(old => [...old, menu]); else player.start(menu, [menu]); setMenu(null); notify('Added to queue'); }}><ListMusic size={18}/>Add to queue</button><span className="sidebar-label">ADD TO PLAYLIST</span>{playlists.map(p => <button className="menu-action" key={p.id} onClick={() => addToPlaylist(p.id, menu)}><Plus size={18}/>{p.name}</button>)}<button className="menu-action" onClick={() => { setMenu(null); setNewPlaylist(true); }}><Plus size={18}/>Create playlist</button>{page === 'playlist' && <button className="menu-action" onClick={() => { setPlaylists(old => old.map(p => p.id === selectedPlaylist ? { ...p, tracks: p.tracks.filter(id => id !== menu.id) } : p)); setMenu(null); }}><X size={18}/>Remove from this playlist</button>}{library.some(t => t.id === menu.id) && <button className="menu-action danger" onClick={async () => { try { await removeTrack(menu.id); setLibrary(old => old.filter(t => t.id !== menu.id)); setLikes(old => old.filter(id => id !== menu.id)); setPlaylists(old => old.map(p => ({ ...p, tracks: p.tracks.filter(id => id !== menu.id) }))); setMenu(null); notify('Removed from your library'); } catch { notify('Could not remove this song. Try again.'); } }}><Trash2 size={18}/>Remove from library{menu.source === 'local' ? ' & device' : ''}</button>}</section></div>}
     {newPlaylist && <div className="modal-backdrop" onClick={() => setNewPlaylist(false)}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="playlist-dialog-title" onClick={e => e.stopPropagation()}><div className="modal-heading"><h2 id="playlist-dialog-title">A new little collection.</h2><IconButton icon={X} label="Close create playlist" onClick={() => setNewPlaylist(false)}/></div><p>Give your soundtrack a name.</p><form onSubmit={createPlaylist}><input className="name-input" aria-label="Playlist name" placeholder="Sunday kind of love" maxLength={80} autoFocus value={playlistName} onChange={e => setPlaylistName(e.target.value)} required/><button className="primary" type="submit">Create playlist<Plus size={17}/></button></form></section></div>}
     {spotifyModal && <div className="modal-backdrop" onClick={() => setSpotifyModal(false)}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="spotify-dialog-title" onClick={e => e.stopPropagation()}><div className="modal-heading"><h2 id="spotify-dialog-title">Import from Spotify.</h2><IconButton icon={X} label="Close modal" onClick={() => setSpotifyModal(false)}/></div><p>Paste a public Spotify playlist, album, or song link.</p><form onSubmit={e => { e.preventDefault(); handleImportSpotify(); }}><input className="name-input" aria-label="Spotify link" placeholder="https://open.spotify.com/playlist/..." value={spotifyUrl} onChange={e => setSpotifyUrl(e.target.value)} autoFocus required/>{spotifyError && <div className="inline-error" style={{ marginBottom: '16px' }}>{spotifyError}</div>}<button className="primary" type="submit" disabled={spotifyLoading || !spotifyUrl.trim()}>{spotifyLoading ? 'Importing playlist…' : 'Import from Spotify'}<Plus size={17}/></button></form></section></div>}
-    {fullScreen && current && <div className={`apple-fullscreen-player ${noLyrics ? 'no-lyrics' : ''}`} role="dialog" aria-modal="true" aria-label="Now playing full screen"><AlbumAtmosphere artwork={highResolutionArtwork(displayCurrent.cover, 128)}/><header className="af-header"><div className="af-brand"><span>XENN · NOW PLAYING</span></div><div className="af-header-actions"><button className="beat-sync-button" aria-pressed={tabBeatSync.active} disabled={tabBeatSync.connecting} onClick={tabBeatSync.toggle} title={tabBeatSync.active ? "Beat sync is always on. Click to pause beat sync." : "Click to resume beat sync."}><Headphones size={14}/>{tabBeatSync.connecting ? 'Connecting…' : tabBeatSync.active ? 'Beat sync on' : 'Beat sync'}</button><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/><IconButton icon={Minimize2} label="Exit full screen (Esc)" onClick={() => setFullScreen(false)}/></div></header><div className={`af-content ${noLyrics ? 'no-lyrics' : ''}`}><div className="af-left"><div className={`af-cover-box ${shape}`}><Cover track={displayCurrent}/></div><div className="af-meta"><div className="af-meta-heading"><h2>{current.title}</h2></div><p>{current.artist}</p>{lyrics?.instrumental && <span className="af-instrumental-tag">♪ Instrumental</span>}{displayCurrent.artworkLink && <a className="artwork-credit" href={displayCurrent.artworkLink} target="_blank" rel="noreferrer">View album on {displayCurrent.artworkProvider}<ArrowUpRight size={11}/></a>}</div><div className="af-controls"><div className="seek-bar af-seek"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))}/><div><span>{time(player.position)}</span><span>{time(player.duration)}</span></div></div><div className="transport af-transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} className="play-button af-play" onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume af-volume"><Volume2 size={18}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div></div></div><div className="af-lyrics">{synced.length > 0 && <LyricsTiming delay={lyricDelay} onChange={setLyricDelay}/>}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><p>♪ Instrumental ♪</p></div> : synced.length ? <div className="af-lyrics-scroll">{synced.map((line, i) => <LyricItem key={i} line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? activeLyricRef : null} onSeek={seekLyric}/>)}<div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : lyrics?.plainLyrics ? <div className="af-lyrics-scroll plain"><p className="plain-lyrics">{lyrics.plainLyrics}</p><div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : <div className="af-lyrics-empty"><p>No lyrics found for this song.</p></div>}</div></div></div>}
+    {fullScreen && current && <div className={`apple-fullscreen-player ${noLyrics ? 'no-lyrics' : ''}`} role="dialog" aria-modal="true" aria-label="Now playing full screen"><AlbumAtmosphere artwork={highResolutionArtwork(displayCurrent.cover, 128)}/><header className="af-header"><div className="af-brand"><span>XENN · NOW PLAYING</span></div><div className="af-header-actions"><button className="beat-sync-button" aria-pressed={tabBeatSync.active} disabled={tabBeatSync.connecting} onClick={tabBeatSync.toggle} title={tabBeatSync.active ? "Beat sync is always on. Click to pause beat sync." : "Click to resume beat sync."}><Headphones size={14}/>{tabBeatSync.connecting ? 'Connecting…' : tabBeatSync.active ? 'Beat sync on' : 'Beat sync'}</button><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/><IconButton icon={Minimize2} label="Exit full screen (Esc)" onClick={() => setFullScreen(false)}/></div></header><div className={`af-content ${noLyrics ? 'no-lyrics' : ''}`}><div className="af-left"><div className={`af-cover-box ${shape}`}><Cover track={displayCurrent}/></div><div className="af-meta"><div className="af-meta-heading"><h2>{current.title}</h2></div><p>{current.artist}</p>{lyrics?.instrumental && <span className="af-instrumental-tag">♪ Instrumental</span>}{displayCurrent.artworkLink && <a className="artwork-credit" href={displayCurrent.artworkLink} target="_blank" rel="noreferrer">View album on {displayCurrent.artworkProvider}<ArrowUpRight size={11}/></a>}</div><div className="af-controls"><div className="seek-bar af-seek"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))}/><div><span>{time(player.position)}</span><span>{time(player.duration)}</span></div></div><div className="transport af-transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} className="play-button af-play" onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume af-volume"><Volume2 size={18}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div></div></div><div className="af-lyrics">{synced.length > 0 && <LyricsTiming delay={lyricDelay} onChange={setLyricDelay}/>}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><p>♪ Instrumental ♪</p></div> : synced.length ? <div className="af-lyrics-scroll" ref={fullscreenLyricsRef}>{synced.map((line, i) => <LyricItem key={i} line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? activeLyricRef : null} onSeek={seekLyric}/>)}<div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : lyrics?.plainLyrics ? <div className="af-lyrics-scroll plain" ref={fullscreenLyricsRef}><p className="plain-lyrics">{lyrics.plainLyrics}</p><div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : <div className="af-lyrics-empty"><p>No lyrics found for this song.</p></div>}</div></div></div>}
   <div className="youtube-audio-only" aria-hidden="true" style={{ position: 'fixed', bottom: 0, right: 0, width: '200px', height: '120px', opacity: 0.001, pointerEvents: 'none', overflow: 'hidden', zIndex: -999 }}><div id="youtube-player"/></div></div>;
 }
 

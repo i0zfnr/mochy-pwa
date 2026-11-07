@@ -17,14 +17,66 @@
 .player-panel>.album-atmosphere{border-radius:inherit;opacity:.65}
 .player-panel>:not(.album-atmosphere){position:relative;z-index:1}
 .theme-apple-light .player-panel>.album-atmosphere{opacity:.16}
-/* Only source timestamps drive the lyrics. No guessed word sweep or large glow. */
-.apple-fullscreen-player .af-lyric-line,.lyrics-panel .af-lyric-line{font-weight:700;line-height:1.35;letter-spacing:-.45px;opacity:1;color:#ffffff70;filter:none;transform:none;text-shadow:none;transition:color 240ms ease,filter 240ms ease,transform 240ms ease}
-.apple-fullscreen-player .af-lyric-line{font-size:clamp(28px,3.1vw,42px);margin-bottom:26px}
-.apple-fullscreen-player .af-lyric-line.active,.lyrics-panel .af-lyric-line.active{color:#fff!important;font-weight:700!important;opacity:1!important;filter:none!important;text-shadow:none!important;transform:translateX(5px)!important}
-.apple-fullscreen-player .af-lyric-line[data-distance="1"]{color:#ffffff80;filter:blur(.35px)}
-.apple-fullscreen-player .af-lyric-line[data-distance="2"]{color:#ffffff60;filter:blur(.7px)}
-.apple-fullscreen-player .af-lyric-line[data-distance="3"]{color:#ffffff45;filter:blur(1px)}
-.af-timed-word{color:#ffffff66;white-space:pre-wrap}.af-timed-word.sung{color:#fff}
+/* Only source timestamps drive the lyrics. Fluid Apple spring motion without heavy GPU blurs. */
+.apple-fullscreen-player .af-lyric-line, .lyrics-panel .af-lyric-line {
+  font-weight: 700 !important;
+  line-height: 1.36;
+  letter-spacing: -0.45px;
+  filter: none !important;
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.35s ease,
+              text-shadow 0.45s ease;
+  will-change: transform, opacity, color;
+}
+.apple-fullscreen-player .af-lyric-line {
+  font-size: clamp(28px, 3.1vw, 42px);
+  margin-bottom: 26px;
+}
+.apple-fullscreen-player .af-lyric-line.active, .lyrics-panel .af-lyric-line.active {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: scale(1.035) translateX(8px) !important;
+  text-shadow: 0 0 24px rgba(255, 255, 255, 0.42), 0 0 50px rgba(255, 255, 255, 0.18) !important;
+}
+.lyrics-panel .af-lyric-line.active {
+  transform: scale(1.03) translateX(6px) !important;
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.35) !important;
+}
+.apple-fullscreen-player .af-lyric-line[data-distance="1"], .lyrics-panel .af-lyric-line[data-distance="1"] {
+  color: rgba(255, 255, 255, 0.68) !important;
+  opacity: 0.8 !important;
+  transform: scale(0.99) !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+.apple-fullscreen-player .af-lyric-line[data-distance="2"], .lyrics-panel .af-lyric-line[data-distance="2"] {
+  color: rgba(255, 255, 255, 0.45) !important;
+  opacity: 0.55 !important;
+  transform: scale(0.98) !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+.apple-fullscreen-player .af-lyric-line[data-distance="3"], .lyrics-panel .af-lyric-line[data-distance="3"] {
+  color: rgba(255, 255, 255, 0.3) !important;
+  opacity: 0.35 !important;
+  transform: scale(0.97) !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+.af-timed-word, .af-word {
+  color: #ffffff66;
+  white-space: pre-wrap;
+  transition: color 0.22s ease, text-shadow 0.25s ease, opacity 0.22s ease;
+}
+.af-timed-word.sung, .af-timed-word.active, .af-word.sung, .af-word.active {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.45) !important;
+}
 .apple-fullscreen-player .af-controls{background:#ffffff0f!important;border:1px solid #ffffff18!important;box-shadow:none!important;border-radius:18px!important;backdrop-filter:blur(20px)!important}
 .apple-fullscreen-player .af-seek input,.apple-fullscreen-player .af-volume input{accent-color:#fff}
 .lyrics-timing{position:relative;z-index:3;flex-shrink:0;color:#ffffffaa;font-size:11px;margin:4px 0 0}

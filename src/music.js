@@ -1,5 +1,16 @@
 export const time = value => { const n = Math.max(0, Math.floor(Number(value) || 0)); return `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`; };
-export function parseLrc(text = '') { return text.split('\n').flatMap(line => { const content = line.replace(/\[\d+:\d+(?:\.\d+)?\]/g, '').trim(); return [...line.matchAll(/\[(\d+):(\d+(?:\.\d+)?)\]/g)].map(m => ({ time: Number(m[1]) * 60 + Number(m[2]), text: content })); }).sort((a, b) => a.time - b.time); }
+export function parseLrc(text = '') {
+  if (!text || typeof text !== 'string') return [];
+  return text.split('\n').flatMap(line => {
+    const content = line.replace(/\[\d+:\d+(?:\.\d+)?\]/g, '').trim();
+    const words = [...content.matchAll(/<(\d+):(\d+(?:\.\d+)?)>([^<]*)/g)].map(m => ({ time: Number(m[1]) * 60 + Number(m[2]), text: m[3] }));
+    return [...line.matchAll(/\[(\d+):(\d+(?:\.\d+)?)\]/g)].map(m => ({
+      time: Number(m[1]) * 60 + Number(m[2]),
+      text: content.replace(/<\d+:\d+(?:\.\d+)?>/g, ''),
+      ...(words.length ? { words } : {}),
+    }));
+  }).sort((a, b) => a.time - b.time);
+}
 export function nextIndex(index, length, shuffle, repeat, direction = 1, ended = false) {
   if (!length) return -1;
   if (ended && repeat === 'one') return index;

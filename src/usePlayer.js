@@ -13,6 +13,7 @@ function loadYoutube() {
 export function usePlayer({ notify, onPlayed }) {
   const audio = useRef(new Audio());
   const youtube = useRef(null);
+  const analyserRef = useRef(null);
   const localUrl = useRef(null);
   const generation = useRef(0);
   const currentRef = useRef(null);
@@ -39,8 +40,45 @@ export function usePlayer({ notify, onPlayed }) {
         if (token !== generation.current) return;
         if (!file) throw new Error('This file is missing. Import it again.');
         localUrl.current = URL.createObjectURL(file); audio.current.src = localUrl.current;
+        // Local media can be analysed without copying or uploading the audio.
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext && !analyserRef.current) {
+            const context = new AudioContext();
+            const analyser = context.createAnalyser();
+            analyser.fftSize = 1024;
+            analyser.smoothingTimeConstant = 0.75;
+            const source = context.createMediaElementSource(audio.current);
+            source.connect(analyser);
+            analyser.connect(context.destination);
+            analyserRef.current = { context, analyser, source };
+          }
+          if (analyserRef.current?.context.state === 'suspended') await analyserRef.current.context.resume();
+        } catch { /* Audio playback still works in browsers without Web Audio. */ }
+        if (token !== generation.current) return;
         await audio.current.play();
+        if (token === generation.current) onPlayed(track);
       } else {
+        let playableTrack = track;
+        if (track.source === 'spotify' || track.id.startsWith('sp_') || !/^[\w-]{11}$/.test(track.id)) {
+          try {
+            const query = `${track.title} ${track.artist}`;
+            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data?.tracks?.[0]?.id) {
+                playableTrack = {
+                  ...track,
+                  id: data.tracks[0].id,
+                  source: 'youtube',
+                  cover: track.cover || data.tracks[0].cover
+                };
+                setCurrent(playableTrack);
+                currentRef.current = playableTrack;
+              }
+            }
+          } catch {}
+        }
         const YT = await loadYoutube();
         if (token !== generation.current) return;
         if (!youtube.current) {
@@ -56,9 +94,11 @@ export function usePlayer({ notify, onPlayed }) {
           });
         }
         if (token !== generation.current) return;
-        youtube.current.setVolume(volume * 100); youtube.current.loadVideoById(track.id);
+        youtube.current.setVolume(volume * 100);
+        youtube.current.loadVideoById(playableTrack.id);
+        if (token === generation.current) onPlayed(playableTrack);
+        return;
       }
-      if (token === generation.current) onPlayed(track);
     } catch (error) { if (token === generation.current) { setPlaying(false); notify(error.message); } }
   }
   function advance(direction = 1, ended = false) {
@@ -80,7 +120,7 @@ export function usePlayer({ notify, onPlayed }) {
     const play = () => setPlaying(true), pause = () => setPlaying(false), ended = () => advanceRef.current?.(1, true);
     const error = () => { setPlaying(false); notify('Your browser could not decode this audio file. Try MP3, M4A, WAV, or OGG.'); };
     el.addEventListener('timeupdate', update); el.addEventListener('loadedmetadata', update); el.addEventListener('play', play); el.addEventListener('pause', pause); el.addEventListener('ended', ended); el.addEventListener('error', error);
-    const timer = setInterval(() => { if (currentRef.current?.source === 'youtube' && youtube.current?.getCurrentTime) { setPosition(youtube.current.getCurrentTime()); setDuration(youtube.current.getDuration() || 0); } }, 500);
+    const timer = setInterval(() => { if (currentRef.current?.source === 'youtube' && youtube.current?.getCurrentTime) { const t = youtube.current.getCurrentTime(); if (typeof t === 'number' && !Number.isNaN(t)) { setPosition(t); const d = youtube.current.getDuration?.(); if (d && !Number.isNaN(d)) setDuration(d); } } else if (currentRef.current?.source === 'local' && el && !el.paused) { setPosition(el.currentTime || 0); if (Number.isFinite(el.duration)) setDuration(el.duration); } }, 50);
     return () => { clearInterval(timer); el.pause(); for (const [event, handler] of [['timeupdate', update], ['loadedmetadata', update], ['play', play], ['pause', pause], ['ended', ended], ['error', error]]) el.removeEventListener(event, handler); };
   }, []);
   useEffect(() => { audio.current.volume = volume; youtube.current?.setVolume?.(volume * 100); }, [volume]);
@@ -91,5 +131,5 @@ export function usePlayer({ notify, onPlayed }) {
     for (const [name, handler] of Object.entries(actions)) try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
   }, [current]);
   function removeQueueItem(at) { if (at === index) return; setQueue(old => old.filter((_, i) => i !== at)); if (at < index) setIndex(old => old - 1); }
-  return { current, queue, index, playing, position, duration, volume, setVolume, shuffle, setShuffle, repeat, setRepeat, start, advance, toggle, seek, setQueue, removeQueueItem };
+  return { current, queue, index, playing, position, duration, volume, setVolume, shuffle, setShuffle, repeat, setRepeat, start, advance, toggle, seek, setQueue, removeQueueItem, analyserRef };
 }

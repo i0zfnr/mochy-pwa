@@ -11,7 +11,7 @@ test('managed startup entrypoint opens the configured listener', { timeout: 1000
   const url = await new Promise((resolve, reject) => {
     let output = '', errors = '';
     child.stderr.on('data', chunk => { errors += chunk; });
-    child.stdout.on('data', chunk => { output += chunk; const match = output.match(/Mochy is ready at (http:\/\/127\.0\.0\.1:\d+)/); if (match) resolve(match[1]); });
+    child.stdout.on('data', chunk => { output += chunk; const match = output.match(/(?:Xenn|Mochy) is ready at (http:\/\/127\.0\.0\.1:\d+)/); if (match) resolve(match[1]); });
     child.once('error', reject);
     child.once('exit', code => reject(new Error(`Server exited before listening (${code}): ${errors}`)));
   });

@@ -27,6 +27,8 @@ test('production server health, validation, unknown APIs and missing files', asy
   assert.equal((await fetch(url + '/api/search?q=')).status, 400);
   assert.equal((await fetch(url + '/api/search?q=' + 'x'.repeat(151))).status, 400);
   assert.equal((await fetch(url + '/api/lyrics')).status, 400);
+  assert.equal((await fetch(url + '/api/lyrics?title=Song&artist=Artist&duration=invalid')).status, 400);
+  assert.equal((await fetch(url + '/api/artwork')).status, 400);
   assert.equal((await fetch(url + '/api/unknown')).status, 404);
   assert.equal((await fetch(url + '/api/search', { method: 'POST' })).status, 405);
   assert.equal((await fetch(url + '/missing.js')).status, 404);

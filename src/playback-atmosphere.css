@@ -1,0 +1,176 @@
+/* Mochy four-tone atmosphere; the listening environment supplies the color. */
+.album-atmosphere{position:absolute;inset:0;overflow:hidden;pointer-events:none;isolation:isolate;contain:paint;z-index:0;background:#2b2a2d}
+.album-atmosphere canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0}
+.album-atmosphere[data-renderer="shader"] canvas{opacity:1}
+.album-color-fallback{position:absolute;inset:-20%;background:radial-gradient(ellipse at 20% 50%,var(--album-tone-0),transparent 65%),radial-gradient(ellipse at 80% 60%,var(--album-tone-1),transparent 65%),radial-gradient(ellipse at 60% 70%,var(--album-tone-3),transparent 70%),var(--album-tone-2)}
+.album-atmosphere-shade{position:absolute;inset:0;background:linear-gradient(180deg,#05080c66,#05080c40 35%,#05080cb3);opacity:calc(1 - var(--beat-energy,0)*.25);transition:opacity 130ms linear}
+.apple-fullscreen-player{isolation:isolate}
+.apple-fullscreen-player .af-header,.apple-fullscreen-player .af-content{z-index:2}
+.apple-fullscreen-player .af-header{padding-top:env(safe-area-inset-top,0px);min-height:calc(64px + env(safe-area-inset-top,0px))}
+.apple-fullscreen-player .af-header-actions .icon-button{min-width:44px;min-height:44px}
+.af-brand{display:flex;align-items:center;gap:14px}
+.af-brand>span:last-child{font-size:11px;font-weight:600;letter-spacing:.6px;color:#ffffffc0}
+.af-meta-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.af-meta-heading h2{min-width:0}
+.apple-fullscreen-player .af-meta-heading h2{font-size:clamp(20px,2.3vw,34px);line-height:1.18}
+.app .player-panel{position:relative;isolation:isolate}
+.player-panel>.album-atmosphere{border-radius:inherit;opacity:.65}
+.player-panel>:not(.album-atmosphere){position:relative;z-index:1}
+.theme-apple-light .player-panel>.album-atmosphere{opacity:.16}
+/* Only source timestamps drive the lyrics. No guessed word sweep or large glow. */
+.apple-fullscreen-player .af-lyric-line,.lyrics-panel .af-lyric-line{font-weight:700;line-height:1.35;letter-spacing:-.45px;opacity:1;color:#ffffff70;filter:none;transform:none;text-shadow:none;transition:color 240ms ease,filter 240ms ease,transform 240ms ease}
+.apple-fullscreen-player .af-lyric-line{font-size:clamp(28px,3.1vw,42px);margin-bottom:26px}
+.apple-fullscreen-player .af-lyric-line.active,.lyrics-panel .af-lyric-line.active{color:#fff!important;font-weight:700!important;opacity:1!important;filter:none!important;text-shadow:none!important;transform:translateX(5px)!important}
+.apple-fullscreen-player .af-lyric-line[data-distance="1"]{color:#ffffff80;filter:blur(.35px)}
+.apple-fullscreen-player .af-lyric-line[data-distance="2"]{color:#ffffff60;filter:blur(.7px)}
+.apple-fullscreen-player .af-lyric-line[data-distance="3"]{color:#ffffff45;filter:blur(1px)}
+.af-timed-word{color:#ffffff66;white-space:pre-wrap}.af-timed-word.sung{color:#fff}
+.apple-fullscreen-player .af-controls{background:#ffffff0f!important;border:1px solid #ffffff18!important;box-shadow:none!important;border-radius:18px!important;backdrop-filter:blur(20px)!important}
+.apple-fullscreen-player .af-seek input,.apple-fullscreen-player .af-volume input{accent-color:#fff}
+.lyrics-timing{position:relative;z-index:3;flex-shrink:0;color:#ffffffaa;font-size:11px;margin:4px 0 0}
+.lyrics-timing summary{cursor:pointer;display:flex;align-items:center;gap:8px;width:fit-content;min-height:32px;list-style:none;padding:4px 0}
+.lyrics-timing summary::-webkit-details-marker{display:none}
+.lyrics-timing summary:focus-visible{outline:2px solid #ffffff99;outline-offset:4px;border-radius:4px}
+.lyrics-timing summary>span{color:#fff;font-variant-numeric:tabular-nums}
+.lyrics-timing-controls{display:flex;align-items:center;gap:12px;padding:8px 0;font-variant-numeric:tabular-nums}
+.lyrics-timing-controls button{min-height:36px;min-width:52px;background:#ffffff12;border-radius:8px;color:#fff;font-size:11px}
+.lyrics-timing-controls>span{min-width:50px;text-align:center}
+.lyrics-timing p{font-size:11px!important;line-height:1.6!important;color:#ffffff99!important;margin-bottom:8px}
+@media(min-width:961px){.apple-fullscreen-player .af-cover-box{width:min(100%,max(160px,calc(100dvh - 430px)));margin-inline:auto}.apple-fullscreen-player .af-meta{margin-top:20px}.apple-fullscreen-player .af-controls{margin-top:20px;padding:18px 24px!important}}
+@media(min-width:761px) and (max-width:1000px){.app .player-panel{position:fixed}}
+@media(max-width:960px){.apple-fullscreen-player .af-content{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));min-height:0}.apple-fullscreen-player .af-header{padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+@media(max-width:760px){.app .player-panel{position:fixed}.apple-fullscreen-player .af-brand>span:last-child{font-size:9px;letter-spacing:.65px}.apple-fullscreen-player .af-content{display:flex;flex-direction:column;align-items:stretch;gap:24px}.apple-fullscreen-player .af-left{width:100%;flex-shrink:0;max-width:300px}.apple-fullscreen-player .af-cover-box{width:min(58vw,250px);margin-inline:auto}.apple-fullscreen-player .af-meta{margin-top:20px}.apple-fullscreen-player .af-meta h2{font-size:24px}.apple-fullscreen-player .af-meta p{font-size:15px}.apple-fullscreen-player .af-controls{margin-top:20px;padding:18px 20px!important}.apple-fullscreen-player .af-lyrics{min-height:270px;height:42dvh;flex-shrink:0}.apple-fullscreen-player .af-lyrics-scroll{padding-block:65px;max-height:none}.apple-fullscreen-player .af-lyric-line{font-size:26px}}
+@media(prefers-reduced-motion:reduce){.album-atmosphere-shade,.af-lyric-line{transition:none!important;animation:none!important}}
+.artwork-credit{display:inline-flex;gap:4px;align-items:center;margin-top:8px;font-size:11px;color:#ffffff80;text-decoration:none}.artwork-credit:hover{color:#fff;text-decoration:underline}
+.beat-sync-button{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 12px;border:1px solid #ffffff20;border-radius:30px;color:#ffffffb3;font-size:11px;background:#ffffff09}
+.beat-sync-button[aria-pressed="true"]{color:#fff;background:#ffffff20;border-color:#ffffff40}
+@media(max-width:400px){.beat-sync-button{font-size:10px;padding-inline:9px}.beat-sync-button svg{display:none}.apple-fullscreen-player .af-header{padding-left:16px;padding-right:10px}}
+.app .apple-fullscreen-player input[type="range"]{accent-color:#fff!important}
+.apple-fullscreen-player .af-meta-heading h2{color:#fff}
+.apple-fullscreen-player .af-meta>p{color:#ffffffa6}
+
+
+/* Living Fluid Artwork Field & Moving Accent Aurora */
+.album-atmosphere {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  contain: paint;
+  z-index: 0;
+  background: #0a0d14;
+}
+
+.album-artwork-field {
+  position: absolute;
+  inset: -15%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.album-artwork-blur {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(70px) saturate(240%) brightness(0.68);
+  transform: scale(calc(1.14 + var(--beat-energy, 0) * 0.045));
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.25s ease;
+  will-change: transform;
+  opacity: 0.95;
+}
+
+.album-artwork-drift {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  object-fit: cover;
+  filter: blur(95px) saturate(260%) brightness(0.72);
+  mix-blend-mode: screen;
+  opacity: calc(0.36 + var(--beat-energy, 0) * 0.16);
+  transform: scale(calc(1.1 + var(--beat-energy, 0) * 0.04)) rotate(8deg);
+  animation: bgDriftFlow 36s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+  transition: opacity 0.24s ease, transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes bgDriftFlow {
+  0% { transform: translate(-3%, -2%) rotate(0deg) scale(1.08); }
+  50% { transform: translate(3%, 3%) rotate(7deg) scale(1.18); }
+  100% { transform: translate(-2%, 2%) rotate(-5deg) scale(1.12); }
+}
+
+.album-accent-aurora {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: calc(0.32 + var(--beat-energy, 0) * 0.18);
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.aurora-orb.orb-a {
+  width: 650px;
+  height: 650px;
+  top: 8%;
+  left: 8%;
+  background: radial-gradient(circle, var(--album-tone-0, rgba(255, 140, 100, 0.55)) 0%, transparent 70%);
+  transform: scale(calc(1 + var(--beat-energy, 0) * 0.05));
+  animation: auroraDriftA 28s ease-in-out infinite alternate;
+}
+
+.aurora-orb.orb-b {
+  width: 580px;
+  height: 580px;
+  bottom: 10%;
+  right: 10%;
+  background: radial-gradient(circle, var(--album-tone-3, rgba(240, 90, 150, 0.5)) 0%, transparent 70%);
+  transform: scale(calc(1.04 + var(--beat-energy, 0) * 0.05));
+  animation: auroraDriftB 32s ease-in-out infinite alternate;
+}
+
+@keyframes auroraDriftA {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(80px, 50px) scale(1.15); }
+  100% { transform: translate(-40px, 70px) scale(0.95); }
+}
+
+@keyframes auroraDriftB {
+  0% { transform: translate(0, 0) scale(1.08); }
+  50% { transform: translate(-70px, -40px) scale(0.95); }
+  100% { transform: translate(30px, -60px) scale(1.12); }
+}
+
+.album-atmosphere canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+.album-atmosphere-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, rgba(12, 16, 24, 0.20) 0%, rgba(6, 9, 14, 0.55) 100%),
+              linear-gradient(180deg, rgba(6, 9, 14, 0.22) 0%, rgba(6, 9, 14, 0.08) 40%, rgba(6, 9, 14, 0.50) 100%);
+  opacity: calc(0.68 - var(--beat-energy, 0) * 0.16);
+  transition: opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 2;
+}

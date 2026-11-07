@@ -1,5 +1,6 @@
 import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { search, getLyrics, fetchSpotify } from './providers.js';
@@ -12,8 +13,15 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+let detectedPort = 8001;
+try {
+  const portFile = resolve(fileURLToPath(import.meta.url), '../../.port');
+  const val = readFileSync(portFile, 'utf8').trim();
+  if (val && !isNaN(Number(val))) detectedPort = Number(val);
+} catch {}
+
 export async function startServer({
-  port = Number(process.env.PORT || (process.env.NODE_ENV === 'production' ? 8000 : 4173)),
+  port = Number(process.env.PORT || (process.env.NODE_ENV === 'production' ? detectedPort : 4173)),
   host = process.env.HOST || (process.env.NODE_ENV === 'production' || process.env.HOSTNAME === '0.0.0.0' ? '0.0.0.0' : '127.0.0.1'),
   dev = false,
 } = {}) {
@@ -55,7 +63,7 @@ export async function startServer({
           if (!title || !artist) { res.writeHead(400); return res.end(JSON.stringify({ error: 'Title and artist are required.' })); }
           const id = url.searchParams.get('id')?.slice(0, 50); const duration = Number(url.searchParams.get('duration') || 0); if (!Number.isFinite(duration) || duration < 0 || duration > 86400) { res.writeHead(400); return res.end(JSON.stringify({ error: 'Invalid recording duration.' })); } const album = url.searchParams.get('album')?.slice(0, 200) || ''; const lyrics = await getLyrics({ id, title, artist, duration, album }); if (lyrics.error) { res.writeHead(404); return res.end(JSON.stringify({ error: lyrics.error })); } res.setHeader('Cache-Control', 'public, max-age=3600'); return res.end(JSON.stringify(lyrics));
         }
-                if (url.pathname === '/api/spotify') {
+        if (url.pathname === '/api/spotify') {
           const spotifyUrl = url.searchParams.get('url')?.trim();
           if (!spotifyUrl) { res.writeHead(400); return res.end(JSON.stringify({ error: 'Please enter a Spotify playlist or song link.' })); }
           try {

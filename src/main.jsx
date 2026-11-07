@@ -46,6 +46,13 @@ import { useTabBeatSync } from './useTabBeatSync';
 import { AudioLab } from './AudioLab';
 import { DEFAULT_AUDIO_LAB } from './audio-lab';
 
+if (typeof window !== 'undefined') {
+  const isTouch = 'ontouchstart' in window || (navigator.maxTouchPoints > 0);
+  if (isTouch) {
+    document.documentElement.classList.add('is-touch');
+  }
+}
+
 function IconButton({ icon: Icon, label, onClick, active, className = '', ...props }) { return <button type="button" className={`icon-button ${active ? 'active' : ''} ${className}`} aria-label={label} title={label} onClick={onClick} {...props}><Icon size={20}/></button>; }
 function Cover({ track, className = '' }) {
   const original = track?.cover || '';
@@ -208,11 +215,11 @@ function App() {
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening';
   const hero = history[0] || feed[0];
   // synced and lyricIndex computed above
-  function TrackRow({ track, list, number }) { return <div className={`track-row ${current?.id === track.id ? 'is-playing' : ''}`}><button className="track-main" onClick={() => play(track, list)} aria-label={`Play ${track.title}`}>{number !== undefined && <span className="track-number">{current?.id === track.id && player.playing ? <span className="equalizer">▥</span> : String(number + 1).padStart(2, '0')}</span>}<Cover track={track}/><span className="track-info"><strong>{track.title}</strong><small>{track.artist}{track.source === 'local' && ' · On this device'}</small></span></button><span className="track-duration">{time(track.duration)}</span><IconButton icon={Heart} label={likes.includes(track.id) ? `Unlike ${track.title}` : `Like ${track.title}`} active={likes.includes(track.id)} onClick={() => like(track)}/><IconButton icon={MoreHorizontal} label={`Options for ${track.title}`} onClick={() => setMenu(track)}/></div>; }
+  function TrackRow({ track, list, number }) { return <div className={`track-row ${current?.id === track.id ? 'is-playing' : ''}`} onClick={() => play(track, list)} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(track, list); } }}><div className="track-main" aria-label={`Play ${track.title}`}>{number !== undefined && <span className="track-number">{current?.id === track.id && player.playing ? <span className="equalizer">▥</span> : String(number + 1).padStart(2, '0')}</span>}<Cover track={track}/><span className="track-info"><strong>{track.title}</strong><small>{track.artist}{track.source === 'local' && ' · On this device'}</small></span></div><span className="track-duration">{time(track.duration)}</span><IconButton icon={Heart} label={likes.includes(track.id) ? `Unlike ${track.title}` : `Like ${track.title}`} active={likes.includes(track.id)} onClick={e => { e.stopPropagation(); like(track); }}/><IconButton icon={MoreHorizontal} label={`Options for ${track.title}`} onClick={e => { e.stopPropagation(); setMenu(track); }}/></div>; }
   function Tracks({ tracks, numbered = true }) { return <div className="track-list">{tracks.map((track, i) => <TrackRow key={`${track.id}-${i}`} track={track} list={tracks} number={numbered ? i : undefined}/>)}</div>; }
   function Empty({ title, text, action = 'Import music', onClick = () => input.current.click() }) { return <div className="empty"><div className="empty-icon"><Music2 size={36}/></div><h2>{title}</h2><p>{text}</p><button className="primary" onClick={onClick}>{action}<Plus size={17}/></button></div>; }
   function SectionHead({ title, subtitle, action, onClick }) { return <div className="section-head"><div>{subtitle && <span className="eyebrow">{subtitle}</span>}<h2>{title}</h2></div>{action && <button className="text-button" onClick={onClick}>{action}<ChevronRight size={16}/></button>}</div>; }
-  function Cards({ tracks }) { return <div className="album-grid">{tracks.map(track => <article className="album-card" key={track.id}><button className="album-art" onClick={() => play(track, tracks)} aria-label={`Play ${track.title}`}><Cover track={track}/><span className="card-play"><Play size={22} fill="currentColor"/></span></button><button className="album-name" onClick={() => play(track, tracks)}>{track.title}</button><p>{track.artist}</p></article>)}</div>; }
+  function Cards({ tracks }) { return <div className="album-grid">{tracks.map(track => <article className="album-card" key={track.id} onClick={() => play(track, tracks)} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(track, tracks); } }}><div className="album-art" aria-label={`Play ${track.title}`}><Cover track={track}/><span className="card-play"><Play size={22} fill="currentColor"/></span></div><div className="album-name">{track.title}</div><p>{track.artist}</p></article>)}</div>; }
 
     async function handleImportSpotify(urlOverride) {
     const targetUrl = (urlOverride || spotifyUrl).trim();

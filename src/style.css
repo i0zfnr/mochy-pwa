@@ -11,3 +11,21 @@
 .has-video:not(.player-expanded) .player-panel{display:none!important}
 .has-video .now-title h2,.has-video.player-expanded .now-title h2{font-size:20px!important}
 .has-video .playing-label,.has-video.player-expanded .playing-label{display:block!important;font-size:6px!important}
+
+/* Real Application Touch & Single-Tap Responsiveness */
+.track-row, .album-card {
+  cursor: pointer;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.is-touch .card-play {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.is-touch .album-art > .cover {
+  transform: none !important;
+}
+

@@ -2211,6 +2211,18 @@ button:active:not(:disabled),
 }
 
 /* Touchscreens: Always show play buttons directly, instant response */
+.is-touch .card-play,
+.is-touch .app.theme-apple-light .card-play,
+.is-touch .app.theme-apple-dark .card-play {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.is-touch .album-art > .cover {
+  transform: none !important;
+}
+
 @media (hover: none), (pointer: coarse) {
   .card-play,
   .app.theme-apple-light .card-play,
@@ -2227,7 +2239,7 @@ button:active:not(:disabled),
 
 /* Desktop only: smooth hover effects for mouse pointers */
 @media (hover: hover) and (pointer: fine) {
-  .album-card:hover .card-play {
+  html:not(.is-touch) .album-card:hover .card-play {
     opacity: 1;
     transform: translateY(0);
   }

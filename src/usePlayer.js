@@ -53,6 +53,10 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
           }
         }, 300);
       }
+    } else if (e.data === 5) {
+      if (!isUserExplicitlyPaused.current) {
+        youtube.current?.playVideo?.();
+      }
     } else if (e.data === 0) {
       setPlaying(false);
       silentAudioRef.current?.pause();
@@ -88,7 +92,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
     loadYoutube().then(YT => {
       if (!youtube.current && document.getElementById('youtube-player')) {
         youtube.current = new YT.Player('youtube-player', {
-          width: '100%', height: '100%', playerVars: { playsinline: 1, origin: window.location.origin },
+          width: '100%', height: '100%', playerVars: { playsinline: 1, autoplay: 1, enablejsapi: 1, origin: window.location.origin },
           events: {
             onStateChange: handleYoutubeStateChange,
             onError: () => { setPlaying(false); silentAudioRef.current?.pause(); notify('This recording cannot play here. Try another result or open it on YouTube.'); },
@@ -210,7 +214,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
         if (!youtube.current) {
           await new Promise(resolve => {
             youtube.current = new YT.Player('youtube-player', {
-              width: '100%', height: '100%', playerVars: { playsinline: 1, origin: window.location.origin },
+              width: '100%', height: '100%', playerVars: { playsinline: 1, autoplay: 1, enablejsapi: 1, origin: window.location.origin },
               events: {
                 onReady: resolve,
                 onStateChange: handleYoutubeStateChange,

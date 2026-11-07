@@ -1,0 +1,427 @@
+/* Audio Lab Design System */
+
+.audiolab-page {
+  padding: 24px 28px 140px;
+  max-width: 620px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+.al-topbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.al-back-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #222226;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f4f4f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.al-back-btn:active {
+  transform: scale(0.92);
+  background: #2e2e33;
+}
+
+.al-header {
+  margin-bottom: 32px;
+}
+
+.al-main-title {
+  font-size: clamp(34px, 6vw, 46px);
+  line-height: 1.04;
+  font-weight: 700;
+  letter-spacing: -1.4px;
+  color: #ffffff;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+}
+
+.al-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Individual Audio Lab Cards */
+.al-card {
+  position: relative;
+  width: 100%;
+  background: #1c1c1f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 26px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  overflow: hidden;
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.al-card:hover {
+  background: #222227;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.al-card:active {
+  transform: scale(0.98);
+  background: #25252b;
+}
+
+.al-card.card-large {
+  min-height: 124px;
+  align-items: center;
+}
+
+.al-card.card-standard {
+  min-height: 82px;
+  padding: 18px 24px;
+}
+
+.al-card-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Status Badges */
+.al-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #a1a1aa;
+  margin-bottom: 8px;
+}
+
+.al-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+.al-badge-dot.off {
+  background: #71717a;
+  box-shadow: none;
+}
+
+.al-title-lg {
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.al-title-sm {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.al-subtitle {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: #71717a;
+  margin: 4px 0 0;
+}
+
+/* Stylized Right-Side Wireframe Artwork */
+.al-card-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: #52525b;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.al-card:hover .al-card-right {
+  color: #71717a;
+}
+
+.al-art-eq {
+  width: 74px;
+  height: 68px;
+}
+
+.al-art-fx {
+  width: 80px;
+  height: 64px;
+}
+
+.al-art-waveform {
+  width: 90px;
+  height: 32px;
+}
+
+.al-art-transition {
+  width: 58px;
+  height: 32px;
+}
+
+.al-art-pass {
+  width: 64px;
+  height: 30px;
+}
+
+/* Settings entry banner */
+.settings-audiolab-card {
+  background: linear-gradient(135deg, #1c1c22 0%, #15151a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 22px 24px;
+  margin: 18px 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.settings-audiolab-card:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.settings-audiolab-card:active {
+  transform: scale(0.98);
+}
+
+.sac-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sac-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #25252e;
+  color: #22c55e;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.sac-info strong {
+  display: block;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.sac-info p {
+  font-size: 11px;
+  color: #a1a1aa;
+  margin-top: 4px;
+}
+
+/* Modal and Sub-Sheet styling */
+.al-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.al-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.al-presets-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 10px;
+  scrollbar-width: none;
+}
+
+.al-preset-chip {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #27272a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  font-weight: 600;
+  color: #d4d4d8;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.12s ease;
+}
+
+.al-preset-chip:hover {
+  background: #323238;
+}
+
+.al-preset-chip.active {
+  background: #ffffff;
+  color: #09090b;
+  border-color: #ffffff;
+}
+
+/* Equalizer 5-Band Slider Board */
+.al-eq-board {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #141416;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 22px 14px;
+  margin: 6px 0;
+}
+
+.al-eq-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.al-eq-gain {
+  font-size: 10px;
+  font-weight: 600;
+  color: #a1a1aa;
+  font-variant-numeric: tabular-nums;
+  min-height: 14px;
+}
+
+.al-eq-slider-container {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.al-eq-slider {
+  writing-mode: bt-lr; /* IE/Edge */
+  -webkit-appearance: slider-vertical; /* WebKit */
+  width: 24px;
+  height: 130px;
+  accent-color: #22c55e;
+  cursor: pointer;
+}
+
+.al-eq-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #71717a;
+}
+
+.al-eq-name {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #52525b;
+}
+
+/* Option List Items for Effects / Quality / Transitions */
+.al-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.al-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #232328;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  touch-action: manipulation;
+  text-align: left;
+  transition: all 0.12s ease;
+}
+
+.al-option-item:hover {
+  background: #2a2a30;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.al-option-item.selected {
+  background: #2c2c34;
+  border-color: #22c55e;
+}
+
+.al-option-item:active {
+  transform: scale(0.98);
+}
+
+.al-option-info strong {
+  display: block;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.al-option-info p {
+  font-size: 10px;
+  color: #a1a1aa;
+  margin-top: 3px;
+}
+
+.al-option-check {
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .audiolab-page {
+    padding: 18px 16px 120px;
+  }
+  .al-card.card-large {
+    min-height: 110px;
+    padding: 18px 20px;
+  }
+  .al-title-lg {
+    font-size: 22px;
+  }
+  .al-card.card-standard {
+    min-height: 74px;
+    padding: 15px 18px;
+  }
+  .al-title-sm {
+    font-size: 15px;
+  }
+  .al-eq-slider-container {
+    height: 120px;
+  }
+  .al-eq-slider {
+    height: 110px;
+  }
+}

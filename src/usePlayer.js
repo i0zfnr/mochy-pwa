@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getFile } from './storage';
 import { nextIndex } from './music';
+import { createAudioLabGraph, updateAudioLabGraph, DEFAULT_AUDIO_LAB } from './audio-lab';
 let youtubeReady;
 function loadYoutube() {
   if (window.YT?.Player) return Promise.resolve(window.YT);
@@ -10,7 +11,7 @@ function loadYoutube() {
   });
   return youtubeReady;
 }
-export function usePlayer({ notify, onPlayed }) {
+export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_LAB }) {
   const audio = useRef(new Audio());
   const silentAudioRef = useRef(null);
   const youtube = useRef(null);
@@ -167,9 +168,16 @@ export function usePlayer({ notify, onPlayed }) {
             analyser.fftSize = 1024;
             analyser.smoothingTimeConstant = 0.75;
             const source = context.createMediaElementSource(audio.current);
-            source.connect(analyser);
+            const audioLabGraph = createAudioLabGraph(context);
+            if (audioLabGraph) {
+              source.connect(audioLabGraph.input);
+              audioLabGraph.output.connect(analyser);
+              updateAudioLabGraph(audioLabGraph, audioLabSettings);
+            } else {
+              source.connect(analyser);
+            }
             analyser.connect(context.destination);
-            analyserRef.current = { context, analyser, source };
+            analyserRef.current = { context, analyser, source, audioLabGraph };
           }
           if (analyserRef.current?.context.state === 'suspended') await analyserRef.current.context.resume();
         } catch { /* Audio playback still works in browsers without Web Audio. */ }
@@ -277,6 +285,12 @@ export function usePlayer({ notify, onPlayed }) {
     return () => { clearInterval(timer); el.pause(); for (const [event, handler] of [['timeupdate', update], ['loadedmetadata', update], ['play', play], ['pause', pause], ['ended', ended], ['error', error]]) el.removeEventListener(event, handler); };
   }, []);
   useEffect(() => { audio.current.volume = volume; youtube.current?.setVolume?.(volume * 100); }, [volume]);
+
+  useEffect(() => {
+    if (analyserRef.current?.audioLabGraph) {
+      updateAudioLabGraph(analyserRef.current.audioLabGraph, audioLabSettings);
+    }
+  }, [audioLabSettings]);
 
   useEffect(() => {
     if ('mediaSession' in navigator) {

@@ -2173,16 +2173,41 @@
 
 html, body, button, a, input, select, textarea,
 [role="button"], .track-row, .album-card, .af-controls, .icon-button,
-.collection, .nav-item, .library-shortcuts button, .primary, .secondary {
+.collection, .nav-item, .library-shortcuts button, .primary, .secondary,
+.mini-track, .play-button, .card-play {
   touch-action: manipulation !important;
   -webkit-tap-highlight-color: transparent !important;
   user-select: none;
   -webkit-user-select: none;
 }
 
+button svg, a svg, .icon-button svg, .card-play svg, .play-button svg {
+  pointer-events: none !important;
+}
+
 input, textarea {
   user-select: text !important;
   -webkit-user-select: text !important;
+}
+
+/* Instant Native App Press Reaction across all devices */
+button:active:not(:disabled),
+.album-card:active,
+.album-art:active,
+.track-row:active,
+.track-main:active,
+.collection:active,
+.nav-item:active,
+.library-shortcuts button:active,
+.primary:active,
+.secondary:active,
+.icon-button:active,
+.play-button:active,
+.beat-sync-button:active,
+.mini-track:active {
+  transform: scale(0.96) !important;
+  opacity: 0.85 !important;
+  transition: transform 0.05s ease, opacity 0.05s ease !important;
 }
 
 /* Touchscreens: Always show play buttons directly, instant response */
@@ -2197,25 +2222,6 @@ input, textarea {
 
   .album-art > .cover {
     transform: none !important;
-  }
-
-  /* Instant Native App Press Reaction */
-  button:active:not(:disabled),
-  .album-card:active,
-  .album-art:active,
-  .track-row:active,
-  .track-main:active,
-  .collection:active,
-  .nav-item:active,
-  .library-shortcuts button:active,
-  .primary:active,
-  .secondary:active,
-  .icon-button:active,
-  .play-button:active,
-  .beat-sync-button:active {
-    transform: scale(0.96) !important;
-    opacity: 0.82 !important;
-    transition: transform 0.06s ease, opacity 0.06s ease !important;
   }
 }
 

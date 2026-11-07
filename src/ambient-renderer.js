@@ -19,13 +19,13 @@ void main(){
   vec2 b=vec2(.80+.14*cos(t*w+1.3),(.62+.08*sin(t*w*2.+.7))*aspect);
   vec2 c=vec2(.48+.24*cos(t*w*3.+2.1),(.92+.06*sin(t*w+1.9))*aspect);
   vec2 d=vec2(.62+.22*sin(t*w*2.+3.4),(.78+.10*cos(t*w*3.+.4))*aspect);
-  // A bass hit expands the existing color field, rather than adding a flash.
-  float swell=1.-energy*.13;
+  // Soft bass hit gently swells the accent pool and overall luminosity
+  float swell=1.-energy*.09;
   float wa=pool(p,a,3.2*swell),wb=pool(p,b,3.2*swell);
-  float wc=pool(p,c,2.4),wd=pool(p,d,4.*swell)*(.8+energy*.24);
+  float wc=pool(p,c,2.4),wd=pool(p,d,3.6*swell)*(.85+energy*.20);
   vec3 col=(seamLeft*wa+seamRight*wb+deep*wc+accent*wd)/(wa+wb+wc+wd+.0001);
   col*=1.-.16*smoothstep(.6,1.,uv.y);
-  col*=1.+energy*.20;
+  col*=1.+energy*.10;
   gl_FragColor=vec4(col,1.);
 }`;
 export function createAmbientRenderer(canvas) {

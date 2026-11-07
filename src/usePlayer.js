@@ -18,6 +18,8 @@ export function usePlayer({ notify, onPlayed }) {
   const localUrl = useRef(null);
   const generation = useRef(0);
   const currentRef = useRef(null);
+  const isUserExplicitlyPaused = useRef(false);
+  const backgroundRetryTimer = useRef(null);
   const [current, setCurrent] = useState(null);
   const [queue, setQueue] = useState([]);
   const [index, setIndex] = useState(0);
@@ -29,14 +31,56 @@ export function usePlayer({ notify, onPlayed }) {
   const [repeat, setRepeat] = useState('off');
   const advanceRef = useRef(null);
 
+  function handleYoutubeStateChange(e) {
+    if (currentRef.current?.source !== 'youtube') return;
+    if (e.data === 1) {
+      isUserExplicitlyPaused.current = false;
+      setPlaying(true);
+      silentAudioRef.current?.play().catch(() => {});
+    } else if (e.data === 2) {
+      if (isUserExplicitlyPaused.current) {
+        setPlaying(false);
+        silentAudioRef.current?.pause();
+      } else {
+        // Tab hidden, game switched, or background WebKit auto-pause. Override and keep audio thread alive!
+        silentAudioRef.current?.play().catch(() => {});
+        youtube.current?.playVideo?.();
+        clearTimeout(backgroundRetryTimer.current);
+        backgroundRetryTimer.current = setTimeout(() => {
+          if (!isUserExplicitlyPaused.current && currentRef.current?.source === 'youtube') {
+            youtube.current?.playVideo?.();
+          }
+        }, 300);
+      }
+    } else if (e.data === 0) {
+      setPlaying(false);
+      silentAudioRef.current?.pause();
+      advanceRef.current?.(1, true);
+    }
+  }
+
   useEffect(() => {
     if ('audioSession' in navigator) {
-      try { navigator.audioSession.type = 'playback'; } catch {}
+      try {
+        navigator.audioSession.type = 'playback';
+        const onSessionStateChange = () => {
+          if (navigator.audioSession.state === 'active' && !isUserExplicitlyPaused.current && currentRef.current) {
+            if (currentRef.current.source === 'local') audio.current.play().catch(() => {});
+            else {
+              silentAudioRef.current?.play().catch(() => {});
+              youtube.current?.playVideo?.();
+            }
+          }
+        };
+        navigator.audioSession.addEventListener('statechange', onSessionStateChange);
+      } catch {}
     }
-    // Tiny silent WAV loop to register an active HTML5 audio session on iOS/iPadOS for background media
-    const silentAudio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+
+    // High quality looping silent audio shield to hold iOS/iPadOS audio session during game & background playback
+    const silentAudio = new Audio('/silence.wav');
     silentAudio.loop = true;
-    silentAudio.volume = 0.001;
+    silentAudio.volume = 0.01;
+    silentAudio.preload = 'auto';
     silentAudioRef.current = silentAudio;
 
     // Warm-up YouTube iframe player ahead of time so first tap plays with 0 delay
@@ -45,14 +89,7 @@ export function usePlayer({ notify, onPlayed }) {
         youtube.current = new YT.Player('youtube-player', {
           width: '100%', height: '100%', playerVars: { playsinline: 1, origin: window.location.origin },
           events: {
-            onStateChange: e => {
-              if (currentRef.current?.source !== 'youtube') return;
-              const isPlay = e.data === 1;
-              setPlaying(isPlay);
-              if (isPlay) silentAudioRef.current?.play().catch(() => {});
-              else if (e.data === 2 || e.data === 0) silentAudioRef.current?.pause();
-              if (e.data === 0) advanceRef.current?.(1, true);
-            },
+            onStateChange: handleYoutubeStateChange,
             onError: () => { setPlaying(false); silentAudioRef.current?.pause(); notify('This recording cannot play here. Try another result or open it on YouTube.'); },
           },
         });
@@ -63,7 +100,7 @@ export function usePlayer({ notify, onPlayed }) {
     const unlock = () => {
       if (silentAudioRef.current) {
         silentAudioRef.current.play().then(() => {
-          if (!currentRef.current) silentAudioRef.current.pause();
+          if (!currentRef.current || isUserExplicitlyPaused.current) silentAudioRef.current.pause();
         }).catch(() => {});
       }
       window.removeEventListener('touchstart', unlock);
@@ -76,18 +113,39 @@ export function usePlayer({ notify, onPlayed }) {
     window.addEventListener('pointerdown', unlock, { passive: true });
     window.addEventListener('click', unlock, { passive: true });
 
+    // Keep audio session locked across visibility and focus changes (e.g. switching to game)
+    const handleVisibility = () => {
+      if (!isUserExplicitlyPaused.current && currentRef.current) {
+        silentAudioRef.current?.play().catch(() => {});
+        if (currentRef.current.source === 'youtube' && youtube.current?.playVideo) {
+          youtube.current.playVideo();
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('pagehide', handleVisibility);
+    window.addEventListener('pageshow', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
+
     return () => {
+      clearTimeout(backgroundRetryTimer.current);
       silentAudio.pause();
       silentAudio.src = '';
       window.removeEventListener('touchstart', unlock);
       window.removeEventListener('touchend', unlock);
       window.removeEventListener('pointerdown', unlock);
       window.removeEventListener('click', unlock);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('pagehide', handleVisibility);
+      window.removeEventListener('pageshow', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
     };
   }, []);
 
   async function start(track, tracks = queue, at = tracks.findIndex(t => t.id === track.id)) {
-    // Synchronously prime iOS user gesture activation
+    isUserExplicitlyPaused.current = false;
+    clearTimeout(backgroundRetryTimer.current);
+    // Synchronously prime iOS user gesture activation immediately on user tap
     try { silentAudioRef.current?.play().catch(() => {}); } catch {}
     const token = ++generation.current;
     audio.current.pause(); youtube.current?.stopVideo?.();
@@ -147,14 +205,7 @@ export function usePlayer({ notify, onPlayed }) {
               width: '100%', height: '100%', playerVars: { playsinline: 1, origin: window.location.origin },
               events: {
                 onReady: resolve,
-                onStateChange: e => {
-                  if (currentRef.current?.source !== 'youtube') return;
-                  const isPlay = e.data === 1;
-                  setPlaying(isPlay);
-                  if (isPlay) silentAudioRef.current?.play().catch(() => {});
-                  else if (e.data === 2 || e.data === 0) silentAudioRef.current?.pause();
-                  if (e.data === 0) advanceRef.current?.(1, true);
-                },
+                onStateChange: handleYoutubeStateChange,
                 onError: () => { setPlaying(false); silentAudioRef.current?.pause(); notify('This recording cannot play here. Try another result or open it on YouTube.'); },
               },
             });
@@ -163,6 +214,7 @@ export function usePlayer({ notify, onPlayed }) {
         if (token !== generation.current) return;
         youtube.current.setVolume(volume * 100);
         youtube.current.loadVideoById(playableTrack.id);
+        youtube.current.playVideo?.();
         if (token === generation.current) onPlayed(playableTrack);
         return;
       }
@@ -178,12 +230,19 @@ export function usePlayer({ notify, onPlayed }) {
   function toggle() {
     if (!current) return;
     if (current.source === 'local') {
-      if (audio.current.paused) audio.current.play().catch(e => notify(e.message));
-      else audio.current.pause();
+      if (audio.current.paused) {
+        isUserExplicitlyPaused.current = false;
+        audio.current.play().catch(e => notify(e.message));
+      } else {
+        isUserExplicitlyPaused.current = true;
+        audio.current.pause();
+      }
     } else if (playing) {
+      isUserExplicitlyPaused.current = true;
       silentAudioRef.current?.pause();
       youtube.current?.pauseVideo();
     } else {
+      isUserExplicitlyPaused.current = false;
       silentAudioRef.current?.play().catch(() => {});
       youtube.current?.playVideo();
     }
@@ -248,6 +307,7 @@ export function usePlayer({ notify, onPlayed }) {
     });
     const actions = {
       play: () => {
+        isUserExplicitlyPaused.current = false;
         if (currentRef.current?.source === 'local') audio.current.play().catch(e => notify(e.message));
         else {
           silentAudioRef.current?.play().catch(() => {});
@@ -255,6 +315,7 @@ export function usePlayer({ notify, onPlayed }) {
         }
       },
       pause: () => {
+        isUserExplicitlyPaused.current = true;
         audio.current.pause();
         silentAudioRef.current?.pause();
         youtube.current?.pauseVideo?.();

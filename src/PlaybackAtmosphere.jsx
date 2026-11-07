@@ -3,6 +3,8 @@ import { START_TONES, readArtworkTones } from './ambient-palette';
 import { createAmbientRenderer } from './ambient-renderer';
 import './playback-atmosphere.css';
 
+let currentBeatEnergy = 0;
+
 export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', compact = false }) {
   const [tones, setTones] = useState(START_TONES);
   const element = useRef(null), canvas = useRef(null), redraw = useRef(null);
@@ -41,8 +43,10 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
         lastDraw = now;
         const eased = progress * progress * (3 - 2 * progress);
         shown.current = fade.current.from.map((color, i) => color.map((value, channel) => value + (fade.current.to[i][channel] - value) * eased));
-        const energy = active ? Number(app.style.getPropertyValue('--beat-energy')) || 0 : 0;
+        const energy = active ? currentBeatEnergy : 0;
         renderer.draw(clock, shown.current, energy);
+        // Only set --beat-energy on this atmosphere container, never on the app root
+        holder.style.setProperty('--beat-energy', energy.toFixed(2));
       }
       if (active || progress < 1) frame = requestAnimationFrame(draw);
     }
@@ -81,7 +85,6 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
     {artwork ? (
       <div className="album-artwork-field">
         <img src={artwork} alt="" className="album-artwork-blur" />
-        {!compact && <img src={artwork} alt="" className="album-artwork-drift" />}
       </div>
     ) : null}
     <div className="album-color-fallback"/>
@@ -97,9 +100,8 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
 });
 
 // Local files or explicitly shared tab audio can drive the light field.
-// Optimized for maximum battery and CPU/GPU efficiency across mobile and tablets.
+// Highly optimized for maximum battery and 60fps iPad / mobile performance.
 export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
-  const lastEnergyRef = useRef(0);
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -109,13 +111,12 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
     let data;
 
     function clear() {
-      root.style.setProperty('--beat-energy', '0');
-      lastEnergyRef.current = 0;
+      currentBeatEnergy = 0;
     }
 
     function sample(now) {
       frame = requestAnimationFrame(sample);
-      if (now - lastTime < 38) return; // 26fps is buttery smooth and saves 60% CPU cycles
+      if (now - lastTime < 38) return; // 26fps keeps main thread free and cool
       lastTime = now;
       const analyser = analyserRef.current?.analyser;
       let energy = 0;
@@ -124,8 +125,8 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
         analyser.getByteFrequencyData(data);
         root.dataset.audioMotion = 'audio';
         let bass = 0;
-        for (let i = 0; i < 6; i++) bass += (data[i] || 0) / 255;
-        energy = Math.min(1, Math.max(0, bass / 6));
+        for (let i = 0; i < 4; i++) bass += (data[i] || 0) / 255;
+        energy = Math.min(0.38, Math.max(0.04, (bass / 4) * 0.38));
       } else {
         root.dataset.audioMotion = 'audio';
         const nowSec = now / 1000;
@@ -135,16 +136,13 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable) {
         const beatPhase = (measureTime % beatPeriod) / beatPeriod;
 
         const isAccent = beatNum === 0 || beatNum === 2;
-        const kickWave = Math.sin(beatPhase * Math.PI) * (isAccent ? 0.35 : 0.22);
-        const kickDecay = Math.exp(-beatPhase * 4.2) * (isAccent ? 0.25 : 0.16);
-        const breathing = Math.sin(nowSec * 1.5) * 0.05 + 0.08;
-        energy = Math.min(0.65, Math.max(0.06, (kickWave + kickDecay) * 0.6 + breathing));
+        const kickWave = Math.sin(beatPhase * Math.PI) * (isAccent ? 0.20 : 0.12);
+        const kickDecay = Math.exp(-beatPhase * 4.2) * (isAccent ? 0.15 : 0.08);
+        const breathing = Math.sin(nowSec * 1.2) * 0.03 + 0.05;
+        energy = Math.min(0.38, Math.max(0.04, (kickWave + kickDecay) * 0.32 + breathing));
       }
 
-      if (Math.abs(lastEnergyRef.current - energy) > 0.015) {
-        lastEnergyRef.current = energy;
-        root.style.setProperty('--beat-energy', energy.toFixed(2));
-      }
+      currentBeatEnergy = energy;
     }
 
     function update() {

@@ -1,5 +1,5 @@
-// WebGL adaptation of Mochy's AmbientBackdrop.kt / AmbientShaderSource.
-// Four weighted color pools, 100-second loop, quarter-resolution rendering.
+// WebGL Apple Music-grade Aurora Atmosphere Renderer.
+// Fluid undulating aurora ribbons modulated by album accent tones & bass beat energy.
 const VERTEX = `attribute vec2 position; void main(){gl_Position=vec4(position,0.,1.);}`;
 const FRAGMENT = `
 precision mediump float;
@@ -7,27 +7,56 @@ uniform vec2 resolution;
 uniform float time;
 uniform float energy;
 uniform vec3 seamLeft, seamRight, deep, accent;
-const float TAU=6.2831853;
-float pool(vec2 p,vec2 centre,float spread){vec2 d=p-centre;return exp(-dot(d,d)*spread);}
+const float TAU = 6.2831853;
+
 void main(){
-  vec2 coord=vec2(gl_FragCoord.x,resolution.y-gl_FragCoord.y);
-  vec2 uv=coord/resolution;
-  float aspect=resolution.y/max(resolution.x,1.);
-  vec2 p=vec2(uv.x,uv.y*aspect);
-  float w=TAU/50.,t=time;
-  vec2 a=vec2(.22+.16*sin(t*w+.4),(.58+.07*cos(t*w*2.))*aspect);
-  vec2 b=vec2(.80+.14*cos(t*w+1.3),(.62+.08*sin(t*w*2.+.7))*aspect);
-  vec2 c=vec2(.48+.24*cos(t*w*3.+2.1),(.92+.06*sin(t*w+1.9))*aspect);
-  vec2 d=vec2(.62+.22*sin(t*w*2.+3.4),(.78+.10*cos(t*w*3.+.4))*aspect);
-  // Bass hit swells accent color pool and boosts luminosity dynamically
-  float swell=max(0.40, 1.0 - energy * 0.28);
-  float wa=pool(p,a,3.0*swell),wb=pool(p,b,3.0*swell);
-  float wc=pool(p,c,2.2*swell),wd=pool(p,d,3.4*swell)*(.80+energy*.45);
-  vec3 col=(seamLeft*wa+seamRight*wb+deep*wc+accent*wd)/(wa+wb+wc+wd+.0001);
-  col*=1.-.14*smoothstep(.5,1.,uv.y);
-  col*=1.+energy*.35;
-  gl_FragColor=vec4(col,1.);
+  vec2 uv = gl_FragCoord.xy / resolution;
+  float aspect = resolution.x / max(resolution.y, 1.0);
+  vec2 p = vec2(uv.x * aspect, uv.y);
+
+  float t = time * 0.16;
+  // Bass impact swells the aurora width and intensity
+  float bassPunch = energy * 0.50;
+
+  // Layered sinusoidal domain warping creating organic aurora waves
+  float wave1 = sin(p.x * 2.4 + t * 1.3 + sin(p.y * 3.2 + t * 0.9)) * 0.26;
+  float wave2 = cos(p.y * 2.0 - t * 0.8 + cos(p.x * 2.8 - t * 1.1)) * 0.22;
+  float wave3 = sin((p.x * 1.8 + p.y * 1.4) + t * 0.7) * 0.18;
+
+  vec2 warped = p + vec2(wave1 + wave2, wave2 + wave3);
+
+  // Aurora Ribbon A (Seam Left / Primary accent flowing diagonally)
+  float ribbonA = smoothstep(0.68, 0.05, abs(warped.y - (0.48 + wave1 * 0.35 + bassPunch * 0.06)));
+  // Aurora Ribbon B (Seam Right / Secondary accent crossing gracefully)
+  float ribbonB = smoothstep(0.72, 0.05, abs(warped.x / aspect - (0.52 + wave2 * 0.32 - bassPunch * 0.05)));
+  // Aurora Ribbon C (Luminous top accent wave)
+  float ribbonC = smoothstep(0.58, 0.02, abs((warped.x * 0.6 + warped.y * 0.8) - (0.75 + wave3 * 0.28)));
+
+  // Radial center bloom that expands dynamically with bass drop
+  vec2 bloomCenter = vec2(0.5 * aspect, 0.55) + vec2(sin(t * 0.7) * 0.18, cos(t * 0.5) * 0.14);
+  float distToCenter = length(p - bloomCenter);
+  float bloom = exp(-distToCenter * (1.85 - energy * 0.42));
+
+  // Base background is deep album tone
+  vec3 col = deep;
+
+  // Blend in the album accent colors across the aurora ribbons
+  col = mix(col, seamLeft, clamp(ribbonA * 0.82 + bloom * 0.25, 0.0, 1.0));
+  col = mix(col, seamRight, clamp(ribbonB * 0.78, 0.0, 1.0));
+  // Accent color illuminates the intersecting crests of the aurora ribbons
+  float crest = ribbonA * ribbonB + ribbonC * 0.6 + bloom * 0.5;
+  col = mix(col, accent, clamp(crest * (0.95 + bassPunch * 0.6), 0.0, 1.0));
+
+  // Bass beat creates radiant luminescence on the aurora waves
+  col *= 1.0 + energy * 0.40;
+
+  // Soft subtle corner vignette to maintain contrast for lyrics
+  float vignette = smoothstep(1.35, 0.40, length((uv - vec2(0.5, 0.5)) * vec2(aspect, 1.0)));
+  col = mix(deep * 0.65, col, vignette);
+
+  gl_FragColor = vec4(col, 1.0);
 }`;
+
 export function createAmbientRenderer(canvas) {
   const gl = canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'low-power' });
   if (!gl) return null;

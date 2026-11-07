@@ -138,52 +138,94 @@
 
 .album-accent-aurora {
   position: absolute;
-  inset: 0;
+  inset: -10%;
   pointer-events: none;
   overflow: hidden;
   z-index: 1;
   contain: strict;
-}
-
-/* Hardware-friendly radial gradient orbs driven by beat energy & scale */
-.aurora-orb {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: calc(0.32 + var(--beat-energy, 0) * 0.45);
-  transform: scale(calc(0.96 + var(--beat-energy, 0) * 0.16)) translate3d(0, 0, 0);
-  transition: opacity 0.12s linear, transform 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: blur(55px);
+  -webkit-filter: blur(55px);
+  mix-blend-mode: screen;
+  transform: translate3d(0, 0, 0);
   will-change: transform, opacity;
 }
 
-.aurora-orb.orb-a {
-  width: 550px;
-  height: 550px;
-  top: 5%;
-  left: 5%;
-  background: radial-gradient(circle, var(--album-tone-0, rgba(255, 140, 100, 0.45)) 0%, transparent 70%);
-  animation: auroraDriftA 32s ease-in-out infinite alternate;
+/* Fluid undulating Aurora Curtain A - Primary Album Accent */
+.aurora-curtain.curtain-a, .aurora-orb.orb-a {
+  position: absolute;
+  width: 75vw;
+  height: 65vh;
+  top: -5%;
+  left: -10%;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  background: radial-gradient(ellipse at 40% 45%, var(--album-tone-0, rgba(130, 80, 220, 0.6)) 0%, transparent 70%);
+  opacity: calc(0.55 + var(--beat-energy, 0) * 0.40);
+  transform: scale(calc(1.0 + var(--beat-energy, 0) * 0.16)) translate3d(0, 0, 0);
+  animation: auroraFlowA 28s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
-.aurora-orb.orb-b {
-  width: 480px;
-  height: 480px;
-  bottom: 8%;
-  right: 8%;
-  background: radial-gradient(circle, var(--album-tone-3, rgba(240, 90, 150, 0.4)) 0%, transparent 70%);
-  animation: auroraDriftB 36s ease-in-out infinite alternate;
+/* Fluid undulating Aurora Curtain B - Secondary Album Accent */
+.aurora-curtain.curtain-b, .aurora-orb.orb-b {
+  position: absolute;
+  width: 70vw;
+  height: 70vh;
+  bottom: -10%;
+  right: -10%;
+  border-radius: 60% 40% 30% 70% / 50% 60% 40% 60%;
+  background: radial-gradient(ellipse at 60% 55%, var(--album-tone-1, rgba(60, 160, 240, 0.55)) 0%, transparent 70%);
+  opacity: calc(0.50 + var(--beat-energy, 0) * 0.38);
+  transform: scale(calc(0.98 + var(--beat-energy, 0) * 0.15)) translate3d(0, 0, 0);
+  animation: auroraFlowB 34s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
-@keyframes auroraDriftA {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(50px, 35px, 0) scale(1.1); }
-  100% { transform: translate3d(-30px, 45px, 0) scale(0.96); }
+/* Fluid undulating Aurora Curtain C - Luminous Highlight Accent */
+.aurora-curtain.curtain-c {
+  position: absolute;
+  width: 80vw;
+  height: 55vh;
+  top: 25%;
+  left: 10%;
+  border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
+  background: radial-gradient(ellipse at 50% 50%, var(--album-tone-3, rgba(255, 100, 150, 0.5)) 0%, transparent 68%);
+  opacity: calc(0.42 + var(--beat-energy, 0) * 0.42);
+  transform: scale(calc(0.96 + var(--beat-energy, 0) * 0.18)) rotate(12deg) translate3d(0, 0, 0);
+  animation: auroraFlowC 38s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
-@keyframes auroraDriftB {
-  0% { transform: translate3d(0, 0, 0) scale(1.05); }
-  50% { transform: translate3d(-45px, -30px, 0) scale(0.96); }
-  100% { transform: translate3d(25px, -40px, 0) scale(1.08); }
+/* Glowing central aurora core that blooms with the bass beat */
+.aurora-glow-core {
+  position: absolute;
+  width: 50vw;
+  height: 50vh;
+  top: 25%;
+  left: 25%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--album-tone-3, rgba(255, 160, 120, 0.6)) 0%, transparent 65%);
+  opacity: calc(0.35 + var(--beat-energy, 0) * 0.50);
+  transform: scale(calc(0.92 + var(--beat-energy, 0) * 0.22)) translate3d(0, 0, 0);
+  transition: opacity 0.10s linear, transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+@keyframes auroraFlowA {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(60px, 40px, 0) rotate(14deg) scale(1.12); }
+  100% { transform: translate3d(-40px, 60px, 0) rotate(-10deg) scale(0.96); }
+}
+
+@keyframes auroraFlowB {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.05); }
+  50% { transform: translate3d(-50px, -40px, 0) rotate(-12deg) scale(0.95); }
+  100% { transform: translate3d(30px, -50px, 0) rotate(8deg) scale(1.10); }
+}
+
+@keyframes auroraFlowC {
+  0% { transform: translate3d(0, 0, 0) rotate(12deg) scale(0.96); }
+  50% { transform: translate3d(-35px, 45px, 0) rotate(-8deg) scale(1.08); }
+  100% { transform: translate3d(45px, -30px, 0) rotate(16deg) scale(1.02); }
 }
 
 .album-atmosphere canvas {
@@ -191,33 +233,32 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.65;
+  opacity: 0.82;
   z-index: 1;
 }
 
 .album-atmosphere-shade {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 45%, rgba(12, 16, 24, 0.15) 0%, rgba(6, 9, 14, 0.50) 100%),
-              linear-gradient(180deg, rgba(6, 9, 14, 0.18) 0%, rgba(6, 9, 14, 0.05) 40%, rgba(6, 9, 14, 0.45) 100%);
-  opacity: calc(0.72 - var(--beat-energy, 0) * 0.30);
+  background: radial-gradient(ellipse at 50% 50%, rgba(6, 9, 14, 0.08) 0%, rgba(6, 9, 14, 0.42) 100%),
+              linear-gradient(180deg, rgba(6, 9, 14, 0.22) 0%, transparent 35%, rgba(6, 9, 14, 0.48) 100%);
+  opacity: calc(0.58 - var(--beat-energy, 0) * 0.18);
   transition: opacity 0.12s linear;
   z-index: 2;
 }
 
 .album-artwork-blur {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
   object-fit: cover;
-  opacity: calc(0.38 + var(--beat-energy, 0) * 0.25);
-  filter: blur(24px) saturate(160%) brightness(calc(0.70 + var(--beat-energy, 0) * 0.28));
+  opacity: calc(0.30 + var(--beat-energy, 0) * 0.18);
+  filter: blur(36px) saturate(180%) brightness(calc(0.74 + var(--beat-energy, 0) * 0.24));
   transform: scale(calc(1.02 + var(--beat-energy, 0) * 0.05)) translate3d(0, 0, 0);
   transition: opacity 0.15s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity, filter;
 }
-
 
 .beat-intensity-button, .beat-sync-button {
   display: inline-flex;

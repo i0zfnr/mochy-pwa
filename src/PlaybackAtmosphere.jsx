@@ -81,6 +81,16 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
 
   const colors = Object.fromEntries(tones.map((rgb, i) => [`--album-tone-${i}`, `rgb(${rgb.map(channel => Math.round(channel * 255)).join(' ')})`]));
 
+  // Dynamically extract most vibrant album accent tone for the living aurora
+  const tone0 = tones[0] || [0.2, 0.2, 0.2];
+  const tone1 = tones[1] || [0.2, 0.2, 0.2];
+  const tone3 = tones[3] || [0.3, 0.3, 0.3];
+  const chroma = t => Math.max(...t) - Math.min(...t);
+  const bestAccent = [tone3, tone0, tone1].sort((a, b) => chroma(b) - chroma(a))[0];
+  const accentRgb = bestAccent.map(c => Math.round(c * 255)).join(' ');
+  colors['--album-accent'] = `rgb(${accentRgb})`;
+  colors['--album-accent-glow'] = `rgba(${accentRgb}, 0.55)`;
+
   return <div ref={element} className={`album-atmosphere ${compact ? 'is-compact' : ''}`} style={colors} aria-hidden="true">
     {artwork ? (
       <div className="album-artwork-field">
@@ -91,8 +101,10 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
     {!compact && <canvas ref={canvas}/>}
     {!compact && (
       <div className="album-accent-aurora">
-        <div className="aurora-orb orb-a"/>
-        <div className="aurora-orb orb-b"/>
+        <div className="aurora-curtain curtain-a"/>
+        <div className="aurora-curtain curtain-b"/>
+        <div className="aurora-curtain curtain-c"/>
+        <div className="aurora-glow-core"/>
       </div>
     )}
     <div className="album-atmosphere-shade"/>
@@ -100,7 +112,7 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
 });
 
 // Local files or explicitly shared tab audio can drive the light field.
-// Highly optimized for maximum battery and 60fps iPad / mobile performance.
+// Strictly tracks bass frequencies (20-130Hz) so beat motion follows the bass drum/808.
 export function usePlaybackMotion(rootRef, analyserRef, playing, analysable, beatIntensity = 'normal') {
   useEffect(() => {
     const root = rootRef.current;
@@ -109,6 +121,8 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable, bea
     let frame = 0;
     let lastTime = 0;
     let data;
+    let bassBaseline = 0.20;
+    let bassPeak = 0;
 
     const multipliers = {
       off: 0,
@@ -120,6 +134,7 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable, bea
 
     function clear() {
       currentBeatEnergy = 0;
+      bassPeak = 0;
     }
 
     function sample(now) {
@@ -132,22 +147,43 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable, bea
         if (!data || data.length !== analyser.frequencyBinCount) data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
         root.dataset.audioMotion = 'audio';
-        let bass = 0;
-        for (let i = 0; i < 4; i++) bass += (data[i] || 0) / 255;
-        energy = Math.min(1.0, Math.max(0.04, (bass / 4) * 1.25 * mult));
+
+        // STRICTLY isolate bass frequencies: 20Hz - 130Hz (FFT bins 0, 1, 2)
+        // Bin 0: sub-bass (0-43Hz), Bin 1: kick fundamental (43-86Hz), Bin 2: kick punch (86-129Hz)
+        const subBass = (data[0] || 0) / 255;
+        const kickFund = (data[1] || 0) / 255;
+        const kickPunch = (data[2] || 0) / 255;
+        const currentBass = subBass * 0.35 + kickFund * 0.45 + kickPunch * 0.20;
+
+        // Dynamic bass baseline tracking (adapts to song mastering level)
+        bassBaseline = bassBaseline * 0.92 + currentBass * 0.08;
+
+        // Kick / 808 transient punch: only triggers when bass spikes above recent baseline
+        const bassDelta = Math.max(0, currentBass - bassBaseline * 1.06);
+        if (bassDelta > 0.04) {
+          bassPeak = Math.max(bassPeak, Math.min(1.0, bassDelta * 3.4));
+        }
+        // Natural bass drum decay curve (~140ms half-life)
+        bassPeak *= 0.88;
+
+        const rawEnergy = bassPeak * 0.75 + currentBass * 0.25;
+        energy = Math.min(1.0, Math.max(0.04, rawEnergy * mult));
       } else {
         root.dataset.audioMotion = 'audio';
+        // Pure 808 bass kick drum envelope pattern
         const nowSec = now / 1000;
-        const beatPeriod = 0.5085;
+        const beatPeriod = 0.50; // ~120 BPM
         const measureTime = nowSec % (beatPeriod * 4);
         const beatNum = Math.floor(measureTime / beatPeriod);
         const beatPhase = (measureTime % beatPeriod) / beatPeriod;
 
-        const isAccent = beatNum === 0 || beatNum === 2;
-        const kickWave = Math.sin(beatPhase * Math.PI) * (isAccent ? 0.65 : 0.40);
-        const kickDecay = Math.exp(-beatPhase * 3.8) * (isAccent ? 0.45 : 0.25);
-        const breathing = Math.sin(nowSec * 1.5) * 0.10 + 0.12;
-        const raw = (kickWave + kickDecay) * 0.65 + breathing;
+        // Bass kick hits hard on downbeats (1 and 3)
+        const isKickBeat = beatNum === 0 || beatNum === 2;
+        const kickAmp = isKickBeat ? 0.85 : 0.45;
+        // Pure exponential kick drum decay: sharp instant attack, smooth bass decay
+        const kickDecay = Math.exp(-beatPhase * 5.2) * kickAmp;
+        const subRumble = Math.sin(nowSec * 1.6) * 0.08 + 0.10;
+        const raw = kickDecay * 0.78 + subRumble * 0.22;
         energy = Math.min(1.0, Math.max(0.04, raw * mult));
       }
 

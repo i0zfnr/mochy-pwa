@@ -57,9 +57,20 @@ export const DEFAULT_AUDIO_LAB = {
   effect: 'surround',
   quality: 'auto',
   transition: 'auto',
+  transitionDuration: 3,
   audioPass: false,
   beatIntensity: 'normal',
 };
+
+
+export function getTransitionDuration(settings) {
+  if (!settings) return 3;
+  if (settings.transition === 'off' || settings.transition === 'gapless') return 0;
+  if (typeof settings.transitionDuration === 'number') return settings.transitionDuration;
+  if (settings.transition === 'crossfade_5s') return 5;
+  if (settings.transition === 'auto') return 3;
+  return 3;
+}
 
 // Create the Web Audio filter chain for Equalizer and Audio Effects
 export function createAudioLabGraph(context) {

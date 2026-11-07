@@ -1,7 +1,34 @@
+
+function rampYoutubeVolume(player, fromVol, toVol, durationSec) {
+  if (!player?.setVolume) return;
+  const startTime = Date.now();
+  const durMs = Math.max(300, durationSec * 1000);
+  const timer = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(1, elapsed / durMs);
+    const currVol = fromVol + (toVol - fromVol) * progress;
+    try { player.setVolume(Math.round(currVol)); } catch {}
+    if (progress >= 1) clearInterval(timer);
+  }, 50);
+}
+
+function rampAudioVolume(audioEl, fromVol, toVol, durationSec) {
+  if (!audioEl) return;
+  const startTime = Date.now();
+  const durMs = Math.max(300, durationSec * 1000);
+  const timer = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(1, elapsed / durMs);
+    const currVol = fromVol + (toVol - fromVol) * progress;
+    try { audioEl.volume = Math.max(0, Math.min(1, currVol)); } catch {}
+    if (progress >= 1) clearInterval(timer);
+  }, 50);
+}
+
 import { useEffect, useRef, useState } from 'react';
 import { getFile } from './storage';
 import { nextIndex } from './music';
-import { createAudioLabGraph, updateAudioLabGraph, DEFAULT_AUDIO_LAB } from './audio-lab';
+import { createAudioLabGraph, updateAudioLabGraph, DEFAULT_AUDIO_LAB, getTransitionDuration } from './audio-lab';
 let youtubeReady;
 function loadYoutube() {
   if (window.YT?.Player) return Promise.resolve(window.YT);
@@ -20,6 +47,10 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
   const generation = useRef(0);
   const currentRef = useRef(null);
   const isUserExplicitlyPaused = useRef(false);
+  const audioLabSettingsRef = useRef(audioLabSettings);
+  const queueRef = useRef([]);
+  const isAutoTransitioning = useRef(false);
+  useEffect(() => { audioLabSettingsRef.current = audioLabSettings; }, [audioLabSettings]);
   const backgroundRetryTimer = useRef(null);
   const [current, setCurrent] = useState(null);
   const [queue, setQueue] = useState([]);
@@ -165,7 +196,10 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
     audio.current.pause(); youtube.current?.stopVideo?.();
     if (localUrl.current) { URL.revokeObjectURL(localUrl.current); localUrl.current = null; }
     currentRef.current = track; setCurrent(track); setPosition(0); setDuration(track.duration || 0); setPlaying(false);
-    setQueue(tracks.length ? tracks : [track]); setIndex(Math.max(0, at));
+    const q = tracks.length ? tracks : [track];
+    queueRef.current = q;
+    setQueue(q); setIndex(Math.max(0, at));
+    isAutoTransitioning.current = false;
     try {
       if (track.source === 'local') {
         const file = await getFile(track.id);
@@ -195,7 +229,15 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
           if (analyserRef.current?.context.state === 'suspended') await analyserRef.current.context.resume();
         } catch { /* Audio playback still works in browsers without Web Audio. */ }
         if (token !== generation.current) return;
-        await audio.current.play();
+        const transDur = getTransitionDuration(audioLabSettingsRef.current);
+        if (transDur > 0) {
+          audio.current.volume = 0;
+          await audio.current.play();
+          rampAudioVolume(audio.current, 0, volume, Math.min(2.5, transDur));
+        } else {
+          audio.current.volume = volume;
+          await audio.current.play();
+        }
         if (token === generation.current) onPlayed(track);
       } else {
         let playableTrack = track;
@@ -233,9 +275,18 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
           });
         }
         if (token !== generation.current) return;
-        youtube.current.setVolume(volume * 100);
-        youtube.current.loadVideoById(playableTrack.id);
-        youtube.current.playVideo?.();
+        const targetVol = volume * 100;
+        const transDur = getTransitionDuration(audioLabSettingsRef.current);
+        if (transDur > 0) {
+          youtube.current.setVolume(0);
+          youtube.current.loadVideoById(playableTrack.id);
+          youtube.current.playVideo?.();
+          rampYoutubeVolume(youtube.current, 0, targetVol, Math.min(2.5, transDur));
+        } else {
+          youtube.current.setVolume(targetVol);
+          youtube.current.loadVideoById(playableTrack.id);
+          youtube.current.playVideo?.();
+        }
         if (token === generation.current) onPlayed(playableTrack);
         return;
       }
@@ -285,7 +336,17 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
             setPosition(t);
           }
           const d = youtube.current.getDuration?.();
-          if (d && !Number.isNaN(d)) setDuration(d);
+          if (d && !Number.isNaN(d)) {
+            setDuration(d);
+            const transDur = getTransitionDuration(audioLabSettingsRef.current);
+            if (transDur > 0 && queueRef.current?.length > 1 && d > transDur + 3) {
+              const remaining = d - t;
+              if (remaining <= transDur && remaining > 0 && !isAutoTransitioning.current) {
+                isAutoTransitioning.current = true;
+                rampYoutubeVolume(youtube.current, volume * 100, 0, remaining);
+              }
+            }
+          }
         }
       } else if (currentRef.current?.source === 'local' && el && !el.paused) {
         if (Math.abs(el.currentTime - lastPos) >= 0.1) {

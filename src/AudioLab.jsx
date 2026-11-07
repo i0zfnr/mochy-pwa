@@ -55,6 +55,8 @@ export function AudioLab({ settings, onChange, onBack }) {
 
   const currentQualityObj = AUDIO_QUALITIES.find(q => q.id === settings.quality) || AUDIO_QUALITIES[0];
   const currentTransitionObj = TRANSITION_PRESETS.find(t => t.id === settings.transition) || TRANSITION_PRESETS[0];
+  const transitionDuration = settings.transitionDuration || (settings.transition === 'crossfade_5s' ? 5 : 3);
+  const isCrossfade = settings.transition !== 'off' && settings.transition !== 'gapless';
   const currentEffectObj = AUDIO_EFFECTS.find(e => e.id === settings.effect) || AUDIO_EFFECTS[0];
 
   return (
@@ -137,8 +139,14 @@ export function AudioLab({ settings, onChange, onBack }) {
         {/* 4. Transition Card */}
         <div className="al-card card-standard" onClick={() => setActiveModal('transition')} role="button" tabIndex={0}>
           <div className="al-card-left">
+            <span className="al-badge">
+              <span className={`al-badge-dot ${settings.transition !== 'off' ? '' : 'off'}`} />
+              {settings.transition === 'off' ? 'OFF' : settings.transition === 'gapless' ? 'GAPLESS' : `CROSSFADE · ${transitionDuration}S`}
+            </span>
             <h3 className="al-title-sm">Transition</h3>
-            <p className="al-subtitle">{currentTransitionObj.name.toUpperCase()}</p>
+            <p className="al-subtitle">
+              {settings.transition === 'off' ? 'STANDARD CUT' : settings.transition === 'gapless' ? 'ZERO DELAY' : `${transitionDuration}s natural crossfade`}
+            </p>
           </div>
           <div className="al-card-right">
             <svg viewBox="0 0 70 32" className="al-art-transition" fill="none" stroke="currentColor">
@@ -183,7 +191,7 @@ export function AudioLab({ settings, onChange, onBack }) {
           <div className="modal" style={{ width: 490 }} onClick={e => e.stopPropagation()}>
             <div className="modal-heading">
               <h2>Equalizer</h2>
-              <button className="icon-button" onClick={() => setActiveModal(null)} aria-label="Close">
+              <button className="al-modal-close-btn" onClick={() => setActiveModal(null)} aria-label="Close">
                 <X size={20} />
               </button>
             </div>
@@ -252,7 +260,7 @@ export function AudioLab({ settings, onChange, onBack }) {
           <div className="modal" style={{ width: 440 }} onClick={e => e.stopPropagation()}>
             <div className="modal-heading">
               <h2>Audio Effect</h2>
-              <button className="icon-button" onClick={() => setActiveModal(null)} aria-label="Close">
+              <button className="al-modal-close-btn" onClick={() => setActiveModal(null)} aria-label="Close">
                 <X size={20} />
               </button>
             </div>
@@ -291,7 +299,7 @@ export function AudioLab({ settings, onChange, onBack }) {
           <div className="modal" style={{ width: 440 }} onClick={e => e.stopPropagation()}>
             <div className="modal-heading">
               <h2>Audio Quality</h2>
-              <button className="icon-button" onClick={() => setActiveModal(null)} aria-label="Close">
+              <button className="al-modal-close-btn" onClick={() => setActiveModal(null)} aria-label="Close">
                 <X size={20} />
               </button>
             </div>
@@ -327,37 +335,224 @@ export function AudioLab({ settings, onChange, onBack }) {
       {/* --- MODAL: Transition --- */}
       {activeModal === 'transition' && (
         <div className="modal-backdrop" onClick={() => setActiveModal(null)}>
-          <div className="modal" style={{ width: 440 }} onClick={e => e.stopPropagation()}>
-            <div className="modal-heading">
-              <h2>Transition</h2>
-              <button className="icon-button" onClick={() => setActiveModal(null)} aria-label="Close">
-                <X size={20} />
+          <div className="modal al-transition-modal" style={{ maxWidth: 480, width: '100%' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-heading al-modal-heading">
+              <div>
+                <h2>Audio Transition</h2>
+                <p className="al-modal-desc">Seamless blending and crossfade between tracks</p>
+              </div>
+              <button className="al-modal-close-btn" onClick={() => setActiveModal(null)} aria-label="Close">
+                <X size={18} />
               </button>
             </div>
-            <div className="al-options-list">
-              {TRANSITION_PRESETS.map(tr => {
-                const isSelected = settings.transition === tr.id;
-                return (
-                  <button
-                    key={tr.id}
-                    className={`al-option-item ${isSelected ? 'selected' : ''}`}
-                    onClick={() => {
-                      onChange({ ...settings, transition: tr.id });
-                      setActiveModal(null);
+
+            {/* Dynamic Interactive Crossfade Curve Graph */}
+            <div className="al-transition-visualizer">
+              <div className="al-visualizer-header">
+                <span className="al-vis-label">
+                  <span className="al-vis-dot outgoing" /> Track A (Ending)
+                </span>
+                <span className="al-vis-badge">
+                  {isCrossfade ? `${transitionDuration}s Overlap` : settings.transition === 'gapless' ? 'Gapless' : 'Cut'}
+                </span>
+                <span className="al-vis-label">
+                  <span className="al-vis-dot incoming" /> Track B (Starting)
+                </span>
+              </div>
+
+              <div className="al-curve-canvas-wrap">
+                <svg viewBox="0 0 360 84" className="al-curve-svg">
+                  <defs>
+                    <linearGradient id="curveOutGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#818cf8" stopOpacity="0.95" />
+                      <stop offset="100%" stopColor="#6366f1" stopOpacity="0.15" />
+                    </linearGradient>
+                    <linearGradient id="curveInGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.15" />
+                      <stop offset="100%" stopColor="#34d399" stopOpacity="0.95" />
+                    </linearGradient>
+                    <linearGradient id="fillOutGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#818cf8" stopOpacity="0.22" />
+                      <stop offset="100%" stopColor="#818cf8" stopOpacity="0.0" />
+                    </linearGradient>
+                    <linearGradient id="fillInGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.22" />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+
+                  {isCrossfade ? (
+                    <>
+                      <path d="M 24 16 Q 180 18, 336 68 L 336 74 L 24 74 Z" fill="url(#fillOutGrad)" />
+                      <path d="M 24 68 Q 180 66, 336 16 L 336 74 L 24 74 Z" fill="url(#fillInGrad)" />
+                      
+                      <line x1="24" y1="74" x2="336" y2="74" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                      <line x1="180" y1="12" x2="180" y2="74" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="3 3" />
+
+                      <path d="M 24 16 Q 180 18, 336 68" stroke="url(#curveOutGrad)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                      <path d="M 24 68 Q 180 66, 336 16" stroke="url(#curveInGrad)" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                      
+                      <circle cx="180" cy="42" r="4.5" fill="#34d399" />
+                      <circle cx="180" cy="42" r="9" fill="none" stroke="#34d399" strokeWidth="1.5" opacity="0.45" />
+                    </>
+                  ) : settings.transition === 'gapless' ? (
+                    <>
+                      <line x1="24" y1="74" x2="336" y2="74" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                      <line x1="180" y1="12" x2="180" y2="74" stroke="#34d399" strokeWidth="2" strokeDasharray="2 2" />
+                      <line x1="24" y1="18" x2="180" y2="18" stroke="#818cf8" strokeWidth="2.5" />
+                      <line x1="180" y1="18" x2="336" y2="18" stroke="#34d399" strokeWidth="2.5" />
+                      <circle cx="180" cy="18" r="4" fill="#34d399" />
+                    </>
+                  ) : (
+                    <>
+                      <line x1="24" y1="74" x2="336" y2="74" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+                      <line x1="24" y1="18" x2="160" y2="18" stroke="#818cf8" strokeWidth="2.5" />
+                      <line x1="160" y1="18" x2="160" y2="74" stroke="#818cf8" strokeWidth="1.5" strokeDasharray="2 2" />
+                      <line x1="200" y1="74" x2="200" y2="18" stroke="#71717a" strokeWidth="1.5" strokeDasharray="2 2" />
+                      <line x1="200" y1="18" x2="336" y2="18" stroke="#71717a" strokeWidth="2.5" />
+                    </>
+                  )}
+                </svg>
+              </div>
+            </div>
+
+            {/* If Crossfade is active, show the Custom Duration Slider */}
+            {isCrossfade && (
+              <div className="al-duration-control-card">
+                <div className="al-duration-header">
+                  <span className="al-duration-title">Crossfade Duration</span>
+                  <span className="al-duration-bubble">{transitionDuration} seconds</span>
+                </div>
+
+                <div className="al-slider-wrap">
+                  <span className="al-slider-min">1s</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="12"
+                    step="1"
+                    value={transitionDuration}
+                    onChange={e => {
+                      const dur = Number(e.target.value);
+                      onChange({
+                        ...settings,
+                        transition: dur === 5 ? 'crossfade_5s' : 'auto',
+                        transitionDuration: dur,
+                      });
                     }}
-                  >
-                    <div className="al-option-info">
-                      <strong>{tr.name}</strong>
-                      <p>{tr.description}</p>
-                    </div>
-                    {isSelected && (
-                      <span className="al-option-check">
-                        <Check size={18} />
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
+                    className="al-transition-slider"
+                  />
+                  <span className="al-slider-max">12s</span>
+                </div>
+
+                {/* Quick Preset Chips */}
+                <div className="al-quick-chips">
+                  {[
+                    { dur: 2, label: '2s Quick' },
+                    { dur: 3, label: '3s Auto', preset: 'auto' },
+                    { dur: 5, label: '5s Cinematic', preset: 'crossfade_5s' },
+                    { dur: 8, label: '8s Extended' },
+                    { dur: 12, label: '12s Club Mix' },
+                  ].map(chip => (
+                    <button
+                      key={chip.dur}
+                      type="button"
+                      className={`al-chip-btn ${transitionDuration === chip.dur ? 'active' : ''}`}
+                      onClick={() => {
+                        onChange({
+                          ...settings,
+                          transition: chip.preset || (chip.dur === 5 ? 'crossfade_5s' : 'auto'),
+                          transitionDuration: chip.dur,
+                        });
+                      }}
+                    >
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Mode Selection Cards */}
+            <div className="al-modes-stack">
+              {/* Option 1: Crossfade */}
+              <div
+                className={`al-mode-card ${isCrossfade ? 'active' : ''}`}
+                onClick={() => {
+                  onChange({
+                    ...settings,
+                    transition: transitionDuration === 5 ? 'crossfade_5s' : 'auto',
+                    transitionDuration: transitionDuration || 3,
+                  });
+                }}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="al-mode-body">
+                  <div className="al-mode-badge-line">
+                    <span className="al-mode-badge">RECOMMENDED</span>
+                  </div>
+                  <strong className="al-mode-title">Crossfade</strong>
+                  <p className="al-mode-desc">Smoothly blend between songs without abrupt silence.</p>
+                </div>
+                <div className="al-mode-radio">
+                  {isCrossfade ? (
+                    <span className="al-check-circle"><Check size={14} strokeWidth={3} /></span>
+                  ) : (
+                    <span className="al-empty-circle" />
+                  )}
+                </div>
+              </div>
+
+              {/* Option 2: Gapless */}
+              <div
+                className={`al-mode-card ${settings.transition === 'gapless' ? 'active' : ''}`}
+                onClick={() => {
+                  onChange({ ...settings, transition: 'gapless' });
+                }}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="al-mode-body">
+                  <div className="al-mode-badge-line">
+                    <span className="al-mode-badge neutral">SEAMLESS</span>
+                  </div>
+                  <strong className="al-mode-title">Gapless</strong>
+                  <p className="al-mode-desc">Zero delay between tracks. Seamless playback for live concerts and concept albums.</p>
+                </div>
+                <div className="al-mode-radio">
+                  {settings.transition === 'gapless' ? (
+                    <span className="al-check-circle"><Check size={14} strokeWidth={3} /></span>
+                  ) : (
+                    <span className="al-empty-circle" />
+                  )}
+                </div>
+              </div>
+
+              {/* Option 3: Off */}
+              <div
+                className={`al-mode-card ${settings.transition === 'off' ? 'active' : ''}`}
+                onClick={() => {
+                  onChange({ ...settings, transition: 'off' });
+                }}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="al-mode-body">
+                  <div className="al-mode-badge-line">
+                    <span className="al-mode-badge neutral">DIRECT</span>
+                  </div>
+                  <strong className="al-mode-title">Off</strong>
+                  <p className="al-mode-desc">Standard cut on track change without fading.</p>
+                </div>
+                <div className="al-mode-radio">
+                  {settings.transition === 'off' ? (
+                    <span className="al-check-circle"><Check size={14} strokeWidth={3} /></span>
+                  ) : (
+                    <span className="al-empty-circle" />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -369,7 +564,7 @@ export function AudioLab({ settings, onChange, onBack }) {
           <div className="modal" style={{ width: 440 }} onClick={e => e.stopPropagation()}>
             <div className="modal-heading">
               <h2>Audio Pass</h2>
-              <button className="icon-button" onClick={() => setActiveModal(null)} aria-label="Close">
+              <button className="al-modal-close-btn" onClick={() => setActiveModal(null)} aria-label="Close">
                 <X size={20} />
               </button>
             </div>
@@ -405,7 +600,7 @@ export function AudioLab({ settings, onChange, onBack }) {
           <div className="modal" style={{ width: 440 }} onClick={e => e.stopPropagation()}>
             <div className="modal-heading">
               <h2>Beat Motion</h2>
-              <button className="icon-button" onClick={() => setActiveModal(null)} aria-label="Close">
+              <button className="al-modal-close-btn" onClick={() => setActiveModal(null)} aria-label="Close">
                 <X size={20} />
               </button>
             </div>

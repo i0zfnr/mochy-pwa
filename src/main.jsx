@@ -31,7 +31,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback, memo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Home, Search, Library, Settings, Heart, Plus, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1, ListMusic, Mic2, Volume2, ChevronDown, ChevronRight, ArrowUpRight, Upload, Music2, X, Download, Check, MoreHorizontal, Clock3, Disc3, Headphones, WifiOff, Trash2, Maximize2, Minimize2, Link2, SlidersHorizontal } from 'lucide-react';
 import { getLibrary, saveTrack, readState, writeState, importAudio, removeTrack } from './storage';
@@ -54,12 +54,164 @@ if (typeof window !== 'undefined') {
 }
 
 function IconButton({ icon: Icon, label, onClick, active, className = '', ...props }) { return <button type="button" className={`icon-button ${active ? 'active' : ''} ${className}`} aria-label={label} title={label} onClick={onClick} {...props}><Icon size={20}/></button>; }
-function Cover({ track, className = '' }) {
+const Cover = memo(function Cover({ track, className = '' }) {
   const original = track?.cover || '';
-  const [src, setSrc] = useState(() => highResolutionArtwork(original));
-  useEffect(() => setSrc(highResolutionArtwork(original)), [original]);
-  return src ? <img className={`cover ${className}`} src={src} alt="" loading="lazy" decoding="async" onError={() => setSrc(src !== original ? original : '')}/> : <div className={`cover placeholder ${className}`}><Music2/></div>;
-}
+  const target = useMemo(() => highResolutionArtwork(original), [original]);
+  const [failed, setFailed] = useState(false);
+  const [fallback, setFallback] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+    setFallback(false);
+  }, [original]);
+
+  const src = fallback ? original : target;
+
+  if (failed || !src) {
+    return (
+      <div className={`cover placeholder ${className}`}>
+        <Music2/>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      className={`cover ${className}`}
+      src={src}
+      alt=""
+      onError={() => {
+        if (!fallback && target !== original) {
+          setFallback(true);
+        } else {
+          setFailed(true);
+        }
+      }}
+    />
+  );
+});
+
+const TrackRow = memo(function TrackRow({ track, list, number, isCurrent, isPlaying, isLiked, onPlay, onLike, onMenu }) {
+  return (
+    <div
+      className={`track-row ${isCurrent ? 'is-playing' : ''}`}
+      onClick={() => onPlay(track, list)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onPlay(track, list);
+        }
+      }}
+    >
+      <div className="track-main" aria-label={`Play ${track.title}`}>
+        {number !== undefined && (
+          <span className="track-number">
+            {isCurrent && isPlaying ? <span className="equalizer">▥</span> : String(number + 1).padStart(2, '0')}
+          </span>
+        )}
+        <Cover track={track}/>
+        <span className="track-info">
+          <strong>{track.title}</strong>
+          <small>{track.artist}{track.source === 'local' && ' · On this device'}</small>
+        </span>
+      </div>
+      <span className="track-duration">{time(track.duration)}</span>
+      <IconButton
+        icon={Heart}
+        label={isLiked ? `Unlike ${track.title}` : `Like ${track.title}`}
+        active={isLiked}
+        onClick={e => {
+          e.stopPropagation();
+          onLike(track);
+        }}
+      />
+      <IconButton
+        icon={MoreHorizontal}
+        label={`Options for ${track.title}`}
+        onClick={e => {
+          e.stopPropagation();
+          onMenu(track);
+        }}
+      />
+    </div>
+  );
+});
+
+const Tracks = memo(function Tracks({ tracks, numbered = true, currentId, isPlaying, likesSet, onPlay, onLike, onMenu }) {
+  return (
+    <div className="track-list">
+      {tracks.map((track, i) => (
+        <TrackRow
+          key={`${track.id}-${i}`}
+          track={track}
+          list={tracks}
+          number={numbered ? i : undefined}
+          isCurrent={currentId === track.id}
+          isPlaying={isPlaying}
+          isLiked={likesSet ? likesSet.has(track.id) : false}
+          onPlay={onPlay}
+          onLike={onLike}
+          onMenu={onMenu}
+        />
+      ))}
+    </div>
+  );
+});
+
+const Cards = memo(function Cards({ tracks, onPlay }) {
+  return (
+    <div className="album-grid">
+      {tracks.map(track => (
+        <article
+          className="album-card"
+          key={track.id}
+          onClick={() => onPlay(track, tracks)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onPlay(track, tracks);
+            }
+          }}
+        >
+          <div className="album-art" aria-label={`Play ${track.title}`}>
+            <Cover track={track}/>
+            <span className="card-play"><Play size={22} fill="currentColor"/></span>
+          </div>
+          <div className="album-name">{track.title}</div>
+          <p>{track.artist}</p>
+        </article>
+      ))}
+    </div>
+  );
+});
+
+const Empty = memo(function Empty({ title, text, action = 'Import music', onClick }) {
+  return (
+    <div className="empty">
+      <div className="empty-icon"><Music2 size={36}/></div>
+      <h2>{title}</h2>
+      <p>{text}</p>
+      {onClick && <button className="primary" onClick={onClick}>{action}<Plus size={17}/></button>}
+    </div>
+  );
+});
+
+const SectionHead = memo(function SectionHead({ title, subtitle, action, onClick }) {
+  return (
+    <div className="section-head">
+      <div>
+        {subtitle && <span className="eyebrow">{subtitle}</span>}
+        <h2>{title}</h2>
+      </div>
+      {action && <button className="text-button" onClick={onClick}>{action}<ChevronRight size={16}/></button>}
+    </div>
+  );
+});
+
 function LyricItem({ line, position, isCurrent, isPast, activeRef, onSeek, distance = 0 }) {
   // LRC gives line times. Only animate words when the source provides word times.
   return <button ref={activeRef} className={`af-lyric-line ${isCurrent ? 'active' : isPast ? 'past' : 'upcoming'}`}
@@ -199,8 +351,24 @@ function App() {
     catch (e) { if (e.name !== 'AbortError') setError(e.message); }
     finally { if (!signal.aborted) setLoading(false); }
   }
-  async function save(track) { try { await saveTrack(track); setLibrary(old => [track, ...old.filter(t => t.id !== track.id)]); } catch { notify('Could not save to your library. Check available storage.'); } }
-  function like(track) { const exists = likes.includes(track.id); setLikes(old => exists ? old.filter(id => id !== track.id) : [...old, track.id]); if (!exists) save(track); }
+  const save = useCallback(async (track) => {
+    try {
+      await saveTrack(track);
+      setLibrary(old => [track, ...old.filter(t => t.id !== track.id)]);
+    } catch {
+      notify('Could not save to your library. Check available storage.');
+    }
+  }, []);
+
+  const like = useCallback((track) => {
+    setLikes(old => {
+      const exists = old.includes(track.id);
+      const next = exists ? old.filter(id => id !== track.id) : [...old, track.id];
+      if (!exists) save(track);
+      return next;
+    });
+  }, [save]);
+
   async function importFiles(files) {
     setImporting(true); let count = 0;
     for (const file of files) { if (!file.type.startsWith('audio/') && !/\.(mp3|m4a|flac|wav|ogg|aac|opus|webm)$/i.test(file.name)) continue; try { const track = await importAudio(file); setLibrary(old => [track, ...old.filter(t => t.id !== track.id)]); count++; } catch { notify(`Could not import ${file.name}. Check available storage.`); } }
@@ -209,19 +377,22 @@ function App() {
   function createPlaylist(e) { e.preventDefault(); const name = playlistName.trim(); if (!name) return; const list = { id: crypto.randomUUID(), name, tracks: [] }; setPlaylists(old => [...old, list]); setPlaylistName(''); setNewPlaylist(false); setSelectedPlaylist(list.id); setPage('playlist'); }
   function addToPlaylist(id, track) { save(track); setPlaylists(old => old.map(p => p.id === id ? { ...p, tracks: [...new Set([...p.tracks, track.id])] } : p)); setMenu(null); notify('Added to playlist'); }
   function openPlaylist(id) { setSelectedPlaylist(id); setPage('playlist'); }
-  function play(track, list) { player.start(track, list); setPanel('playing'); }
+  const playerRef = useRef(player);
+  playerRef.current = player;
+  const play = useCallback((track, list) => {
+    playerRef.current.start(track, list);
+    setPanel('playing');
+  }, []);
+
+  const likesSet = useMemo(() => new Set(likes), [likes]);
+  const currentId = current?.id;
+  const isPlaying = player.playing;
   const playlist = playlists.find(p => p.id === selectedPlaylist);
   const visibleTracks = page === 'likes' ? library.filter(t => likes.includes(t.id)) : page === 'local' ? library.filter(t => t.source === 'local') : page === 'history' ? history : page === 'playlist' ? (playlist?.tracks || []).map(id => library.find(t => t.id === id)).filter(Boolean) : page === 'search' ? results : library;
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening';
   const hero = history[0] || feed[0];
   // synced and lyricIndex computed above
-  function TrackRow({ track, list, number }) { return <div className={`track-row ${current?.id === track.id ? 'is-playing' : ''}`} onClick={() => play(track, list)} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(track, list); } }}><div className="track-main" aria-label={`Play ${track.title}`}>{number !== undefined && <span className="track-number">{current?.id === track.id && player.playing ? <span className="equalizer">▥</span> : String(number + 1).padStart(2, '0')}</span>}<Cover track={track}/><span className="track-info"><strong>{track.title}</strong><small>{track.artist}{track.source === 'local' && ' · On this device'}</small></span></div><span className="track-duration">{time(track.duration)}</span><IconButton icon={Heart} label={likes.includes(track.id) ? `Unlike ${track.title}` : `Like ${track.title}`} active={likes.includes(track.id)} onClick={e => { e.stopPropagation(); like(track); }}/><IconButton icon={MoreHorizontal} label={`Options for ${track.title}`} onClick={e => { e.stopPropagation(); setMenu(track); }}/></div>; }
-  function Tracks({ tracks, numbered = true }) { return <div className="track-list">{tracks.map((track, i) => <TrackRow key={`${track.id}-${i}`} track={track} list={tracks} number={numbered ? i : undefined}/>)}</div>; }
-  function Empty({ title, text, action = 'Import music', onClick = () => input.current.click() }) { return <div className="empty"><div className="empty-icon"><Music2 size={36}/></div><h2>{title}</h2><p>{text}</p><button className="primary" onClick={onClick}>{action}<Plus size={17}/></button></div>; }
-  function SectionHead({ title, subtitle, action, onClick }) { return <div className="section-head"><div>{subtitle && <span className="eyebrow">{subtitle}</span>}<h2>{title}</h2></div>{action && <button className="text-button" onClick={onClick}>{action}<ChevronRight size={16}/></button>}</div>; }
-  function Cards({ tracks }) { return <div className="album-grid">{tracks.map(track => <article className="album-card" key={track.id} onClick={() => play(track, tracks)} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(track, tracks); } }}><div className="album-art" aria-label={`Play ${track.title}`}><Cover track={track}/><span className="card-play"><Play size={22} fill="currentColor"/></span></div><div className="album-name">{track.title}</div><p>{track.artist}</p></article>)}</div>; }
-
-    async function handleImportSpotify(urlOverride) {
+  async function handleImportSpotify(urlOverride) {
     const targetUrl = (urlOverride || spotifyUrl).trim();
     if (!targetUrl) return;
     setSpotifyLoading(true);
@@ -273,8 +444,8 @@ function App() {
       {page === 'home' ? <div className="page home-page"><div className="greeting"><div><span className="eyebrow">{greeting} <span className="sparkle">✳</span></span><h1>A little music.<br className="mobile-break"/> A little you.</h1><p>Settle in. Your next favorite is waiting.</p></div><span className="date-stamp">{new Date().toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
         <section className="hero"><div className="hero-text"><span className="hero-label"><span/>YOUR DAILY SOUNDTRACK</span><h2>{history.length ? 'Right where\nyou left off.' : 'Find your\nlittle escape.'}</h2><p>{hero ? `${hero.artist}, a deep breath, and a moment just for you.` : 'The songs you love. The ones you haven’t met yet.'}</p><button className="primary" disabled={!hero} onClick={() => hero && play(hero, history.length ? history : feed)}><Play size={17} fill="currentColor"/>{history.length ? 'Keep listening' : 'Start listening'}</button><span className="hero-footnote">A sound for every version of you.</span></div><div className="hero-visual"><span className="orbit orbit-one"/><span className="orbit orbit-two"/><span className="hero-star">✳</span><div className="hero-cover"><Cover track={hero}/></div><span className="hero-caption">a little out of this world <span>↗</span></span></div></section>
         <div className="mood-row">{['For you', 'Chill', 'Focus', 'Feel good', 'Late night', 'Romance', 'Workout'].map((m, i) => <button className={i === 0 ? 'selected' : ''} key={m} onClick={() => i === 0 ? navigate('home') : search(`${m} music`)}>{i === 0 && <span>✳</span>}{m}</button>)}</div>
-        {history.length > 0 && <section><SectionHead title="Back in your rotation" subtitle="SOUNDS LIKE YOU" action="History" onClick={() => navigate('history')}/><div className="quick-grid"><Tracks tracks={history.slice(0, 6)} numbered={false}/></div></section>}
-        <section><SectionHead title="Your next favorites" subtitle="A LITTLE DISCOVERY" action="Explore more" onClick={() => search('indie pop music')}/>{loading && !feed.length ? <div className="skeleton-grid">{[0, 1, 2, 3].map(i => <div className="skeleton" key={i}/>)}</div> : feed.length ? <Cards tracks={feed.slice(0, 5)}/> : <div className="inline-error"><p>{error || 'Connect to discover new music. Your local library is always here.'}</p><button onClick={() => search('indie music')}>Try search<ChevronRight size={16}/></button></div>}</section>
+        {history.length > 0 && <section><SectionHead title="Back in your rotation" subtitle="SOUNDS LIKE YOU" action="History" onClick={() => navigate('history')}/><div className="quick-grid"><Tracks tracks={history.slice(0, 6)} numbered={false} currentId={currentId} isPlaying={isPlaying} likesSet={likesSet} onPlay={play} onLike={like} onMenu={setMenu}/></div></section>}
+        <section><SectionHead title="Your next favorites" subtitle="A LITTLE DISCOVERY" action="Explore more" onClick={() => search('indie pop music')}/>{loading && !feed.length ? <div className="skeleton-grid">{[0, 1, 2, 3].map(i => <div className="skeleton" key={i}/>)}</div> : feed.length ? <Cards tracks={feed.slice(0, 5)} onPlay={play}/> : <div className="inline-error"><p>{error || 'Connect to discover new music. Your local library is always here.'}</p><button onClick={() => search('indie music')}>Try search<ChevronRight size={16}/></button></div>}</section>
         <section className="bring-music"><div className="bring-icon"><Upload size={24}/></div><div><h3>Your collection. Right at home.</h3><p>Import your music and take it offline. No account needed.</p></div><button onClick={() => input.current.click()}>Add music<Plus size={17}/></button></section><footer>Made with a little love. <span>♡</span> Based on Mochy Music · <a href="https://github.com/realidkroo/Mochy-Music" target="_blank" rel="noreferrer">Open source</a></footer>
       </div> : page === 'search' ? <div className="page"><span className="eyebrow">FOLLOW YOUR CURIOSITY</span><h1>Find your sound.</h1><form className="search-box" onSubmit={e => { e.preventDefault(); search(); }}><Search size={24}/><input type="search" autoComplete="off" autoCapitalize="none" spellCheck="false" aria-label="Search songs and artists" autoFocus placeholder="Songs, artists, little obsessions…" value={query} maxLength={150} onChange={e => setQuery(e.target.value)}/>{query && <IconButton icon={X} label="Clear search" onClick={() => { setQuery(''); setResults([]); searchedQuery.current = ''; }}/>}<button className="primary" type="submit">Search</button></form><p className="provider-note">Search YouTube Music · Playback through the YouTube player</p>{query && (query.includes('spotify.com') || query.startsWith('spotify:')) && (
           <div className="spotify-detect-card">
@@ -289,7 +460,7 @@ function App() {
               {spotifyLoading ? 'Importing…' : 'Import Now'}
             </button>
           </div>
-        )}{error ? <div className="inline-error" role="alert">{error}<button onClick={() => search()}>Try again</button></div> : loading ? <div className="loading"><span/>Finding your sound…</div> : results.length ? <><SectionHead title="Songs" subtitle={`${results.length} RECORDINGS`}/><Tracks tracks={results}/></> : query ? <Empty title="No songs here yet" text="Search for a song or artist. Try a different spelling if nothing comes back." action="Try Laufey" onClick={() => search('Laufey')}/> : <><SectionHead title="Where do you want to go?"/><div className="browse-grid">{[['Soft mornings', 'Acoustic', 'peach'], ['After hours', 'Late night jazz', 'purple'], ['In your feelings', 'Sad indie', 'blue'], ['A little energy', 'Indie pop', 'green']].map(([title, q, color]) => <button className={`browse-card ${color}`} key={title} onClick={() => search(q)}><span>{title}</span><Disc3 size={95}/><ArrowUpRight size={22}/></button>)}</div></>}</div> : page === 'audiolab' ? <AudioLab settings={audioLabSettings} onChange={setAudioLabSettings} onBack={() => navigate('settings')}/> : page === 'settings' ? <div className="page"><span className="eyebrow">MAKE YOURSELF AT HOME</span><h1>A little more you.</h1><p className="page-description">Your space, your way.</p><SectionHead title="Audio Processing & Sound"/><div className="settings-audiolab-card" onClick={() => navigate('audiolab')} role="button" tabIndex={0}><div className="sac-left"><div className="sac-icon"><SlidersHorizontal size={22}/></div><div className="sac-info"><strong>Audio Lab</strong><p>Equalizer, Audio Effects, Quality & Transitions</p></div></div><ChevronRight size={18} color="#71717a"/></div><SectionHead title="Appearance"/><div className="settings-group"><div className="setting"><div><strong>Visual theme</strong><p>Choose your visual style & design system</p></div><select aria-label="Visual theme" value={theme} onChange={e => { const val = e.target.value; setTheme(val); setPureBlack(val === 'pure-black'); }}><option value="apple-dark">Apple Music (Dark)</option><option value="apple-light">Apple Music (Light)</option><option value="mochy">Mochy Warm</option><option value="pure-black">Pure Black</option></select></div>{theme.startsWith('apple-') ? <div className="setting"><div><strong>Apple Music color mode</strong><p>Switch between light canvas and dark mode</p></div><button className="secondary" onClick={() => setTheme(t => t === 'apple-light' ? 'apple-dark' : 'apple-light')}>{theme === 'apple-light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}</button></div> : <div className="setting"><div><strong>Pure black</strong><p>A darker home for your music</p></div><button className={`toggle ${pureBlack ? 'on' : ''}`} role="switch" aria-checked={pureBlack} aria-label="Pure black" onClick={() => { const next = !pureBlack; setPureBlack(next); setTheme(next ? 'pure-black' : 'mochy'); }}><span/></button></div>}<div className="setting"><div><strong>Player artwork</strong><p>A signature Mochy touch</p></div><select aria-label="Player artwork shape" value={shape} onChange={e => setShape(e.target.value)}><option value="clover">Clover</option><option value="rounded">Rounded</option><option value="circle">Circle</option></select></div><div className="setting"><div><strong>Beat sync atmosphere</strong><p>Always sync background ambient colors and fluid shader to the music rhythm</p></div><button className={`toggle ${tabBeatSync.active ? 'on' : ''}`} role="switch" aria-checked={tabBeatSync.active} aria-label="Always-on Beat sync" onClick={tabBeatSync.toggle}><span/></button></div></div><SectionHead title="Your music & data"/><div className="settings-group"><div className="setting"><div><strong>Import from Spotify</strong><p>Paste a public playlist, album, or track link to import songs</p></div><button className="secondary" onClick={() => { setSpotifyError(''); setSpotifyModal(true); }}><Link2 size={17}/>Import link</button></div><div className="setting"><div><strong>Import audio files</strong><p>Stored on this device for offline listening</p></div><button className="secondary" disabled={importing} onClick={() => input.current.click()}><Upload size={17}/>{importing ? 'Importing…' : 'Import'}</button></div><div className="setting"><div><strong>Export library backup</strong><p>Playlist and library metadata; audio files stay on your device</p></div><button className="secondary" onClick={() => { const blob = new Blob([JSON.stringify({ version: 1, library, likes, playlists, history }, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'xenn-library.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }}><Download size={17}/>Export</button></div></div><SectionHead title="Xenn for the web"/><div className="about-card"><img src="/icon.png" alt="Xenn"/><div><h3>Music, made yours.</h3><p>Web beta 0.1.0 · An independent port of Mochy Music.</p><a href="https://github.com/realidkroo/Mochy-Music" target="_blank" rel="noreferrer">Original project & GPL-3.0 license <ArrowUpRight size={14}/></a></div></div><p className="provider-note">Online tracks need a connection and may have regional or embedding restrictions. Background playback is controlled by your browser. Imported local music works offline after the app has loaded once. Install from your browser menu or use “Add to Home Screen” on iOS.</p></div> : <div className="page"><div className="library-title"><div><span className="eyebrow">{page === 'history' ? 'THE SOUNDTRACK SO FAR' : 'COLLECT THE GOOD STUFF'}</span><h1>{page === 'playlist' ? playlist?.name : page === 'likes' ? 'A little love.' : page === 'local' ? 'Always with you.' : page === 'history' ? 'On repeat, lately.' : 'Your little library.'}</h1><p className="page-description">{visibleTracks.length} songs{page === 'local' ? ' · Available offline on this device' : ' · A collection that sounds like you'}</p></div><div style={{ display: 'flex', gap: '10px' }}><button className="secondary" onClick={() => { setSpotifyError(''); setSpotifyModal(true); }}><Link2 size={17}/>Import Spotify</button><button className="secondary" onClick={() => input.current.click()}><Plus size={17}/>Import audio</button></div></div>{page === 'library' && <div className="library-shortcuts"><button onClick={() => navigate('likes')}><Heart/><strong>Liked songs</strong><small>{likes.length} favorites</small><ChevronRight/></button><button onClick={() => navigate('local')}><Download/><strong>On this device</strong><small>Yours, offline</small><ChevronRight/></button></div>}{page === 'library' && <><SectionHead title="Your playlists" action="Create playlist" onClick={() => setNewPlaylist(true)}/><div className="playlist-grid">{playlists.map(p => <button className="playlist-tile" key={p.id} onClick={() => openPlaylist(p.id)}><ListMusic size={28}/><strong>{p.name}</strong><small>{p.tracks.length} songs</small></button>)}<button className="playlist-tile add" onClick={() => setNewPlaylist(true)}><Plus size={28}/><strong>A new little collection</strong><small>Create a playlist</small></button></div><SectionHead title="All songs"/></>}{visibleTracks.length ? <><div className="list-actions"><button className="primary" onClick={() => play(visibleTracks[0], visibleTracks)}><Play size={17} fill="currentColor"/>Play all</button><button className="secondary" onClick={() => { player.setShuffle(true); play(visibleTracks[Math.floor(Math.random() * visibleTracks.length)], visibleTracks); }}><Shuffle size={17}/>Shuffle</button>{page === 'playlist' && <button className="text-button danger" onClick={() => { setPlaylists(old => old.filter(p => p.id !== selectedPlaylist)); navigate('library'); }}><Trash2 size={16}/>Delete playlist</button>}</div><Tracks tracks={visibleTracks}/></> : <Empty title={page === 'history' ? 'Your story starts with a song.' : 'Room for all your favorites.'} text={page === 'playlist' ? 'Open a song’s options to add it to this playlist.' : 'Import music from your device or find something new in Search.'} action={page === 'playlist' || page === 'likes' ? 'Discover music' : 'Import music'} onClick={() => page === 'playlist' || page === 'likes' ? navigate('search') : input.current.click()}/>}</div>}
+        )}{error ? <div className="inline-error" role="alert">{error}<button onClick={() => search()}>Try again</button></div> : loading ? <div className="loading"><span/>Finding your sound…</div> : results.length ? <><SectionHead title="Songs" subtitle={`${results.length} RECORDINGS`}/><Tracks tracks={results} currentId={currentId} isPlaying={isPlaying} likesSet={likesSet} onPlay={play} onLike={like} onMenu={setMenu}/></> : query ? <Empty title="No songs here yet" text="Search for a song or artist. Try a different spelling if nothing comes back." action="Try Laufey" onClick={() => search('Laufey')}/> : <><SectionHead title="Where do you want to go?"/><div className="browse-grid">{[['Soft mornings', 'Acoustic', 'peach'], ['After hours', 'Late night jazz', 'purple'], ['In your feelings', 'Sad indie', 'blue'], ['A little energy', 'Indie pop', 'green']].map(([title, q, color]) => <button className={`browse-card ${color}`} key={title} onClick={() => search(q)}><span>{title}</span><Disc3 size={95}/><ArrowUpRight size={22}/></button>)}</div></>}</div> : page === 'audiolab' ? <AudioLab settings={audioLabSettings} onChange={setAudioLabSettings} onBack={() => navigate('settings')}/> : page === 'settings' ? <div className="page"><span className="eyebrow">MAKE YOURSELF AT HOME</span><h1>A little more you.</h1><p className="page-description">Your space, your way.</p><SectionHead title="Audio Processing & Sound"/><div className="settings-audiolab-card" onClick={() => navigate('audiolab')} role="button" tabIndex={0}><div className="sac-left"><div className="sac-icon"><SlidersHorizontal size={22}/></div><div className="sac-info"><strong>Audio Lab</strong><p>Equalizer, Audio Effects, Quality & Transitions</p></div></div><ChevronRight size={18} color="#71717a"/></div><SectionHead title="Appearance"/><div className="settings-group"><div className="setting"><div><strong>Visual theme</strong><p>Choose your visual style & design system</p></div><select aria-label="Visual theme" value={theme} onChange={e => { const val = e.target.value; setTheme(val); setPureBlack(val === 'pure-black'); }}><option value="apple-dark">Apple Music (Dark)</option><option value="apple-light">Apple Music (Light)</option><option value="mochy">Mochy Warm</option><option value="pure-black">Pure Black</option></select></div>{theme.startsWith('apple-') ? <div className="setting"><div><strong>Apple Music color mode</strong><p>Switch between light canvas and dark mode</p></div><button className="secondary" onClick={() => setTheme(t => t === 'apple-light' ? 'apple-dark' : 'apple-light')}>{theme === 'apple-light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}</button></div> : <div className="setting"><div><strong>Pure black</strong><p>A darker home for your music</p></div><button className={`toggle ${pureBlack ? 'on' : ''}`} role="switch" aria-checked={pureBlack} aria-label="Pure black" onClick={() => { const next = !pureBlack; setPureBlack(next); setTheme(next ? 'pure-black' : 'mochy'); }}><span/></button></div>}<div className="setting"><div><strong>Player artwork</strong><p>A signature Mochy touch</p></div><select aria-label="Player artwork shape" value={shape} onChange={e => setShape(e.target.value)}><option value="clover">Clover</option><option value="rounded">Rounded</option><option value="circle">Circle</option></select></div><div className="setting"><div><strong>Beat sync atmosphere</strong><p>Always sync background ambient colors and fluid shader to the music rhythm</p></div><button className={`toggle ${tabBeatSync.active ? 'on' : ''}`} role="switch" aria-checked={tabBeatSync.active} aria-label="Always-on Beat sync" onClick={tabBeatSync.toggle}><span/></button></div></div><SectionHead title="Your music & data"/><div className="settings-group"><div className="setting"><div><strong>Import from Spotify</strong><p>Paste a public playlist, album, or track link to import songs</p></div><button className="secondary" onClick={() => { setSpotifyError(''); setSpotifyModal(true); }}><Link2 size={17}/>Import link</button></div><div className="setting"><div><strong>Import audio files</strong><p>Stored on this device for offline listening</p></div><button className="secondary" disabled={importing} onClick={() => input.current.click()}><Upload size={17}/>{importing ? 'Importing…' : 'Import'}</button></div><div className="setting"><div><strong>Export library backup</strong><p>Playlist and library metadata; audio files stay on your device</p></div><button className="secondary" onClick={() => { const blob = new Blob([JSON.stringify({ version: 1, library, likes, playlists, history }, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'xenn-library.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }}><Download size={17}/>Export</button></div></div><SectionHead title="Xenn for the web"/><div className="about-card"><img src="/icon.png" alt="Xenn"/><div><h3>Music, made yours.</h3><p>Web beta 0.1.0 · An independent port of Mochy Music.</p><a href="https://github.com/realidkroo/Mochy-Music" target="_blank" rel="noreferrer">Original project & GPL-3.0 license <ArrowUpRight size={14}/></a></div></div><p className="provider-note">Online tracks need a connection and may have regional or embedding restrictions. Background playback is controlled by your browser. Imported local music works offline after the app has loaded once. Install from your browser menu or use “Add to Home Screen” on iOS.</p></div> : <div className="page"><div className="library-title"><div><span className="eyebrow">{page === 'history' ? 'THE SOUNDTRACK SO FAR' : 'COLLECT THE GOOD STUFF'}</span><h1>{page === 'playlist' ? playlist?.name : page === 'likes' ? 'A little love.' : page === 'local' ? 'Always with you.' : page === 'history' ? 'On repeat, lately.' : 'Your little library.'}</h1><p className="page-description">{visibleTracks.length} songs{page === 'local' ? ' · Available offline on this device' : ' · A collection that sounds like you'}</p></div><div style={{ display: 'flex', gap: '10px' }}><button className="secondary" onClick={() => { setSpotifyError(''); setSpotifyModal(true); }}><Link2 size={17}/>Import Spotify</button><button className="secondary" onClick={() => input.current.click()}><Plus size={17}/>Import audio</button></div></div>{page === 'library' && <div className="library-shortcuts"><button onClick={() => navigate('likes')}><Heart/><strong>Liked songs</strong><small>{likes.length} favorites</small><ChevronRight/></button><button onClick={() => navigate('local')}><Download/><strong>On this device</strong><small>Yours, offline</small><ChevronRight/></button></div>}{page === 'library' && <><SectionHead title="Your playlists" action="Create playlist" onClick={() => setNewPlaylist(true)}/><div className="playlist-grid">{playlists.map(p => <button className="playlist-tile" key={p.id} onClick={() => openPlaylist(p.id)}><ListMusic size={28}/><strong>{p.name}</strong><small>{p.tracks.length} songs</small></button>)}<button className="playlist-tile add" onClick={() => setNewPlaylist(true)}><Plus size={28}/><strong>A new little collection</strong><small>Create a playlist</small></button></div><SectionHead title="All songs"/></>}{visibleTracks.length ? <><div className="list-actions"><button className="primary" onClick={() => play(visibleTracks[0], visibleTracks)}><Play size={17} fill="currentColor"/>Play all</button><button className="secondary" onClick={() => { player.setShuffle(true); play(visibleTracks[Math.floor(Math.random() * visibleTracks.length)], visibleTracks); }}><Shuffle size={17}/>Shuffle</button>{page === 'playlist' && <button className="text-button danger" onClick={() => { setPlaylists(old => old.filter(p => p.id !== selectedPlaylist)); navigate('library'); }}><Trash2 size={16}/>Delete playlist</button>}</div><Tracks tracks={visibleTracks} currentId={currentId} isPlaying={isPlaying} likesSet={likesSet} onPlay={play} onLike={like} onMenu={setMenu}/></> : <Empty title={page === 'history' ? 'Your story starts with a song.' : 'Room for all your favorites.'} text={page === 'playlist' ? 'Open a song’s options to add it to this playlist.' : 'Import music from your device or find something new in Search.'} action={page === 'playlist' || page === 'likes' ? 'Discover music' : 'Import music'} onClick={() => page === 'playlist' || page === 'likes' ? navigate('search') : input.current.click()}/>}</div>}
     </main>
     <aside className={`player-panel ${current ? 'has-track' : ''}`}>{current && <AlbumAtmosphere artwork={displayCurrent.cover || ''} compact/>}<div className="player-heading"><span>{panel === 'queue' ? 'UP NEXT' : panel === 'lyrics' ? 'THE WORDS' : 'NOW PLAYING'}</span><IconButton icon={Maximize2} label="Apple Music Full Screen" disabled={!current} onClick={() => setFullScreen(true)}/><IconButton icon={ChevronDown} label="Close expanded player" className="close-player" onClick={() => setExpanded(false)}/><IconButton icon={MoreHorizontal} label="Current song options" disabled={!current} onClick={() => current && setMenu(current)}/></div>
 

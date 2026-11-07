@@ -12,6 +12,7 @@ function loadYoutube() {
 }
 export function usePlayer({ notify, onPlayed }) {
   const audio = useRef(new Audio());
+  const silentAudioRef = useRef(null);
   const youtube = useRef(null);
   const analyserRef = useRef(null);
   const localUrl = useRef(null);
@@ -27,6 +28,21 @@ export function usePlayer({ notify, onPlayed }) {
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState('off');
   const advanceRef = useRef(null);
+
+  useEffect(() => {
+    if ('audioSession' in navigator) {
+      try { navigator.audioSession.type = 'playback'; } catch {}
+    }
+    // Tiny silent WAV loop to register an active HTML5 audio session on iOS/iPadOS for background media
+    const silentAudio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+    silentAudio.loop = true;
+    silentAudio.volume = 0.001;
+    silentAudioRef.current = silentAudio;
+    return () => {
+      silentAudio.pause();
+      silentAudio.src = '';
+    };
+  }, []);
 
   async function start(track, tracks = queue, at = tracks.findIndex(t => t.id === track.id)) {
     const token = ++generation.current;
@@ -87,8 +103,15 @@ export function usePlayer({ notify, onPlayed }) {
               width: '100%', height: '100%', playerVars: { playsinline: 1, origin: window.location.origin },
               events: {
                 onReady: resolve,
-                onStateChange: e => { if (currentRef.current?.source !== 'youtube') return; setPlaying(e.data === 1); if (e.data === 0) advanceRef.current?.(1, true); },
-                onError: () => { setPlaying(false); notify('This recording cannot play here. Try another result or open it on YouTube.'); },
+                onStateChange: e => {
+                  if (currentRef.current?.source !== 'youtube') return;
+                  const isPlay = e.data === 1;
+                  setPlaying(isPlay);
+                  if (isPlay) silentAudioRef.current?.play().catch(() => {});
+                  else if (e.data === 2 || e.data === 0) silentAudioRef.current?.pause();
+                  if (e.data === 0) advanceRef.current?.(1, true);
+                },
+                onError: () => { setPlaying(false); silentAudioRef.current?.pause(); notify('This recording cannot play here. Try another result or open it on YouTube.'); },
               },
             });
           });
@@ -110,8 +133,16 @@ export function usePlayer({ notify, onPlayed }) {
   advanceRef.current = advance;
   function toggle() {
     if (!current) return;
-    if (current.source === 'local') { if (audio.current.paused) audio.current.play().catch(e => notify(e.message)); else audio.current.pause(); }
-    else if (playing) youtube.current?.pauseVideo(); else youtube.current?.playVideo();
+    if (current.source === 'local') {
+      if (audio.current.paused) audio.current.play().catch(e => notify(e.message));
+      else audio.current.pause();
+    } else if (playing) {
+      silentAudioRef.current?.pause();
+      youtube.current?.pauseVideo();
+    } else {
+      silentAudioRef.current?.play().catch(() => {});
+      youtube.current?.playVideo();
+    }
   }
   function seek(value) { if (!current) return; if (current.source === 'local') audio.current.currentTime = value; else youtube.current?.seekTo(value, true); setPosition(value); }
   useEffect(() => {
@@ -124,10 +155,51 @@ export function usePlayer({ notify, onPlayed }) {
     return () => { clearInterval(timer); el.pause(); for (const [event, handler] of [['timeupdate', update], ['loadedmetadata', update], ['play', play], ['pause', pause], ['ended', ended], ['error', error]]) el.removeEventListener(event, handler); };
   }, []);
   useEffect(() => { audio.current.volume = volume; youtube.current?.setVolume?.(volume * 100); }, [volume]);
+
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+    }
+  }, [playing]);
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
+    if (typeof duration === 'number' && duration > 0 && typeof position === 'number' && position >= 0) {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: Math.max(0, duration),
+          playbackRate: playing ? 1 : 0,
+          position: Math.min(Math.max(0, position), duration),
+        });
+      } catch {}
+    }
+  }, [position, duration, playing]);
+
   useEffect(() => {
     if (!current || !('mediaSession' in navigator)) return;
-    navigator.mediaSession.metadata = new MediaMetadata({ title: current.title, artist: current.artist, album: current.album, artwork: current.cover ? [{ src: current.cover }] : [] });
-    const actions = { play: () => { if (current.source === 'local') audio.current.play().catch(e => notify(e.message)); else youtube.current?.playVideo(); }, pause: () => { audio.current.pause(); youtube.current?.pauseVideo?.(); }, previoustrack: () => advanceRef.current(-1), nexttrack: () => advanceRef.current(1), seekto: e => seek(e.seekTime) };
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: current.title,
+      artist: current.artist,
+      album: current.album || 'Xenn',
+      artwork: current.cover ? [{ src: current.cover, sizes: '512x512', type: 'image/png' }] : []
+    });
+    const actions = {
+      play: () => {
+        if (currentRef.current?.source === 'local') audio.current.play().catch(e => notify(e.message));
+        else {
+          silentAudioRef.current?.play().catch(() => {});
+          youtube.current?.playVideo();
+        }
+      },
+      pause: () => {
+        audio.current.pause();
+        silentAudioRef.current?.pause();
+        youtube.current?.pauseVideo?.();
+      },
+      previoustrack: () => advanceRef.current(-1),
+      nexttrack: () => advanceRef.current(1),
+      seekto: e => seek(e.seekTime)
+    };
     for (const [name, handler] of Object.entries(actions)) try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
   }, [current]);
   function removeQueueItem(at) { if (at === index) return; setQueue(old => old.filter((_, i) => i !== at)); if (at < index) setIndex(old => old - 1); }

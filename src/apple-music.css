@@ -1725,14 +1725,16 @@
 .youtube-audio-only iframe,
 #youtube-player {
   position: fixed !important;
-  top: -9999px !important;
-  left: -9999px !important;
-  width: 1px !important;
-  height: 1px !important;
-  opacity: 0 !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  top: auto !important;
+  left: auto !important;
+  width: 160px !important;
+  height: 90px !important;
+  opacity: 0.001 !important;
   pointer-events: none !important;
   overflow: hidden !important;
-  z-index: -9999 !important;
+  z-index: -999 !important;
 }
 
 

@@ -81,18 +81,27 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
       } catch {}
     }
 
-    // High quality looping silent audio shield to hold iOS/iPadOS audio session during game & background playback
-    const silentAudio = new Audio('/silence.wav');
-    silentAudio.loop = true;
-    silentAudio.volume = 0.01;
-    silentAudio.preload = 'auto';
-    silentAudioRef.current = silentAudio;
+    // DOM-anchored audio shield with continuous sub-audible carrier to hold iOS/iPadOS audio session during minimize & games
+    let bgAudio = document.getElementById('bg-audio-anchor');
+    if (!bgAudio) {
+      bgAudio = document.createElement('audio');
+      bgAudio.id = 'bg-audio-anchor';
+      bgAudio.setAttribute('playsinline', '');
+      bgAudio.setAttribute('webkit-playsinline', '');
+      bgAudio.style.cssText = 'position:fixed;bottom:-999px;opacity:0.001;pointer-events:none;';
+      document.body.appendChild(bgAudio);
+    }
+    bgAudio.src = '/silence.wav';
+    bgAudio.loop = true;
+    bgAudio.volume = 0.05;
+    bgAudio.preload = 'auto';
+    silentAudioRef.current = bgAudio;
 
     // Warm-up YouTube iframe player ahead of time so first tap plays with 0 delay
     loadYoutube().then(YT => {
       if (!youtube.current && document.getElementById('youtube-player')) {
         youtube.current = new YT.Player('youtube-player', {
-          width: '100%', height: '100%', playerVars: { playsinline: 1, autoplay: 1, enablejsapi: 1, origin: window.location.origin },
+          width: '100%', height: '100%', playerVars: { playsinline: 1, autoplay: 1, enablejsapi: 1, origin: window.location.origin, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1, rel: 0 },
           events: {
             onStateChange: handleYoutubeStateChange,
             onError: () => { setPlaying(false); silentAudioRef.current?.pause(); notify('This recording cannot play here. Try another result or open it on YouTube.'); },
@@ -214,7 +223,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
         if (!youtube.current) {
           await new Promise(resolve => {
             youtube.current = new YT.Player('youtube-player', {
-              width: '100%', height: '100%', playerVars: { playsinline: 1, autoplay: 1, enablejsapi: 1, origin: window.location.origin },
+              width: '100%', height: '100%', playerVars: { playsinline: 1, autoplay: 1, enablejsapi: 1, origin: window.location.origin, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1, rel: 0 },
               events: {
                 onReady: resolve,
                 onStateChange: handleYoutubeStateChange,

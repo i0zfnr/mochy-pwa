@@ -195,7 +195,26 @@ export function usePlayer({ notify, onPlayed }) {
     const play = () => setPlaying(true), pause = () => setPlaying(false), ended = () => advanceRef.current?.(1, true);
     const error = () => { setPlaying(false); notify('Your browser could not decode this audio file. Try MP3, M4A, WAV, or OGG.'); };
     el.addEventListener('timeupdate', update); el.addEventListener('loadedmetadata', update); el.addEventListener('play', play); el.addEventListener('pause', pause); el.addEventListener('ended', ended); el.addEventListener('error', error);
-    const timer = setInterval(() => { if (currentRef.current?.source === 'youtube' && youtube.current?.getCurrentTime) { const t = youtube.current.getCurrentTime(); if (typeof t === 'number' && !Number.isNaN(t)) { setPosition(t); const d = youtube.current.getDuration?.(); if (d && !Number.isNaN(d)) setDuration(d); } } else if (currentRef.current?.source === 'local' && el && !el.paused) { setPosition(el.currentTime || 0); if (Number.isFinite(el.duration)) setDuration(el.duration); } }, 50);
+    let lastPos = -1;
+    const timer = setInterval(() => {
+      if (currentRef.current?.source === 'youtube' && youtube.current?.getCurrentTime) {
+        const t = youtube.current.getCurrentTime();
+        if (typeof t === 'number' && !Number.isNaN(t)) {
+          if (Math.abs(t - lastPos) >= 0.1) {
+            lastPos = t;
+            setPosition(t);
+          }
+          const d = youtube.current.getDuration?.();
+          if (d && !Number.isNaN(d)) setDuration(d);
+        }
+      } else if (currentRef.current?.source === 'local' && el && !el.paused) {
+        if (Math.abs(el.currentTime - lastPos) >= 0.1) {
+          lastPos = el.currentTime;
+          setPosition(el.currentTime || 0);
+        }
+        if (Number.isFinite(el.duration)) setDuration(el.duration);
+      }
+    }, 150);
     return () => { clearInterval(timer); el.pause(); for (const [event, handler] of [['timeupdate', update], ['loadedmetadata', update], ['play', play], ['pause', pause], ['ended', ended], ['error', error]]) el.removeEventListener(event, handler); };
   }, []);
   useEffect(() => { audio.current.volume = volume; youtube.current?.setVolume?.(volume * 100); }, [volume]);

@@ -5,3 +5,4 @@ upstream/
 youtube-response.json
 .env
 *.log
+.ryaze-pm2.js

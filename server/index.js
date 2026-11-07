@@ -4,7 +4,7 @@ import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { search } from './providers.js';
 
-export async function startServer({ port = Number(process.env.PORT || 4173), host = process.env.HOST || '127.0.0.1', dev = false } = {}) {
+export async function startServer({ port = Number(process.env.PORT || 4173), host = process.env.HOST || (process.env.HOSTNAME === '0.0.0.0' ? '0.0.0.0' : '127.0.0.1'), dev = false } = {}) {
   const root = fileURLToPath(new URL('../dist/', import.meta.url));
   const vite = dev ? await (await import('vite')).createServer({ server: { middlewareMode: true }, appType: 'spa' }) : null;
   const limits = new Map();

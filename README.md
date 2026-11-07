@@ -2,6 +2,8 @@
 
 An independent web/PWA adaptation of [realidkroo/Mochy-Music](https://github.com/realidkroo/Mochy-Music), with an Electron desktop wrapper. GPL-3.0-only; see [NOTICE.md](NOTICE.md).
 
+Hosted project: https://mochy.ryaze.my.id · Source: https://github.com/i0zfnr/mochy-pwa
+
 ## Run
 
 Requires Node.js 22.12+ (Node.js 24 recommended).

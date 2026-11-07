@@ -3,7 +3,7 @@ module.exports = {
   apps: [{
     name: 'mochy-web',
     cwd: __dirname,
-    script: 'server/index.js',
+    script: 'server/start.js',
     interpreter: 'node',
     env: { NODE_ENV: 'production', PORT: process.env.PORT || 8000, HOST: '0.0.0.0' },
     autorestart: true,

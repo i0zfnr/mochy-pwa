@@ -1,6 +1,20 @@
 # Deploying to ryaze.my.id
 
-The public website and its [GitHub deployment guide](https://ryaze.my.id/blog/panduan-lengkap-cara-hosting-web-menggunakan-repository-github-di-ryaze) were inspected in the browser. Ryaze advertises Node.js hosting, Git deployment and automatic HTTPS. No deployment has been performed; the user's account, assigned runtime version, port and project configuration have not been inspected.
+The public website and its [GitHub deployment guide](https://ryaze.my.id/blog/panduan-lengkap-cara-hosting-web-menggunakan-repository-github-di-ryaze) were inspected in the browser. The web port is published at https://github.com/i0zfnr/mochy-pwa and a Node.js project named `mochy` was created at https://mochy.ryaze.my.id. Ryaze assigned this project port 8000.
+
+## Updating this Ryaze project
+
+The observed Node deployment installed dependencies but did not run the frontend build. Its generated `.ryaze-pm2.js` was launched as a script rather than as an ecosystem configuration. Use the committed `ecosystem.config.cjs` to run the actual server. In the project's **Terminal**, execute these commands separately and check each result:
+
+```sh
+git pull --ff-only origin main
+npm ci --include=dev
+npm run build
+npx pm2 startOrRestart ecosystem.config.cjs --only mochy-web --update-env
+npx pm2 save
+```
+
+The ecosystem config binds `0.0.0.0:8000`, matching the project's Nginx proxy. It only targets `mochy-web`. Do not run broad PM2 commands against other hosted applications. If Ryaze changes the assigned proxy port, update the ecosystem configuration to match. The dashboard's Active badge alone does not verify the app: check the public homepage and `/api/health` after updates. The PM2 process list is saved for the hosting user's session; restoration after a full host reboot depends on Ryaze's process-manager service.
 
 ## Ryaze dashboard configuration
 
@@ -11,7 +25,7 @@ The public website and its [GitHub deployment guide](https://ryaze.my.id/blog/pa
 5. Build with `npm ci --include=dev && npm run build`; start with `npm start` (or `node server/index.js`). Set `HOST=0.0.0.0`, `NODE_ENV=production`, `ELECTRON_SKIP_BINARY_DOWNLOAD=1` and the platform-assigned `PORT` if required. Confirm the selected Node version is 22.12+. The build needs dev dependencies even if the runtime environment is production.
 6. Inspect **Riwayat Deploy / Build Logs**, then test the assigned HTTPS URL and `/api/health`.
 
-The public guide confirms the framework/repository/branch flow; exact build/start/port fields depend on the authenticated project panel and still need verification. No account or subscription changes were made.
+The public guide confirms the framework/repository/branch flow. The authenticated project panel confirmed the Node runtime selection and assigned proxy port; the update procedure above addresses the startup behavior actually observed. No account or subscription changes were made.
 
 ## Required hosting capability
 
@@ -62,4 +76,4 @@ The built-in rate limiter counts socket IPs. Behind a proxy it therefore limits 
 
 Rebuild and restart the web process/container. HTML and the service worker are sent with revalidation headers; hashed JS/CSS assets are immutable. Close and reopen installed PWA windows if an old service worker is still active. Keep the domain/origin stable to preserve browser-local libraries. Changing the domain does not migrate IndexedDB data.
 
-To complete publication, obtain the Ryaze panel/runtime details and account access through an appropriate secure workflow. Keep secrets out of source and chat.
+Keep secrets out of source and chat. This project does not require music-service credentials or a server database.

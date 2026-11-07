@@ -2163,3 +2163,66 @@
 .af-content.no-lyrics .af-lyrics {
   display: none !important;
 }
+
+/* ==========================================================================
+   Real Application Touch & Tap Responsiveness (iPad / iOS / Mobile)
+   - Eliminates 300ms double-tap hesitation via touch-action: manipulation
+   - Eliminates iOS hover-trap (where tap 1 previews hover, tap 2 clicks)
+   - Adds instantaneous tactile feedback (scale: 0.96) like a native iOS app
+   ========================================================================== */
+
+html, body, button, a, input, select, textarea,
+[role="button"], .track-row, .album-card, .af-controls, .icon-button,
+.collection, .nav-item, .library-shortcuts button, .primary, .secondary {
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* Touchscreens: Always show play buttons directly, instant response */
+@media (hover: none), (pointer: coarse) {
+  .card-play,
+  .app.theme-apple-light .card-play,
+  .app.theme-apple-dark .card-play {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  .album-art > .cover {
+    transform: none !important;
+  }
+
+  /* Instant Native App Press Reaction */
+  button:active:not(:disabled),
+  .album-card:active,
+  .album-art:active,
+  .track-row:active,
+  .track-main:active,
+  .collection:active,
+  .nav-item:active,
+  .library-shortcuts button:active,
+  .primary:active,
+  .secondary:active,
+  .icon-button:active,
+  .play-button:active,
+  .beat-sync-button:active {
+    transform: scale(0.96) !important;
+    opacity: 0.82 !important;
+    transition: transform 0.06s ease, opacity 0.06s ease !important;
+  }
+}
+
+/* Desktop only: smooth hover effects for mouse pointers */
+@media (hover: hover) and (pointer: fine) {
+  .album-card:hover .card-play {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

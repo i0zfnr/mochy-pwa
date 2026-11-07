@@ -38,13 +38,57 @@ export function usePlayer({ notify, onPlayed }) {
     silentAudio.loop = true;
     silentAudio.volume = 0.001;
     silentAudioRef.current = silentAudio;
+
+    // Warm-up YouTube iframe player ahead of time so first tap plays with 0 delay
+    loadYoutube().then(YT => {
+      if (!youtube.current && document.getElementById('youtube-player')) {
+        youtube.current = new YT.Player('youtube-player', {
+          width: '100%', height: '100%', playerVars: { playsinline: 1, origin: window.location.origin },
+          events: {
+            onStateChange: e => {
+              if (currentRef.current?.source !== 'youtube') return;
+              const isPlay = e.data === 1;
+              setPlaying(isPlay);
+              if (isPlay) silentAudioRef.current?.play().catch(() => {});
+              else if (e.data === 2 || e.data === 0) silentAudioRef.current?.pause();
+              if (e.data === 0) advanceRef.current?.(1, true);
+            },
+            onError: () => { setPlaying(false); silentAudioRef.current?.pause(); notify('This recording cannot play here. Try another result or open it on YouTube.'); },
+          },
+        });
+      }
+    }).catch(() => {});
+
+    // Prime/unlock WebKit media engine on the very first touch gesture anywhere
+    const unlock = () => {
+      if (silentAudioRef.current) {
+        silentAudioRef.current.play().then(() => {
+          if (!currentRef.current) silentAudioRef.current.pause();
+        }).catch(() => {});
+      }
+      window.removeEventListener('touchstart', unlock);
+      window.removeEventListener('touchend', unlock);
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('click', unlock);
+    };
+    window.addEventListener('touchstart', unlock, { passive: true });
+    window.addEventListener('touchend', unlock, { passive: true });
+    window.addEventListener('pointerdown', unlock, { passive: true });
+    window.addEventListener('click', unlock, { passive: true });
+
     return () => {
       silentAudio.pause();
       silentAudio.src = '';
+      window.removeEventListener('touchstart', unlock);
+      window.removeEventListener('touchend', unlock);
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('click', unlock);
     };
   }, []);
 
   async function start(track, tracks = queue, at = tracks.findIndex(t => t.id === track.id)) {
+    // Synchronously prime iOS user gesture activation
+    try { silentAudioRef.current?.play().catch(() => {}); } catch {}
     const token = ++generation.current;
     audio.current.pause(); youtube.current?.stopVideo?.();
     if (localUrl.current) { URL.revokeObjectURL(localUrl.current); localUrl.current = null; }

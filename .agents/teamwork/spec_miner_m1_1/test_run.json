@@ -1,0 +1,48 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "TestFrame",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "props": {
+        "fill": "#080F16"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Platter",
+      "x": 100,
+      "y": 100,
+      "width": 400,
+      "height": 60,
+      "props": {
+        "fill": "#FFFFFF14",
+        "cornerRadius": 30,
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Title",
+      "x": 140,
+      "y": 120,
+      "text": "Mochy Music",
+      "props": {
+        "fontSize": 20,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  }
+]

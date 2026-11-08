@@ -1,0 +1,32 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "View 1 - Fullscreen Apple Music Player",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "props": {
+        "fill": "#080F16",
+        "clip": true
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Box",
+      "parent": 2,
+      "x": 100,
+      "y": 100,
+      "width": 200,
+      "height": 100,
+      "props": {
+        "fill": "#007AFF"
+      }
+    }
+  }
+]

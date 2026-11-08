@@ -1,0 +1,28 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Image Set Test",
+      "width": 600,
+      "height": 400,
+      "props": { "fill": "#0A0D14" }
+    }
+  },
+  {
+    "command": "file.import",
+    "params": {
+      "path": "c:/laragon/www/mochy-pwa/public/icon-512.png",
+      "x": 50,
+      "y": 50
+    }
+  },
+  {
+    "command": "node.set",
+    "params": {
+      "parent": 2,
+      "width": 120,
+      "height": 120,
+      "cornerRadius": 16
+    }
+  }
+]

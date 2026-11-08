@@ -1,0 +1,44 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Test Frame",
+      "width": 800,
+      "height": 600,
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fill": "#0A0E17"
+      }
+    }
+  },
+  {
+    "command": "shape.rectangle",
+    "params": {
+      "name": "Glass Platter",
+      "width": 400,
+      "height": 100,
+      "x": 200,
+      "y": 150,
+      "props": {
+        "fill": "#FFFFFF1A",
+        "cornerRadius": 16,
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "text.create",
+    "params": {
+      "text": "Mochy Music Test",
+      "x": 230,
+      "y": 185,
+      "props": {
+        "fontSize": 24,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  }
+]

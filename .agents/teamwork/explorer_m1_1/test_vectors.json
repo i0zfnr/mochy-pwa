@@ -1,0 +1,45 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Vector Icon Test",
+      "width": 400,
+      "height": 200,
+      "props": { "fill": "#0A0D14" }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "SearchIconStroke",
+      "parent": 2,
+      "x": 40,
+      "y": 40,
+      "width": 32,
+      "height": 32,
+      "path": "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M21 21l-4.35-4.35",
+      "props": {
+        "stroke": "#FFFFFF",
+        "strokeWeight": 2,
+        "fill": "none"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "PlayIconFill",
+      "parent": 2,
+      "x": 100,
+      "y": 40,
+      "width": 32,
+      "height": 32,
+      "path": "M5 3l14 9-14 9V3z",
+      "props": {
+        "fill": "#FA586A"
+      }
+    }
+  }
+]

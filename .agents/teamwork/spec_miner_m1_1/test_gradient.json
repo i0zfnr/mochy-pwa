@@ -1,0 +1,48 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "GradientTest",
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 400,
+      "props": {
+        "fills": [
+          {
+            "type": "linearGradient",
+            "stops": ["#0F1E36", "#080F16"],
+            "from": [0, 0],
+            "to": [1, 1]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "AmbientGlow",
+      "x": 100,
+      "y": 50,
+      "width": 300,
+      "height": 300,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": ["#007AFF40", "#00000000"]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 40
+          }
+        ]
+      }
+    }
+  }
+]

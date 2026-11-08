@@ -1,0 +1,38 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Deterministic Frame",
+      "width": 800,
+      "height": 600,
+      "x": 0,
+      "y": 0,
+      "props": { "fill": "#0A0D14" }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "Platter",
+      "parent": 2,
+      "x": 40,
+      "y": 40,
+      "width": 300,
+      "height": 60,
+      "props": { "fill": "#FFFFFF14", "cornerRadius": 16 }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "PlatterText",
+      "parent": 3,
+      "x": 20,
+      "y": 20,
+      "text": "Inside Platter (ID 3)",
+      "props": { "fontSize": 14, "fill": "#FFFFFF" }
+    }
+  }
+]

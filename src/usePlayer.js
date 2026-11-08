@@ -174,8 +174,10 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
 
     return () => {
       clearTimeout(backgroundRetryTimer.current);
-      silentAudio.pause();
-      silentAudio.src = '';
+      if (silentAudioRef.current) {
+        silentAudioRef.current.pause();
+        silentAudioRef.current.src = '';
+      }
       window.removeEventListener('touchstart', unlock);
       window.removeEventListener('touchend', unlock);
       window.removeEventListener('pointerdown', unlock);

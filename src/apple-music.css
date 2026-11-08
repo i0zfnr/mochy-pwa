@@ -35,6 +35,19 @@
 
   --am-font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
+  /* Master Surface & Chrome Tokens */
+  --card-bg-solid: #F7F7F7;
+  --card-surface-raised: #EDEDED;
+  --card-border-solid: 1px solid #E0E0E0;
+  --card-shadow-solid: 0 4px 16px -2px rgba(0, 0, 0, 0.06);
+
+  --glass-chrome-bg: rgba(245, 245, 247, 0.78);
+  --glass-chrome-blur: blur(28px) saturate(190%);
+  --glass-chrome-border: 1px solid rgba(0, 0, 0, 0.08);
+  --glass-chrome-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+    0 16px 36px -10px rgba(0, 0, 0, 0.12);
+
   /* Apple Liquid Glass Tokens (Light) */
   --am-glass-surface: rgba(255, 255, 255, 0.72);
   --am-glass-surface-raised: rgba(255, 255, 255, 0.82);
@@ -77,6 +90,20 @@
   --am-focus-ring: 0 0 0 4px rgba(0, 122, 255, 0.6);
 
   --am-font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Master Surface & Chrome Tokens */
+  --card-bg-solid: #171D24;
+  --card-surface-raised: #232930;
+  --card-border-solid: 1px solid rgba(255, 255, 255, 0.08);
+  --card-shadow-solid: 0 4px 16px -2px rgba(0, 0, 0, 0.35);
+
+  --glass-chrome-bg: rgba(23, 29, 36, 0.78);
+  --glass-chrome-blur: blur(28px) saturate(190%);
+  --glass-chrome-border: 1px solid rgba(255, 255, 255, 0.12);
+  --glass-chrome-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.20),
+    0 16px 36px -4px rgba(0, 0, 0, 0.45);
 
   /* Apple Liquid Glass Tokens (Dark) */
   --am-glass-surface: rgba(18, 24, 32, 0.65);
@@ -1935,30 +1962,47 @@
   box-shadow: 0 28px 56px -10px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
 }
 
-/* 5. Liquid Glass Cards & Containers */
+/* 5. Solid Content Cards Layer (Zero Blur - WCAG AA Contrast 16.6:1) */
 .app.theme-apple-light .playlist-tile,
-.app.theme-apple-dark .playlist-tile,
 .app.theme-apple-light .settings-group,
-.app.theme-apple-dark .settings-group,
 .app.theme-apple-light .about-card,
-.app.theme-apple-dark .about-card,
 .app.theme-apple-light .bring-music,
-.app.theme-apple-dark .bring-music,
 .app.theme-apple-light .local-note,
-.app.theme-apple-dark .local-note {
-  background: var(--am-glass-sheen), var(--am-glass-surface) !important;
-  backdrop-filter: var(--am-glass-blur) !important;
-  -webkit-backdrop-filter: var(--am-glass-blur) !important;
-  border: 1px solid var(--am-glass-border) !important;
+.app.theme-apple-light .browse-card {
+  background: var(--card-bg-solid, var(--am-surface)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: var(--card-border-solid, 1px solid var(--am-border)) !important;
   border-radius: 16px !important;
-  box-shadow: var(--am-glass-shadow) !important;
+  box-shadow: var(--card-shadow-solid, 0 4px 16px -2px rgba(0, 0, 0, 0.06)) !important;
 }
 
-.app.theme-apple-light .playlist-tile:hover,
+.app.theme-apple-dark .playlist-tile,
+.app.theme-apple-dark .settings-group,
+.app.theme-apple-dark .about-card,
+.app.theme-apple-dark .bring-music,
+.app.theme-apple-dark .local-note,
+.app.theme-apple-dark .browse-card {
+  background: var(--card-bg-solid, #171D24) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: var(--card-border-solid, 1px solid rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--card-shadow-solid, 0 4px 16px -2px rgba(0, 0, 0, 0.35)) !important;
+}
+
+.app.theme-apple-light .playlist-tile:hover {
+  background: var(--card-surface-raised, #EDEDED) !important;
+  border-color: var(--am-border-subtle) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.1) !important;
+}
+
 .app.theme-apple-dark .playlist-tile:hover {
-  border-color: var(--am-glass-border-specular) !important;
-  transform: translateY(-3px) scale(1.01) !important;
-  box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+  background: var(--card-surface-raised, #232930) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45) !important;
 }
 
 .app.theme-apple-light .album-art,

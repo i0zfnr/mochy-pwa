@@ -1,0 +1,31 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "VectorTest",
+      "x": 0,
+      "y": 0,
+      "width": 400,
+      "height": 400,
+      "props": {
+        "fill": "#080F16"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "PlayIcon",
+      "x": 100,
+      "y": 100,
+      "width": 32,
+      "height": 32,
+      "path": "M5 3l14 9-14 9V3z",
+      "props": {
+        "fill": "#F5FAFF"
+      }
+    }
+  }
+]

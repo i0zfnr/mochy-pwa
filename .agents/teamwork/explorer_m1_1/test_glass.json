@@ -1,0 +1,35 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Glass Test",
+      "width": 400,
+      "height": 400,
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fill": "#0F141C"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Glass Box",
+      "parent": 2,
+      "x": 50,
+      "y": 50,
+      "width": 200,
+      "height": 100,
+      "props": {
+        "fill": "#FFFFFF14",
+        "effects": [
+          {
+            "type": "glass"
+          }
+        ]
+      }
+    }
+  }
+]

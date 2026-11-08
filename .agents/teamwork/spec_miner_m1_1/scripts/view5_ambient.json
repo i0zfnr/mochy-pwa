@@ -1,0 +1,780 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "View 5 - Ambient Living Canvas & Synced Lyrics",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "props": {
+        "fill": "#070B10",
+        "clip": true
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "TealFluidOrb",
+      "parent": 2,
+      "x": 40,
+      "y": -60,
+      "width": 900,
+      "height": 900,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": ["#0A364188", "#00000000"]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 90
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "VioletFluidOrb",
+      "parent": 2,
+      "x": 650,
+      "y": 40,
+      "width": 850,
+      "height": 850,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": ["#4A154B77", "#00000000"]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 100
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "AmberFluidOrb",
+      "parent": 2,
+      "x": 350,
+      "y": 320,
+      "width": 750,
+      "height": 750,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": ["#8A3B1455", "#00000000"]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 85
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "CyanCausticOrb",
+      "parent": 2,
+      "x": 200,
+      "y": 480,
+      "width": 600,
+      "height": 600,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": ["#007AFF44", "#00000000"]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 80
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "PulseRingOuter",
+      "parent": 2,
+      "x": 520,
+      "y": 250,
+      "width": 400,
+      "height": 400,
+      "props": {
+        "stroke": "#00F2FE25",
+        "strokeWeight": 2,
+        "fill": null,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00F2FE35",
+            "offset": [0, 0],
+            "radius": 24
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "PulseRingInner",
+      "parent": 2,
+      "x": 580,
+      "y": 310,
+      "width": 280,
+      "height": 280,
+      "props": {
+        "stroke": "#4FACFE30",
+        "strokeWeight": 1.5,
+        "fill": null
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar1",
+      "parent": 2,
+      "x": 320,
+      "y": 720,
+      "width": 8,
+      "height": 28,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#00F2FE66"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar2",
+      "parent": 2,
+      "x": 340,
+      "y": 704,
+      "width": 8,
+      "height": 44,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#00F2FE88"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar3",
+      "parent": 2,
+      "x": 360,
+      "y": 686,
+      "width": 8,
+      "height": 62,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#00F2FEAA"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar4",
+      "parent": 2,
+      "x": 380,
+      "y": 670,
+      "width": 8,
+      "height": 78,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#4FACFE"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar5",
+      "parent": 2,
+      "x": 400,
+      "y": 690,
+      "width": 8,
+      "height": 58,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#4FACFE"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar6",
+      "parent": 2,
+      "x": 420,
+      "y": 712,
+      "width": 8,
+      "height": 36,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#4FACFE"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar7",
+      "parent": 2,
+      "x": 1020,
+      "y": 712,
+      "width": 8,
+      "height": 36,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#4FACFE"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar8",
+      "parent": 2,
+      "x": 1040,
+      "y": 690,
+      "width": 8,
+      "height": 58,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#4FACFE"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar9",
+      "parent": 2,
+      "x": 1060,
+      "y": 670,
+      "width": 8,
+      "height": 78,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#4FACFE"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar10",
+      "parent": 2,
+      "x": 1080,
+      "y": 686,
+      "width": 8,
+      "height": 62,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#00F2FEAA"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar11",
+      "parent": 2,
+      "x": 1100,
+      "y": 704,
+      "width": 8,
+      "height": 44,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#00F2FE88"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "WaveBar12",
+      "parent": 2,
+      "x": 1120,
+      "y": 720,
+      "width": 8,
+      "height": 28,
+      "props": {
+        "cornerRadius": 4,
+        "fill": "#00F2FE66"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "HeaderThumbSquircle",
+      "parent": 2,
+      "x": 600,
+      "y": 56,
+      "width": 48,
+      "height": 48,
+      "props": {
+        "cornerRadius": 12,
+        "fills": [
+          {
+            "type": "linearGradient",
+            "stops": ["#1E293B", "#0F172A"]
+          }
+        ],
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeaderTrackTitle",
+      "parent": 2,
+      "x": 660,
+      "y": 62,
+      "text": "Midnight City",
+      "props": {
+        "fontSize": 16,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeaderTrackArtist",
+      "parent": 2,
+      "x": 660,
+      "y": 84,
+      "text": "M83  •  Hurry Up, We're Dreaming",
+      "props": {
+        "fontSize": 12,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "BadgeAmbient",
+      "parent": 2,
+      "x": 1240,
+      "y": 60,
+      "width": 140,
+      "height": 34,
+      "props": {
+        "cornerRadius": 17,
+        "fill": "#FFFFFF14",
+        "stroke": "#FFFFFF28",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TextAmbientBadge",
+      "parent": 2,
+      "x": 1258,
+      "y": 70,
+      "text": "Ambient Aurora",
+      "props": {
+        "fontSize": 12,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "AmbientLine1",
+      "parent": 2,
+      "x": 480,
+      "y": 210,
+      "text": "Waiting in a car, waiting for a ride in the dark",
+      "props": {
+        "fontSize": 24,
+        "fill": "#FFFFFF44",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ActiveLineAura",
+      "parent": 2,
+      "x": 320,
+      "y": 270,
+      "width": 800,
+      "height": 96,
+      "props": {
+        "cornerRadius": 20,
+        "fill": "#FFFFFF0A",
+        "stroke": "#00F2FE33",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00F2FE28",
+            "offset": [0, 0],
+            "radius": 24
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ActiveLineText",
+      "parent": 2,
+      "x": 520,
+      "y": 288,
+      "text": "The city is my church",
+      "props": {
+        "fontSize": 38,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter",
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00F2FE88",
+            "offset": [0, 0],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ActiveWordGlow",
+      "parent": 2,
+      "x": 480,
+      "y": 332,
+      "text": "It wraps me in the blinding twilight",
+      "props": {
+        "fontSize": 22,
+        "fill": "#00F2FE",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "AmbientLine3",
+      "parent": 2,
+      "x": 480,
+      "y": 405,
+      "text": "Waiting in a car, waiting for the right time",
+      "props": {
+        "fontSize": 24,
+        "fill": "#FFFFFF55",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "AmbientLine4",
+      "parent": 2,
+      "x": 430,
+      "y": 465,
+      "text": "The city is my church, it wraps me in the blinding twilight",
+      "props": {
+        "fontSize": 22,
+        "fill": "#FFFFFF33",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "AmbientControlsPlatter",
+      "parent": 2,
+      "x": 480,
+      "y": 756,
+      "width": 480,
+      "height": 72,
+      "props": {
+        "cornerRadius": 36,
+        "fill": "#FFFFFF18",
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000066",
+            "offset": [0, 14],
+            "radius": 28
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF66",
+            "offset": [0, 1],
+            "radius": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "BeatSyncPill",
+      "parent": 2,
+      "x": 504,
+      "y": 774,
+      "width": 104,
+      "height": 36,
+      "props": {
+        "cornerRadius": 18,
+        "fill": "#00F2FE20",
+        "stroke": "#00F2FE55",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "BeatWaveVec",
+      "parent": 2,
+      "x": 516,
+      "y": 784,
+      "width": 16,
+      "height": 16,
+      "path": "M2 12h3l2-6 4 12 3-9 2 5h4",
+      "props": {
+        "stroke": "#00F2FE",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BeatSyncLabel",
+      "parent": 2,
+      "x": 538,
+      "y": 786,
+      "text": "Beat Sync",
+      "props": {
+        "fontSize": 11,
+        "fill": "#00F2FE",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "AmbientPrev",
+      "parent": 2,
+      "x": 632,
+      "y": 783,
+      "width": 18,
+      "height": 18,
+      "path": "M19 20L9 12l10-8v16zM5 19V5",
+      "props": {
+        "stroke": "#F5FAFF",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "AmbientPlayCircle",
+      "parent": 2,
+      "x": 676,
+      "y": 766,
+      "width": 52,
+      "height": 52,
+      "props": {
+        "fill": "#FFFFFF",
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000044",
+            "offset": [0, 4],
+            "radius": 12
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "AmbientPlayVec",
+      "parent": 2,
+      "x": 696,
+      "y": 782,
+      "width": 16,
+      "height": 18,
+      "path": "M5 3l14 9-14 9V3z",
+      "props": {
+        "fill": "#080F16"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "AmbientNext",
+      "parent": 2,
+      "x": 754,
+      "y": 783,
+      "width": 18,
+      "height": 18,
+      "path": "M5 4l10 8-10 8V4zM19 5v14",
+      "props": {
+        "stroke": "#F5FAFF",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "AmbientVolVec",
+      "parent": 2,
+      "x": 804,
+      "y": 783,
+      "width": 18,
+      "height": 18,
+      "path": "M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "VolTrackBg",
+      "parent": 2,
+      "x": 830,
+      "y": 790,
+      "width": 70,
+      "height": 4,
+      "props": {
+        "cornerRadius": 2,
+        "fill": "#FFFFFF25"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "VolTrackFill",
+      "parent": 2,
+      "x": 830,
+      "y": 790,
+      "width": 48,
+      "height": 4,
+      "props": {
+        "cornerRadius": 2,
+        "fill": "#00F2FE"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "AmbientClose",
+      "parent": 2,
+      "x": 922,
+      "y": 783,
+      "width": 18,
+      "height": 18,
+      "path": "M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  }
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Image Import Test",
+      "width": 600,
+      "height": 400,
+      "props": { "fill": "#0A0D14" }
+    }
+  },
+  {
+    "command": "file.import",
+    "params": {
+      "path": "c:/laragon/www/mochy-pwa/public/icon-512.png",
+      "x": 50,
+      "y": 50
+    }
+  }
+]

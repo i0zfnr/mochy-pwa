@@ -1,0 +1,149 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Liquid Glass Showcase",
+      "width": 1000,
+      "height": 700,
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fills": [
+          {
+            "type": "linearGradient",
+            "stops": ["#1A0B2E", "#0B192E", "#05050A"],
+            "from": [0, 0],
+            "to": [1, 1]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "Solid Content Card",
+      "parent": 2,
+      "x": 100,
+      "y": 120,
+      "width": 800,
+      "height": 450,
+      "props": {
+        "fill": "#171D24",
+        "cornerRadius": 20,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000080",
+            "offset": [0, 16],
+            "radius": 36,
+            "spread": 0
+          }
+        ],
+        "layout": "vertical",
+        "gap": 20,
+        "padding": 32
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Card Title",
+      "parent": 3,
+      "text": "Solid Content Card (Zero Blur)",
+      "props": {
+        "fontSize": 24,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Card Description",
+      "parent": 3,
+      "text": "Content cards and scrollable lists maintain opaque surfaces for crystal-clear readability and zero nested blur.",
+      "props": {
+        "fontSize": 15,
+        "fill": "#A0AEC0",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "Floating Glass Control Chrome",
+      "parent": 2,
+      "x": 200,
+      "y": 50,
+      "width": 600,
+      "height": 64,
+      "props": {
+        "fill": "#FFFFFF1A",
+        "cornerRadius": 32,
+        "stroke": "#FFFFFF4D",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "backgroundBlur",
+            "radius": 30
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF66",
+            "offset": [0, 1],
+            "radius": 2
+          },
+          {
+            "type": "dropShadow",
+            "color": "#00000066",
+            "offset": [0, 12],
+            "radius": 28,
+            "spread": 0
+          }
+        ],
+        "layout": "horizontal",
+        "gap": 16,
+        "padding": [12, 24, 12, 24],
+        "crossAlign": "center"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "PlayIcon",
+      "parent": 6,
+      "width": 20,
+      "height": 20,
+      "path": "M5 3l14 9-14 9V3z",
+      "props": {
+        "fill": "#FA586A"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Glass Platter Label",
+      "parent": 6,
+      "text": "Floating Liquid Glass Platter (Navigation / Chrome Layer)",
+      "props": {
+        "fontSize": 15,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  }
+]

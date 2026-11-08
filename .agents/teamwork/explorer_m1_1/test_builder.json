@@ -1,0 +1,102 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Builder Pattern Test",
+      "width": 800,
+      "height": 500,
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fill": "#0A0D14"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "parent": 2,
+      "type": "frame",
+      "name": "Glass Platter",
+      "width": 400,
+      "height": 60,
+      "x": 200,
+      "y": 80,
+      "props": {
+        "fill": "#FFFFFF14",
+        "cornerRadius": 16,
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "backgroundBlur",
+            "radius": 24
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF4D",
+            "offset": [
+              0,
+              1
+            ],
+            "radius": 2
+          },
+          {
+            "type": "dropShadow",
+            "color": "#00000066",
+            "offset": [
+              0,
+              10
+            ],
+            "radius": 24,
+            "spread": 0
+          }
+        ],
+        "layout": "horizontal",
+        "gap": 12,
+        "padding": [
+          12,
+          20,
+          12,
+          20
+        ],
+        "crossAlign": "center"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "parent": 3,
+      "type": "vector",
+      "name": "PlayIcon",
+      "width": 20,
+      "height": 20,
+      "x": 0,
+      "y": 0,
+      "path": "M5 3l14 9-14 9V3z",
+      "props": {
+        "fill": "#FA586A",
+        "stroke": "none",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "parent": 3,
+      "type": "text",
+      "name": "Builder Pattern Verified",
+      "text": "Builder Pattern Verified",
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fontSize": 16,
+        "fontFamily": "Inter",
+        "fontStyle": "SemiBold",
+        "fill": "#FFFFFF"
+      }
+    }
+  }
+]

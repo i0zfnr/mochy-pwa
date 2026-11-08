@@ -1,0 +1,52 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Effects Test",
+      "width": 800,
+      "height": 600,
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fill": "#0F141C"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "All Effects Box",
+      "parent": 2,
+      "x": 50,
+      "y": 50,
+      "width": 200,
+      "height": 100,
+      "props": {
+        "fill": "#FFFFFF14",
+        "cornerRadius": 16,
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000080",
+            "offset": [0, 12],
+            "radius": 32,
+            "spread": 0
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF40",
+            "offset": [0, 1],
+            "radius": 2
+          },
+          {
+            "type": "backgroundBlur",
+            "radius": 28
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,1600 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "View 3 - Library View Architecture",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "props": {
+        "fill": "#080F16",
+        "clip": true
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "DesktopSidebarPlatter",
+      "parent": 2,
+      "x": 24,
+      "y": 24,
+      "width": 236,
+      "height": 852,
+      "props": {
+        "cornerRadius": 24,
+        "fill": "#FFFFFF12",
+        "stroke": "#FFFFFF26",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000055",
+            "offset": [0, 12],
+            "radius": 24
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF55",
+            "offset": [0, 1],
+            "radius": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "BrandIcon",
+      "parent": 2,
+      "x": 48,
+      "y": 52,
+      "width": 20,
+      "height": 20,
+      "path": "M2 12h2a2 2 0 0 1 1.8 1.1L8 18l4-12 3 7 1.2-2.1A2 2 0 0 1 20 10h2",
+      "props": {
+        "stroke": "#007AFF",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BrandName",
+      "parent": 2,
+      "x": 76,
+      "y": 51,
+      "text": "Mochy Music",
+      "props": {
+        "fontSize": 17,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeaderDiscover",
+      "parent": 2,
+      "x": 48,
+      "y": 104,
+      "text": "DISCOVER",
+      "props": {
+        "fontSize": 10,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "IconHome",
+      "parent": 2,
+      "x": 54,
+      "y": 136,
+      "width": 18,
+      "height": 18,
+      "path": "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TextHome",
+      "parent": 2,
+      "x": 82,
+      "y": 137,
+      "text": "Home",
+      "props": {
+        "fontSize": 14,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "IconSearch",
+      "parent": 2,
+      "x": 54,
+      "y": 180,
+      "width": 18,
+      "height": 18,
+      "path": "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TextSearch",
+      "parent": 2,
+      "x": 82,
+      "y": 181,
+      "text": "Search",
+      "props": {
+        "fontSize": 14,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "NavLibraryPill",
+      "parent": 2,
+      "x": 40,
+      "y": 214,
+      "width": 204,
+      "height": 42,
+      "props": {
+        "cornerRadius": 12,
+        "fill": "#FFFFFF18",
+        "stroke": "#FFFFFF24",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "IconLibrary",
+      "parent": 2,
+      "x": 54,
+      "y": 226,
+      "width": 18,
+      "height": 18,
+      "path": "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5z",
+      "props": {
+        "stroke": "#007AFF",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TextLibrary",
+      "parent": 2,
+      "x": 82,
+      "y": 227,
+      "text": "Library",
+      "props": {
+        "fontSize": 14,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "IconAudioLab",
+      "parent": 2,
+      "x": 54,
+      "y": 270,
+      "width": 18,
+      "height": 18,
+      "path": "M12 2v20M17 5v14M7 8v8M2 11v2M22 10v4",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TextAudioLab",
+      "parent": 2,
+      "x": 82,
+      "y": 271,
+      "text": "Audio Lab DSP",
+      "props": {
+        "fontSize": 14,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "DesktopTopbarPlatter",
+      "parent": 2,
+      "x": 280,
+      "y": 24,
+      "width": 1136,
+      "height": 60,
+      "props": {
+        "cornerRadius": 20,
+        "fill": "#FFFFFF12",
+        "stroke": "#FFFFFF26",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000044",
+            "offset": [0, 8],
+            "radius": 20
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF55",
+            "offset": [0, 1],
+            "radius": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "BreadcrumbIcon",
+      "parent": 2,
+      "x": 304,
+      "y": 45,
+      "width": 16,
+      "height": 16,
+      "path": "M9 18l6-6-6-6",
+      "props": {
+        "stroke": "#007AFF",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BreadcrumbText",
+      "parent": 2,
+      "x": 328,
+      "y": 44,
+      "text": "Mochy / Library / All Songs",
+      "props": {
+        "fontSize": 14,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "PillImportSpotify",
+      "parent": 2,
+      "x": 1090,
+      "y": 38,
+      "width": 146,
+      "height": 32,
+      "props": {
+        "cornerRadius": 16,
+        "fill": "#1DB9541C",
+        "stroke": "#1DB95444",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TextImportSpotify",
+      "parent": 2,
+      "x": 1114,
+      "y": 46,
+      "text": "Import Spotify",
+      "props": {
+        "fontSize": 12,
+        "fill": "#1DB954",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "PillImportAudio",
+      "parent": 2,
+      "x": 1248,
+      "y": 38,
+      "width": 140,
+      "height": 32,
+      "props": {
+        "cornerRadius": 16,
+        "fill": "#007AFF1C",
+        "stroke": "#007AFF44",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TextImportAudio",
+      "parent": 2,
+      "x": 1272,
+      "y": 46,
+      "text": "Import Audio",
+      "props": {
+        "fontSize": 12,
+        "fill": "#007AFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "LibraryMainTitle",
+      "parent": 2,
+      "x": 280,
+      "y": 104,
+      "text": "Your Library",
+      "props": {
+        "fontSize": 28,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "LibrarySubhead",
+      "parent": 2,
+      "x": 280,
+      "y": 144,
+      "text": "1,248 Songs  •  42 Playlists  •  18.4 GB Local Storage",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "CardLikedSongs",
+      "parent": 2,
+      "x": 280,
+      "y": 174,
+      "width": 554,
+      "height": 96,
+      "props": {
+        "cornerRadius": 16,
+        "fill": "#171D24",
+        "stroke": "#2C3440",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000035",
+            "offset": [0, 6],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "IconBoxLiked",
+      "parent": 2,
+      "x": 300,
+      "y": 192,
+      "width": 60,
+      "height": 60,
+      "props": {
+        "cornerRadius": 14,
+        "fill": "#FF2D551A",
+        "stroke": "#FF2D5533",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "VecLikedHeart",
+      "parent": 2,
+      "x": 318,
+      "y": 210,
+      "width": 24,
+      "height": 24,
+      "path": "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+      "props": {
+        "stroke": "#FF2D55",
+        "fill": "#FF2D55",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TitleLiked",
+      "parent": 2,
+      "x": 380,
+      "y": 200,
+      "text": "Liked Songs",
+      "props": {
+        "fontSize": 18,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SubLiked",
+      "parent": 2,
+      "x": 380,
+      "y": 228,
+      "text": "342 favorite tracks  •  Auto-synced",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "CardOnDevice",
+      "parent": 2,
+      "x": 860,
+      "y": 174,
+      "width": 554,
+      "height": 96,
+      "props": {
+        "cornerRadius": 16,
+        "fill": "#171D24",
+        "stroke": "#2C3440",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000035",
+            "offset": [0, 6],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "IconBoxDevice",
+      "parent": 2,
+      "x": 880,
+      "y": 192,
+      "width": 60,
+      "height": 60,
+      "props": {
+        "cornerRadius": 14,
+        "fill": "#30D1581A",
+        "stroke": "#30D15833",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "VecDeviceDrive",
+      "parent": 2,
+      "x": 898,
+      "y": 210,
+      "width": 24,
+      "height": 24,
+      "path": "M4 6h16M4 12h16M4 18h16",
+      "props": {
+        "stroke": "#30D158",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TitleDevice",
+      "parent": 2,
+      "x": 960,
+      "y": 200,
+      "text": "On This Device",
+      "props": {
+        "fontSize": 18,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SubDevice",
+      "parent": 2,
+      "x": 960,
+      "y": 228,
+      "text": "894 local audio files  •  Offline IndexedDB",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeaderPlaylists",
+      "parent": 2,
+      "x": 280,
+      "y": 296,
+      "text": "FEATURED PLAYLISTS",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "PlaylistCard1",
+      "parent": 2,
+      "x": 280,
+      "y": 320,
+      "width": 360,
+      "height": 130,
+      "props": {
+        "cornerRadius": 16,
+        "fill": "#171D24",
+        "stroke": "#2C3440",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ArtP1",
+      "parent": 2,
+      "x": 296,
+      "y": 336,
+      "width": 98,
+      "height": 98,
+      "props": {
+        "cornerRadius": 12,
+        "fills": [
+          {
+            "type": "linearGradient",
+            "stops": ["#6366F1", "#1E1B4B"]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TitleP1",
+      "parent": 2,
+      "x": 410,
+      "y": 348,
+      "text": "Late Night Drive",
+      "props": {
+        "fontSize": 16,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "DescP1",
+      "parent": 2,
+      "x": 410,
+      "y": 374,
+      "text": "Synthwave & electronic",
+      "props": {
+        "fontSize": 12,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "MetaP1",
+      "parent": 2,
+      "x": 410,
+      "y": 404,
+      "text": "48 tracks  •  3 hr 12 min",
+      "props": {
+        "fontSize": 12,
+        "fill": "#007AFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "PlaylistCard2",
+      "parent": 2,
+      "x": 660,
+      "y": 320,
+      "width": 360,
+      "height": 130,
+      "props": {
+        "cornerRadius": 16,
+        "fill": "#171D24",
+        "stroke": "#2C3440",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ArtP2",
+      "parent": 2,
+      "x": 676,
+      "y": 336,
+      "width": 98,
+      "height": 98,
+      "props": {
+        "cornerRadius": 12,
+        "fills": [
+          {
+            "type": "linearGradient",
+            "stops": ["#06B6D4", "#083344"]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TitleP2",
+      "parent": 2,
+      "x": 790,
+      "y": 348,
+      "text": "Focus & Flow",
+      "props": {
+        "fontSize": 16,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "DescP2",
+      "parent": 2,
+      "x": 790,
+      "y": 374,
+      "text": "Deep ambient lo-fi",
+      "props": {
+        "fontSize": 12,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "MetaP2",
+      "parent": 2,
+      "x": 790,
+      "y": 404,
+      "text": "64 tracks  •  4 hr 05 min",
+      "props": {
+        "fontSize": 12,
+        "fill": "#007AFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "PlaylistCard3",
+      "parent": 2,
+      "x": 1040,
+      "y": 320,
+      "width": 374,
+      "height": 130,
+      "props": {
+        "cornerRadius": 16,
+        "fill": "#171D24",
+        "stroke": "#2C3440",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ArtP3",
+      "parent": 2,
+      "x": 1056,
+      "y": 336,
+      "width": 98,
+      "height": 98,
+      "props": {
+        "cornerRadius": 12,
+        "fills": [
+          {
+            "type": "linearGradient",
+            "stops": ["#F59E0B", "#451A03"]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TitleP3",
+      "parent": 2,
+      "x": 1170,
+      "y": 348,
+      "text": "Coffeehouse Acoustic",
+      "props": {
+        "fontSize": 16,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "DescP3",
+      "parent": 2,
+      "x": 1170,
+      "y": 374,
+      "text": "Indie folk & acoustic guitar",
+      "props": {
+        "fontSize": 12,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "MetaP3",
+      "parent": 2,
+      "x": 1170,
+      "y": 404,
+      "text": "32 tracks  •  2 hr 10 min",
+      "props": {
+        "fontSize": 12,
+        "fill": "#007AFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeaderAllSongs",
+      "parent": 2,
+      "x": 280,
+      "y": 480,
+      "text": "ALL SONGS",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "TableHeaderBg",
+      "parent": 2,
+      "x": 280,
+      "y": 502,
+      "width": 1134,
+      "height": 34,
+      "props": {
+        "cornerRadius": 8,
+        "fill": "#FFFFFF0A"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ThNum",
+      "parent": 2,
+      "x": 300,
+      "y": 512,
+      "text": "#",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ThTitle",
+      "parent": 2,
+      "x": 350,
+      "y": 512,
+      "text": "TITLE",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ThArtist",
+      "parent": 2,
+      "x": 680,
+      "y": 512,
+      "text": "ARTIST",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ThAlbum",
+      "parent": 2,
+      "x": 920,
+      "y": 512,
+      "text": "ALBUM",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ThDur",
+      "parent": 2,
+      "x": 1180,
+      "y": 512,
+      "text": "DURATION",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ThAction",
+      "parent": 2,
+      "x": 1330,
+      "y": 512,
+      "text": "ACTIONS",
+      "props": {
+        "fontSize": 11,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row1Bg",
+      "parent": 2,
+      "x": 280,
+      "y": 544,
+      "width": 1134,
+      "height": 56,
+      "props": {
+        "cornerRadius": 10,
+        "fill": "#171D24",
+        "stroke": "#007AFF55",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row1Wave",
+      "parent": 2,
+      "x": 300,
+      "y": 562,
+      "width": 16,
+      "height": 16,
+      "path": "M2 10v4M6 4v16M10 8v8M14 2v20M18 6v12M22 10v4",
+      "props": {
+        "stroke": "#007AFF",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row1Thumb",
+      "parent": 2,
+      "x": 332,
+      "y": 552,
+      "width": 40,
+      "height": 40,
+      "props": {
+        "cornerRadius": 8,
+        "fill": "#1E293B"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row1Title",
+      "parent": 2,
+      "x": 384,
+      "y": 562,
+      "text": "Midnight City",
+      "props": {
+        "fontSize": 14,
+        "fill": "#007AFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row1Artist",
+      "parent": 2,
+      "x": 680,
+      "y": 562,
+      "text": "M83",
+      "props": {
+        "fontSize": 13,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row1Album",
+      "parent": 2,
+      "x": 920,
+      "y": 562,
+      "text": "Hurry Up, We're Dreaming",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row1Dur",
+      "parent": 2,
+      "x": 1195,
+      "y": 562,
+      "text": "4:04",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row1Heart",
+      "parent": 2,
+      "x": 1335,
+      "y": 562,
+      "width": 16,
+      "height": 16,
+      "path": "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+      "props": {
+        "stroke": "#FF2D55",
+        "fill": "#FF2D55",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row1More",
+      "parent": 2,
+      "x": 1375,
+      "y": 562,
+      "width": 16,
+      "height": 16,
+      "path": "M12 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM19 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM5 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0z",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row2Bg",
+      "parent": 2,
+      "x": 280,
+      "y": 606,
+      "width": 1134,
+      "height": 56,
+      "props": {
+        "cornerRadius": 10,
+        "fill": "#171D24",
+        "stroke": "#242A32",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row2Num",
+      "parent": 2,
+      "x": 300,
+      "y": 624,
+      "text": "2",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row2Thumb",
+      "parent": 2,
+      "x": 332,
+      "y": 614,
+      "width": 40,
+      "height": 40,
+      "props": {
+        "cornerRadius": 8,
+        "fill": "#1E293B"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row2Title",
+      "parent": 2,
+      "x": 384,
+      "y": 624,
+      "text": "Instant Crush",
+      "props": {
+        "fontSize": 14,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row2Artist",
+      "parent": 2,
+      "x": 680,
+      "y": 624,
+      "text": "Daft Punk ft. Julian Casablancas",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row2Album",
+      "parent": 2,
+      "x": 920,
+      "y": 624,
+      "text": "Random Access Memories",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row2Dur",
+      "parent": 2,
+      "x": 1195,
+      "y": 624,
+      "text": "5:37",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row2Heart",
+      "parent": 2,
+      "x": 1335,
+      "y": 624,
+      "width": 16,
+      "height": 16,
+      "path": "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row2More",
+      "parent": 2,
+      "x": 1375,
+      "y": 624,
+      "width": 16,
+      "height": 16,
+      "path": "M12 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM19 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM5 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0z",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row3Bg",
+      "parent": 2,
+      "x": 280,
+      "y": 668,
+      "width": 1134,
+      "height": 56,
+      "props": {
+        "cornerRadius": 10,
+        "fill": "#171D24",
+        "stroke": "#242A32",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row3Num",
+      "parent": 2,
+      "x": 300,
+      "y": 686,
+      "text": "3",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row3Thumb",
+      "parent": 2,
+      "x": 332,
+      "y": 676,
+      "width": 40,
+      "height": 40,
+      "props": {
+        "cornerRadius": 8,
+        "fill": "#1E293B"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row3Title",
+      "parent": 2,
+      "x": 384,
+      "y": 686,
+      "text": "Awake",
+      "props": {
+        "fontSize": 14,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row3Artist",
+      "parent": 2,
+      "x": 680,
+      "y": 686,
+      "text": "Tycho",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row3Album",
+      "parent": 2,
+      "x": 920,
+      "y": 686,
+      "text": "Awake",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row3Dur",
+      "parent": 2,
+      "x": 1195,
+      "y": 686,
+      "text": "4:43",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row3Heart",
+      "parent": 2,
+      "x": 1335,
+      "y": 686,
+      "width": 16,
+      "height": 16,
+      "path": "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+      "props": {
+        "stroke": "#FF2D55",
+        "fill": "#FF2D55",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row3More",
+      "parent": 2,
+      "x": 1375,
+      "y": 686,
+      "width": 16,
+      "height": 16,
+      "path": "M12 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM19 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM5 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0z",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row4Bg",
+      "parent": 2,
+      "x": 280,
+      "y": 730,
+      "width": 1134,
+      "height": 56,
+      "props": {
+        "cornerRadius": 10,
+        "fill": "#171D24",
+        "stroke": "#242A32",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row4Num",
+      "parent": 2,
+      "x": 300,
+      "y": 748,
+      "text": "4",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "Row4Thumb",
+      "parent": 2,
+      "x": 332,
+      "y": 738,
+      "width": 40,
+      "height": 40,
+      "props": {
+        "cornerRadius": 8,
+        "fill": "#1E293B"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row4Title",
+      "parent": 2,
+      "x": 384,
+      "y": 748,
+      "text": "From the Start",
+      "props": {
+        "fontSize": 14,
+        "fill": "#F5FAFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row4Artist",
+      "parent": 2,
+      "x": 680,
+      "y": 748,
+      "text": "Laufey",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row4Album",
+      "parent": 2,
+      "x": 920,
+      "y": 748,
+      "text": "Bewitched",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Row4Dur",
+      "parent": 2,
+      "x": 1195,
+      "y": 748,
+      "text": "2:49",
+      "props": {
+        "fontSize": 13,
+        "fill": "#9BA1A6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row4Heart",
+      "parent": 2,
+      "x": 1335,
+      "y": 748,
+      "width": 16,
+      "height": 16,
+      "path": "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "Row4More",
+      "parent": 2,
+      "x": 1375,
+      "y": 748,
+      "width": 16,
+      "height": 16,
+      "path": "M12 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM19 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0zM5 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0z",
+      "props": {
+        "stroke": "#9BA1A6",
+        "strokeWeight": 2
+      }
+    }
+  }
+]

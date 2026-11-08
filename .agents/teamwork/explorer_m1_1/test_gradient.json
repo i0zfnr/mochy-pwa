@@ -1,0 +1,22 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Gradient Test",
+      "width": 600,
+      "height": 400,
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fills": [
+          {
+            "type": "linearGradient",
+            "stops": ["#FF0055", "#7928CA", "#0070F3"],
+            "from": [0, 0],
+            "to": [1, 1]
+          }
+        ]
+      }
+    }
+  }
+]

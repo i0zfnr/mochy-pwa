@@ -1,0 +1,99 @@
+[
+  {
+    "command": "frame.create",
+    "params": {
+      "name": "Artboard",
+      "width": 1200,
+      "height": 800,
+      "x": 0,
+      "y": 0,
+      "props": {
+        "fill": "#0A0D14"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "AutoLayoutContainer",
+      "parent": 2,
+      "x": 50,
+      "y": 50,
+      "width": 500,
+      "height": 400,
+      "props": {
+        "fill": "#171D24",
+        "cornerRadius": 16,
+        "stroke": "#FFFFFF1A",
+        "strokeWeight": 1,
+        "layout": "vertical",
+        "gap": 16,
+        "padding": 24
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Header Title",
+      "parent": 3,
+      "text": "Liquid Glass Header",
+      "props": {
+        "fontSize": 20,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter",
+        "fontStyle": "Bold"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "GlassPlatter",
+      "parent": 3,
+      "width": 400,
+      "height": 60,
+      "props": {
+        "fill": "#FFFFFF14",
+        "cornerRadius": 12,
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1,
+        "layout": "horizontal",
+        "gap": 12,
+        "padding": [12, 16, 12, 16],
+        "crossAlign": "center"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "vector",
+      "name": "PlayIcon",
+      "parent": 5,
+      "width": 24,
+      "height": 24,
+      "path": "M5 3l14 9-14 9V3z",
+      "props": {
+        "fill": "#FA586A"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TrackLabel",
+      "parent": 5,
+      "text": "Now Playing - Aurora Beats",
+      "props": {
+        "fontSize": 14,
+        "fill": "#F5F5F7",
+        "fontFamily": "Inter"
+      }
+    }
+  }
+]

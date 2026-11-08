@@ -1,0 +1,2158 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "Apple Music Web - New & Browse Shell",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "props": {
+        "fill": "#1A1A1A",
+        "clip": true
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SidebarPlatter",
+      "parent": 2,
+      "x": 0,
+      "y": 0,
+      "width": 220,
+      "height": 900,
+      "props": {
+        "fill": "#141414",
+        "stroke": "#262626",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BrandLogo",
+      "parent": 2,
+      "x": 28,
+      "y": 30,
+      "text": " Music",
+      "props": {
+        "fontSize": 22,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "NavText_Search",
+      "parent": 2,
+      "x": 40,
+      "y": 85,
+      "text": "Search",
+      "props": {
+        "fontSize": 14,
+        "fill": "#A0A0A0",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "NavText_Home",
+      "parent": 2,
+      "x": 40,
+      "y": 127,
+      "text": "Home",
+      "props": {
+        "fontSize": 14,
+        "fill": "#A0A0A0",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "NavPill_New",
+      "parent": 2,
+      "x": 16,
+      "y": 160,
+      "width": 188,
+      "height": 36,
+      "props": {
+        "fill": "#2B2B2B",
+        "cornerRadius": 8
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "NavText_New",
+      "parent": 2,
+      "x": 40,
+      "y": 169,
+      "text": "New",
+      "props": {
+        "fontSize": 14,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "NavText_Radio",
+      "parent": 2,
+      "x": 40,
+      "y": 211,
+      "text": "Radio",
+      "props": {
+        "fontSize": 14,
+        "fill": "#A0A0A0",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "OpenInMusic",
+      "parent": 2,
+      "x": 28,
+      "y": 805,
+      "text": "Open in Music ↗",
+      "props": {
+        "fontSize": 12,
+        "fill": "#808080",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SignInButton",
+      "parent": 2,
+      "x": 20,
+      "y": 835,
+      "width": 180,
+      "height": 38,
+      "props": {
+        "fill": "#FFFFFF",
+        "cornerRadius": 19,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000040",
+            "offset": [
+              0,
+              4
+            ],
+            "radius": 12
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SignInText",
+      "parent": 2,
+      "x": 75,
+      "y": 845,
+      "text": "Sign In",
+      "props": {
+        "fontSize": 13,
+        "fill": "#000000",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "PageTitle",
+      "parent": 2,
+      "x": 256,
+      "y": 32,
+      "text": "New",
+      "props": {
+        "fontSize": 34,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroEyebrow_Best Songs of 2026",
+      "parent": 2,
+      "x": 256,
+      "y": 88,
+      "text": "NEW PLAYLIST",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroTitle_Best Songs of 2026",
+      "parent": 2,
+      "x": 256,
+      "y": 103,
+      "text": "Best Songs of 2026",
+      "props": {
+        "fontSize": 15,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroSub_Best Songs of 2026",
+      "parent": 2,
+      "x": 256,
+      "y": 122,
+      "text": "Apple Music",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "HeroArt_Best Songs of 2026",
+      "parent": 2,
+      "x": 256,
+      "y": 142,
+      "width": 284,
+      "height": 154,
+      "props": {
+        "fill": "#283B4F",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#0000004D",
+            "offset": [
+              0,
+              8
+            ],
+            "radius": 18
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroBannerText_Best Songs of 2026",
+      "parent": 2,
+      "x": 276,
+      "y": 172,
+      "text": "Best Songs of 2026",
+      "props": {
+        "fontSize": 20,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroEyebrow_Before we reveal Artist of the Year...",
+      "parent": 2,
+      "x": 554,
+      "y": 88,
+      "text": "BEST OF 2026",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroTitle_Before we reveal Artist of the Year...",
+      "parent": 2,
+      "x": 554,
+      "y": 103,
+      "text": "Before we reveal Artist of the Year...",
+      "props": {
+        "fontSize": 15,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroSub_Before we reveal Artist of the Year...",
+      "parent": 2,
+      "x": 554,
+      "y": 122,
+      "text": "Check out more of our 2026 picks",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "HeroArt_Before we reveal Artist of the Year...",
+      "parent": 2,
+      "x": 554,
+      "y": 142,
+      "width": 284,
+      "height": 154,
+      "props": {
+        "fill": "#344033",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#0000004D",
+            "offset": [
+              0,
+              8
+            ],
+            "radius": 18
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroBannerText_Before we reveal Artist of the Year...",
+      "parent": 2,
+      "x": 574,
+      "y": 172,
+      "text": "Before we reveal Artist of the Year...",
+      "props": {
+        "fontSize": 20,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroEyebrow_FRESH",
+      "parent": 2,
+      "x": 852,
+      "y": 88,
+      "text": "NEW ALBUM",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroTitle_FRESH",
+      "parent": 2,
+      "x": 852,
+      "y": 103,
+      "text": "FRESH",
+      "props": {
+        "fontSize": 15,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroSub_FRESH",
+      "parent": 2,
+      "x": 852,
+      "y": 122,
+      "text": "Lil Baby",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "HeroArt_FRESH",
+      "parent": 2,
+      "x": 852,
+      "y": 142,
+      "width": 284,
+      "height": 154,
+      "props": {
+        "fill": "#4A3425",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#0000004D",
+            "offset": [
+              0,
+              8
+            ],
+            "radius": 18
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "HeroBannerText_FRESH",
+      "parent": 2,
+      "x": 872,
+      "y": 172,
+      "text": "FRESH",
+      "props": {
+        "fontSize": 20,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "CarouselNextDisc",
+      "parent": 2,
+      "x": 1115,
+      "y": 200,
+      "width": 32,
+      "height": 32,
+      "props": {
+        "fill": "#333333",
+        "stroke": "#FFFFFF33",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000066",
+            "offset": [
+              0,
+              4
+            ],
+            "radius": 10
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "CarouselArrow",
+      "parent": 2,
+      "x": 1126,
+      "y": 207,
+      "text": ">",
+      "props": {
+        "fontSize": 14,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SecTitle_BestOf2026",
+      "parent": 2,
+      "x": 256,
+      "y": 324,
+      "text": "Best of 2026 >",
+      "props": {
+        "fontSize": 20,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SquareCard_Rap Life: Best of 2026",
+      "parent": 2,
+      "x": 256,
+      "y": 356,
+      "width": 162,
+      "height": 162,
+      "props": {
+        "fill": "#1E1E1E",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF1A",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000055",
+            "offset": [
+              0,
+              6
+            ],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BigYear_Rap Life: Best of 2026",
+      "parent": 2,
+      "x": 270,
+      "y": 472,
+      "text": "2026",
+      "props": {
+        "fontSize": 32,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Label_Rap Life: Best of 2026",
+      "parent": 2,
+      "x": 256,
+      "y": 526,
+      "text": "Rap Life: Best of ",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Sub_Rap Life: Best of 2026",
+      "parent": 2,
+      "x": 256,
+      "y": 544,
+      "text": "Apple Music Hip-Hop",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SquareCard_R&B Now: Best of 2026",
+      "parent": 2,
+      "x": 432,
+      "y": 356,
+      "width": 162,
+      "height": 162,
+      "props": {
+        "fill": "#731E2A",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF1A",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000055",
+            "offset": [
+              0,
+              6
+            ],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BigYear_R&B Now: Best of 2026",
+      "parent": 2,
+      "x": 446,
+      "y": 472,
+      "text": "2026",
+      "props": {
+        "fontSize": 32,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Label_R&B Now: Best of 2026",
+      "parent": 2,
+      "x": 432,
+      "y": 526,
+      "text": "R&B Now: Best of 2",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Sub_R&B Now: Best of 2026",
+      "parent": 2,
+      "x": 432,
+      "y": 544,
+      "text": "Apple Music R&B",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SquareCard_A-List Pop: Best of 2026",
+      "parent": 2,
+      "x": 608,
+      "y": 356,
+      "width": 162,
+      "height": 162,
+      "props": {
+        "fill": "#12548E",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF1A",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000055",
+            "offset": [
+              0,
+              6
+            ],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BigYear_A-List Pop: Best of 2026",
+      "parent": 2,
+      "x": 622,
+      "y": 472,
+      "text": "2026",
+      "props": {
+        "fontSize": 32,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Label_A-List Pop: Best of 2026",
+      "parent": 2,
+      "x": 608,
+      "y": 526,
+      "text": "A-List Pop: Best o",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Sub_A-List Pop: Best of 2026",
+      "parent": 2,
+      "x": 608,
+      "y": 544,
+      "text": "Apple Music Pop",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SquareCard_Today's Country: Best of 2026",
+      "parent": 2,
+      "x": 784,
+      "y": 356,
+      "width": 162,
+      "height": 162,
+      "props": {
+        "fill": "#8F1E5E",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF1A",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000055",
+            "offset": [
+              0,
+              6
+            ],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BigYear_Today's Country: Best of 2026",
+      "parent": 2,
+      "x": 798,
+      "y": 472,
+      "text": "2026",
+      "props": {
+        "fontSize": 32,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Label_Today's Country: Best of 2026",
+      "parent": 2,
+      "x": 784,
+      "y": 526,
+      "text": "Today's Country: B",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Sub_Today's Country: Best of 2026",
+      "parent": 2,
+      "x": 784,
+      "y": 544,
+      "text": "Apple Music Country",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SquareCard_¡Dale Play!: Best of 2026",
+      "parent": 2,
+      "x": 960,
+      "y": 356,
+      "width": 162,
+      "height": 162,
+      "props": {
+        "fill": "#007A87",
+        "cornerRadius": 10,
+        "stroke": "#FFFFFF1A",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000055",
+            "offset": [
+              0,
+              6
+            ],
+            "radius": 16
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "BigYear_¡Dale Play!: Best of 2026",
+      "parent": 2,
+      "x": 974,
+      "y": 472,
+      "text": "2026",
+      "props": {
+        "fontSize": 32,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Label_¡Dale Play!: Best of 2026",
+      "parent": 2,
+      "x": 960,
+      "y": 526,
+      "text": "¡Dale Play!: Best ",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "Sub_¡Dale Play!: Best of 2026",
+      "parent": 2,
+      "x": 960,
+      "y": 544,
+      "text": "Apple Music Latin",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SecTitle_BestNewSongs",
+      "parent": 2,
+      "x": 256,
+      "y": 588,
+      "text": "Best New Songs >",
+      "props": {
+        "fontSize": 20,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SongRow_Ya Hit (feat. Drake, Travis Scott & Loc Sh...)",
+      "parent": 2,
+      "x": 256,
+      "y": 620,
+      "width": 866,
+      "height": 44,
+      "props": {
+        "fill": "#242424",
+        "cornerRadius": 8,
+        "stroke": "#FFFFFF0D",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SongArt_Ya Hit (feat. Drake, Travis Scott & Loc Sh...)",
+      "parent": 2,
+      "x": 264,
+      "y": 626,
+      "width": 32,
+      "height": 32,
+      "props": {
+        "fill": "#3E4957",
+        "cornerRadius": 4
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongTitle_Ya Hit (feat. Drake, Travis Scott & Loc Sh...)",
+      "parent": 2,
+      "x": 308,
+      "y": 634,
+      "text": "Ya Hit (feat. Drake, Travis Scott & Loc Sh...)",
+      "props": {
+        "fontSize": 13,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongArtist_Ya Hit (feat. Drake, Travis Scott & Loc Sh...)",
+      "parent": 2,
+      "x": 650,
+      "y": 634,
+      "text": "Future",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongDur_Ya Hit (feat. Drake, Travis Scott & Loc Sh...)",
+      "parent": 2,
+      "x": 1070,
+      "y": 634,
+      "text": "3:45",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SongRow_Blue Moon (Apple Music Sessions)",
+      "parent": 2,
+      "x": 256,
+      "y": 668,
+      "width": 866,
+      "height": 44,
+      "props": {
+        "fill": "#242424",
+        "cornerRadius": 8,
+        "stroke": "#FFFFFF0D",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SongArt_Blue Moon (Apple Music Sessions)",
+      "parent": 2,
+      "x": 264,
+      "y": 674,
+      "width": 32,
+      "height": 32,
+      "props": {
+        "fill": "#3E4957",
+        "cornerRadius": 4
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongTitle_Blue Moon (Apple Music Sessions)",
+      "parent": 2,
+      "x": 308,
+      "y": 682,
+      "text": "Blue Moon (Apple Music Sessions)",
+      "props": {
+        "fontSize": 13,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongArtist_Blue Moon (Apple Music Sessions)",
+      "parent": 2,
+      "x": 650,
+      "y": 682,
+      "text": "Zara Larsson — Sessions",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongDur_Blue Moon (Apple Music Sessions)",
+      "parent": 2,
+      "x": 1070,
+      "y": 682,
+      "text": "3:12",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SongRow_Saturn's Return",
+      "parent": 2,
+      "x": 256,
+      "y": 716,
+      "width": 866,
+      "height": 44,
+      "props": {
+        "fill": "#242424",
+        "cornerRadius": 8,
+        "stroke": "#FFFFFF0D",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "SongArt_Saturn's Return",
+      "parent": 2,
+      "x": 264,
+      "y": 722,
+      "width": 32,
+      "height": 32,
+      "props": {
+        "fill": "#3E4957",
+        "cornerRadius": 4
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongTitle_Saturn's Return",
+      "parent": 2,
+      "x": 308,
+      "y": 730,
+      "text": "Saturn's Return",
+      "props": {
+        "fontSize": 13,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongArtist_Saturn's Return",
+      "parent": 2,
+      "x": 650,
+      "y": 730,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "SongDur_Saturn's Return",
+      "parent": 2,
+      "x": 1070,
+      "y": 730,
+      "text": "3:48",
+      "props": {
+        "fontSize": 12,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "UpNextDrawer",
+      "parent": 2,
+      "x": 1148,
+      "y": 0,
+      "width": 292,
+      "height": 900,
+      "props": {
+        "fill": "#181C22D8",
+        "stroke": "#FFFFFF1A",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000088",
+            "offset": [
+              -8,
+              0
+            ],
+            "radius": 30
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "UpNextHeader",
+      "parent": 2,
+      "x": 1168,
+      "y": 28,
+      "text": "Up Next",
+      "props": {
+        "fontSize": 17,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "UpNextClear",
+      "parent": 2,
+      "x": 1380,
+      "y": 30,
+      "text": "Clear",
+      "props": {
+        "fontSize": 13,
+        "fill": "#FF3B30",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:04",
+      "parent": 2,
+      "x": 1168,
+      "y": 68,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:04",
+      "parent": 2,
+      "x": 1214,
+      "y": 70,
+      "text": "Girl's Girl (Apple Music...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:04",
+      "parent": 2,
+      "x": 1214,
+      "y": 87,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:04",
+      "parent": 2,
+      "x": 1390,
+      "y": 78,
+      "text": "3:04",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:36",
+      "parent": 2,
+      "x": 1168,
+      "y": 114,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:36",
+      "parent": 2,
+      "x": 1214,
+      "y": 116,
+      "text": "The Ambition (Apple M...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:36",
+      "parent": 2,
+      "x": 1214,
+      "y": 133,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:36",
+      "parent": 2,
+      "x": 1390,
+      "y": 124,
+      "text": "3:36",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:48",
+      "parent": 2,
+      "x": 1168,
+      "y": 160,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:48",
+      "parent": 2,
+      "x": 1214,
+      "y": 162,
+      "text": "Saturn's Return (Apple ...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:48",
+      "parent": 2,
+      "x": 1214,
+      "y": 179,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:48",
+      "parent": 2,
+      "x": 1390,
+      "y": 170,
+      "text": "3:48",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:05",
+      "parent": 2,
+      "x": 1168,
+      "y": 206,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:05",
+      "parent": 2,
+      "x": 1214,
+      "y": 208,
+      "text": "Ruin My Life (Apple Mu...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:05",
+      "parent": 2,
+      "x": 1214,
+      "y": 225,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:05",
+      "parent": 2,
+      "x": 1390,
+      "y": 216,
+      "text": "3:05",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:52",
+      "parent": 2,
+      "x": 1168,
+      "y": 252,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:52",
+      "parent": 2,
+      "x": 1214,
+      "y": 254,
+      "text": "Uncover (Apple Music ...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:52",
+      "parent": 2,
+      "x": 1214,
+      "y": 271,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:52",
+      "parent": 2,
+      "x": 1390,
+      "y": 262,
+      "text": "3:52",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:49",
+      "parent": 2,
+      "x": 1168,
+      "y": 298,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:49",
+      "parent": 2,
+      "x": 1214,
+      "y": 300,
+      "text": "Never Forget You (Apple...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:49",
+      "parent": 2,
+      "x": 1214,
+      "y": 317,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:49",
+      "parent": 2,
+      "x": 1390,
+      "y": 308,
+      "text": "3:49",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_4:10",
+      "parent": 2,
+      "x": 1168,
+      "y": 344,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_4:10",
+      "parent": 2,
+      "x": 1214,
+      "y": 346,
+      "text": "Symphony (Apple Music...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_4:10",
+      "parent": 2,
+      "x": 1214,
+      "y": 363,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_4:10",
+      "parent": 2,
+      "x": 1390,
+      "y": 354,
+      "text": "4:10",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:21",
+      "parent": 2,
+      "x": 1168,
+      "y": 390,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:21",
+      "parent": 2,
+      "x": 1214,
+      "y": 392,
+      "text": "Puss Puss (Apple Music...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:21",
+      "parent": 2,
+      "x": 1214,
+      "y": 409,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:21",
+      "parent": 2,
+      "x": 1390,
+      "y": 400,
+      "text": "3:21",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_5:05",
+      "parent": 2,
+      "x": 1168,
+      "y": 436,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_5:05",
+      "parent": 2,
+      "x": 1214,
+      "y": 438,
+      "text": "Lush Life (Apple Music ...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_5:05",
+      "parent": 2,
+      "x": 1214,
+      "y": 455,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_5:05",
+      "parent": 2,
+      "x": 1390,
+      "y": 446,
+      "text": "5:05",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "QueueThumb_3:31",
+      "parent": 2,
+      "x": 1168,
+      "y": 482,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#4A2A38",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF14",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTitle_3:31",
+      "parent": 2,
+      "x": 1214,
+      "y": 484,
+      "text": "Midnight Sun (Apple Mu...)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueArtist_3:31",
+      "parent": 2,
+      "x": 1214,
+      "y": 501,
+      "text": "Zara Larsson",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "QueueTime_3:31",
+      "parent": 2,
+      "x": 1390,
+      "y": 492,
+      "text": "3:31",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "FloatingPlayerPlatter",
+      "parent": 2,
+      "x": 340,
+      "y": 832,
+      "width": 760,
+      "height": 52,
+      "props": {
+        "fill": "#20252DF0",
+        "cornerRadius": 26,
+        "stroke": "#FFFFFF29",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000088",
+            "offset": [
+              0,
+              16
+            ],
+            "radius": 36
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF4D",
+            "offset": [
+              0,
+              1
+            ],
+            "radius": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TransportPrev",
+      "parent": 2,
+      "x": 365,
+      "y": 849,
+      "text": "◀◀",
+      "props": {
+        "fontSize": 13,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "TransportPlayCircle",
+      "parent": 2,
+      "x": 395,
+      "y": 841,
+      "width": 34,
+      "height": 34,
+      "props": {
+        "fill": "#FFFFFF"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TransportPlayIcon",
+      "parent": 2,
+      "x": 407,
+      "y": 849,
+      "text": "▶",
+      "props": {
+        "fontSize": 14,
+        "fill": "#000000",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TransportNext",
+      "parent": 2,
+      "x": 440,
+      "y": 849,
+      "text": "▶▶",
+      "props": {
+        "fontSize": 13,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "PlatterCover",
+      "parent": 2,
+      "x": 476,
+      "y": 840,
+      "width": 36,
+      "height": 36,
+      "props": {
+        "fill": "#3D4A5B",
+        "cornerRadius": 6,
+        "stroke": "#FFFFFF1F",
+        "strokeWeight": 1
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "PlatterTitle",
+      "parent": 2,
+      "x": 522,
+      "y": 843,
+      "text": "Blue Moon (Apple Music Sessions)",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "PlatterArtist",
+      "parent": 2,
+      "x": 522,
+      "y": 860,
+      "text": "Zara Larsson — Sessions",
+      "props": {
+        "fontSize": 10,
+        "fill": "#8E8E93",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "PreviewBadge",
+      "parent": 2,
+      "x": 740,
+      "y": 850,
+      "width": 58,
+      "height": 18,
+      "props": {
+        "fill": "#333A44",
+        "cornerRadius": 4
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "PreviewBadgeText",
+      "parent": 2,
+      "x": 748,
+      "y": 854,
+      "text": "PREVIEW",
+      "props": {
+        "fontSize": 9,
+        "fill": "#A0AAB6",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ScrubberBg",
+      "parent": 2,
+      "x": 820,
+      "y": 856,
+      "width": 170,
+      "height": 4,
+      "props": {
+        "fill": "#3A424E",
+        "cornerRadius": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ScrubberProgress",
+      "parent": 2,
+      "x": 820,
+      "y": 856,
+      "width": 75,
+      "height": 4,
+      "props": {
+        "fill": "#FFFFFF",
+        "cornerRadius": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "VolumeIcon",
+      "parent": 2,
+      "x": 1005,
+      "y": 849,
+      "text": "🔊",
+      "props": {
+        "fontSize": 12,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "VolumeBar",
+      "parent": 2,
+      "x": 1025,
+      "y": 856,
+      "width": 55,
+      "height": 4,
+      "props": {
+        "fill": "#FFFFFF",
+        "cornerRadius": 2
+      }
+    }
+  }
+]

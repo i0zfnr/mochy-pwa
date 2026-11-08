@@ -1,5 +1,11 @@
 // Ported from Mochy Music's flagship/AmbientColors.kt (GPL-3.0).
-export const START_TONES = Array.from({ length: 4 }, () => [43 / 255, 42 / 255, 45 / 255]);
+// Default start tones tuned to authentic Apple Music burgundy/violet fluid mesh (from macOS Apple Music video).
+export const START_TONES = [
+  [94 / 255, 14 / 255, 44 / 255],   // Deep burgundy (#5E0E2C)
+  [140 / 255, 20 / 255, 69 / 255],  // Rich magenta (#8C1445)
+  [26 / 255, 5 / 255, 20 / 255],    // Deep dark violet (#1A0514)
+  [58 / 255, 9 / 255, 82 / 255],    // Dark violet accent (#3A0952)
+];
 
 export function ambientTones(pixels, width, height) {
   if (!width || !height) return START_TONES;

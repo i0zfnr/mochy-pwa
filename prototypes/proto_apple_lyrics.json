@@ -1,0 +1,550 @@
+[
+  {
+    "command": "node.create",
+    "params": {
+      "type": "frame",
+      "name": "Apple Music - Immersive Fullscreen Synced Lyrics",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "props": {
+        "fill": "#15050E",
+        "clip": true
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "AuroraBurgundy",
+      "parent": 2,
+      "x": -60,
+      "y": -40,
+      "width": 800,
+      "height": 750,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": [
+              "#5E0E2C66",
+              "#00000000"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 100
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "AuroraMagentaBloom",
+      "parent": 2,
+      "x": 650,
+      "y": 40,
+      "width": 900,
+      "height": 800,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": [
+              "#8C14455E",
+              "#00000000"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 110
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "AuroraVioletDeep",
+      "parent": 2,
+      "x": 260,
+      "y": 350,
+      "width": 950,
+      "height": 700,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": [
+              "#3A095255",
+              "#00000000"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 120
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "AuroraCrimsonCenter",
+      "parent": 2,
+      "x": 450,
+      "y": 150,
+      "width": 600,
+      "height": 550,
+      "props": {
+        "fills": [
+          {
+            "type": "radialGradient",
+            "stops": [
+              "#7A103544",
+              "#00000000"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "layerBlur",
+            "radius": 90
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "AlbumCoverSquircle",
+      "parent": 2,
+      "x": 88,
+      "y": 120,
+      "width": 420,
+      "height": 420,
+      "props": {
+        "fill": "#3D1022",
+        "cornerRadius": 24,
+        "stroke": "#FFFFFF2B",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#000000A6",
+            "offset": [
+              0,
+              24
+            ],
+            "radius": 60
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF3D",
+            "offset": [
+              0,
+              1
+            ],
+            "radius": 2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "AlbumCoverGraphic",
+      "parent": 2,
+      "x": 130,
+      "y": 300,
+      "text": "iLoveMakonnen\nTuesday (feat. Drake)",
+      "props": {
+        "fontSize": 26,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ScrubberBg",
+      "parent": 2,
+      "x": 88,
+      "y": 568,
+      "width": 420,
+      "height": 3,
+      "props": {
+        "fill": "#FFFFFF2B",
+        "cornerRadius": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "ScrubberFill",
+      "parent": 2,
+      "x": 88,
+      "y": 568,
+      "width": 175,
+      "height": 3,
+      "props": {
+        "fill": "#FFFFFF",
+        "cornerRadius": 2
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "RemainingTime",
+      "parent": 2,
+      "x": 466,
+      "y": 578,
+      "text": "-3:26",
+      "props": {
+        "fontSize": 11,
+        "fill": "#FFFFFF99",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ElapsedTime",
+      "parent": 2,
+      "x": 88,
+      "y": 578,
+      "text": "1:44",
+      "props": {
+        "fontSize": 11,
+        "fill": "#FFFFFF99",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "VideoTrackTitle",
+      "parent": 2,
+      "x": 88,
+      "y": 604,
+      "text": "Tuesday (feat. Drake)",
+      "props": {
+        "fontSize": 22,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "VideoTrackArtist",
+      "parent": 2,
+      "x": 88,
+      "y": 636,
+      "text": "iLoveMakonnen — Single",
+      "props": {
+        "fontSize": 15,
+        "fill": "#FFFFFF80",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "rectangle",
+      "name": "MiniControlsPlatter",
+      "parent": 2,
+      "x": 88,
+      "y": 680,
+      "width": 420,
+      "height": 72,
+      "props": {
+        "fill": "#FFFFFF12",
+        "cornerRadius": 20,
+        "stroke": "#FFFFFF26",
+        "strokeWeight": 1,
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#00000066",
+            "offset": [
+              0,
+              12
+            ],
+            "radius": 28
+          },
+          {
+            "type": "innerShadow",
+            "color": "#FFFFFF33",
+            "offset": [
+              0,
+              1
+            ],
+            "radius": 1
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TransportPrevMini",
+      "parent": 2,
+      "x": 180,
+      "y": 706,
+      "text": "◀◀",
+      "props": {
+        "fontSize": 16,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "ellipse",
+      "name": "TransportPlayCircleMini",
+      "parent": 2,
+      "x": 240,
+      "y": 694,
+      "width": 44,
+      "height": 44,
+      "props": {
+        "fill": "#FFFFFF"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TransportPlayIconMini",
+      "parent": 2,
+      "x": 257,
+      "y": 707,
+      "text": "▶",
+      "props": {
+        "fontSize": 16,
+        "fill": "#000000",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "TransportNextMini",
+      "parent": 2,
+      "x": 316,
+      "y": 706,
+      "text": "▶▶",
+      "props": {
+        "fontSize": 16,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "LyricPastLine1",
+      "parent": 2,
+      "x": 600,
+      "y": 160,
+      "text": "Got the club going up on a Tuesday",
+      "props": {
+        "fontSize": 28,
+        "fill": "#FFFFFF59",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "LyricPastLine2",
+      "parent": 2,
+      "x": 600,
+      "y": 220,
+      "text": "Got your girl in the cut and she ain't choosy",
+      "props": {
+        "fontSize": 28,
+        "fill": "#FFFFFF73",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "ActiveLyricLine",
+      "parent": 2,
+      "x": 600,
+      "y": 295,
+      "text": "Club going up on a Tuesday",
+      "props": {
+        "fontSize": 40,
+        "fill": "#FFFFFF",
+        "fontFamily": "Inter",
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#FFFFFF55",
+            "offset": [
+              0,
+              0
+            ],
+            "radius": 18
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "InstrumentalPauseDots",
+      "parent": 2,
+      "x": 600,
+      "y": 375,
+      "text": "●    ●    ●",
+      "props": {
+        "fontSize": 22,
+        "fill": "#FFFFFF99",
+        "fontFamily": "Inter",
+        "effects": [
+          {
+            "type": "dropShadow",
+            "color": "#FFFFFF66",
+            "offset": [
+              0,
+              0
+            ],
+            "radius": 12
+          }
+        ]
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "UpcomingLine1",
+      "parent": 2,
+      "x": 600,
+      "y": 440,
+      "text": "Got your girl in the cut and she ain't choosy",
+      "props": {
+        "fontSize": 32,
+        "fill": "#FFFFFF80",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "UpcomingLine2",
+      "parent": 2,
+      "x": 600,
+      "y": 510,
+      "text": "Club going up",
+      "props": {
+        "fontSize": 30,
+        "fill": "#FFFFFF59",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "UpcomingLine3",
+      "parent": 2,
+      "x": 600,
+      "y": 575,
+      "text": "Got the club going up",
+      "props": {
+        "fontSize": 28,
+        "fill": "#FFFFFF40",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "UpcomingLine4",
+      "parent": 2,
+      "x": 600,
+      "y": 635,
+      "text": "Got the club going up on a Tuesday",
+      "props": {
+        "fontSize": 26,
+        "fill": "#FFFFFF2B",
+        "fontFamily": "Inter"
+      }
+    }
+  },
+  {
+    "command": "node.create",
+    "params": {
+      "type": "text",
+      "name": "LyricsProviderNote",
+      "parent": 2,
+      "x": 600,
+      "y": 720,
+      "text": "Apple Music Time-Synced Lyrics · LRCLIB & Musixmatch",
+      "props": {
+        "fontSize": 11,
+        "fill": "#8A5B6F",
+        "fontFamily": "Inter"
+      }
+    }
+  }
+]

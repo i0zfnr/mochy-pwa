@@ -33,7 +33,7 @@ class ErrorBoundary extends React.Component {
 
 import React, { useEffect, useMemo, useRef, useState, useCallback, memo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Home, Search, Library, Settings, Heart, Plus, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1, ListMusic, Mic2, Volume2, ChevronDown, ChevronRight, ArrowUpRight, Upload, Music2, X, Download, Check, MoreHorizontal, Clock3, Disc3, Headphones, WifiOff, Trash2, Maximize2, Minimize2, Link2, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { Home, Search, Library, Settings, Heart, Plus, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1, ListMusic, Mic2, Volume2, ChevronDown, ChevronRight, ArrowUpRight, Upload, Music2, X, Download, Check, MoreHorizontal, Clock3, Disc3, Headphones, WifiOff, Trash2, Maximize2, Minimize2, Link2, SlidersHorizontal, Sparkles, LayoutGrid, Radio } from 'lucide-react';
 import { getLibrary, saveTrack, readState, writeState, importAudio, removeTrack } from './storage';
 import { findMusic, time, parseLrc } from './music';
 import { usePlayer } from './usePlayer';
@@ -44,7 +44,101 @@ import { highResolutionArtwork } from './artwork';
 import { useArtwork } from './useArtwork';
 import { useTabBeatSync } from './useTabBeatSync';
 import { AudioLab } from './AudioLab';
-import { DEFAULT_AUDIO_LAB } from './audio-lab';
+import { DEFAULT_AUDIO_LAB, TRANSITION_PRESETS } from './audio-lab';
+
+const APPLE_HERO_CAROUSEL = [
+  {
+    id: 'hero-1',
+    eyebrow: 'NEW PLAYLIST',
+    title: 'Best Songs of 2026',
+    subtitle: 'Apple Music',
+    query: 'Best Songs of 2026',
+    tagline: 'The tracks that made our year.',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'hero-2',
+    eyebrow: 'BEST OF 2026',
+    title: 'Before we reveal Artist of the Year, check out more of our 2026 picks.',
+    subtitle: 'Apple Music',
+    query: 'Top Hits 2026',
+    tagline: 'Explore our picks across hip-hop, pop, R&B and dance.',
+    image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'hero-3',
+    eyebrow: 'NEW ALBUM',
+    title: 'FRESH',
+    subtitle: 'Lil Baby',
+    query: 'Lil Baby',
+    tagline: 'A decade into his career, an era-defining rap star asserts his resilience.',
+    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format&fit=crop&q=80',
+  },
+];
+
+const APPLE_BENTO_2026 = [
+  {
+    id: 'bento-rap',
+    title: 'Rap Life: Best of 2026',
+    sub: 'Apple Music Hip-Hop',
+    badge: 'RAP LIFE',
+    year: '2026',
+    query: 'Rap Life Best of 2026 Drake',
+    bg: 'linear-gradient(135deg, #1f1c2c 0%, #928DAB 100%)',
+    art: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'bento-rnb',
+    title: 'R&B Now: Best of 2026',
+    sub: 'Apple Music R&B',
+    badge: 'R&B NOW',
+    year: '2026',
+    query: 'R&B Now Best of 2026 SZA Kehlani',
+    bg: 'linear-gradient(135deg, #f12711 0%, #f5af19 100%)',
+    art: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'bento-pop',
+    title: 'A-List Pop: Best of 2026',
+    sub: 'Apple Music Pop',
+    badge: 'A-LIST POP',
+    year: '2026',
+    query: 'A-List Pop Best of 2026 Zara Larsson Sabrina Carpenter',
+    bg: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+    art: 'https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'bento-country',
+    title: "Today's Country: Best of 2026",
+    sub: 'Apple Music Country',
+    badge: "TODAY'S COUNTRY",
+    year: '2026',
+    query: "Today's Country Best of 2026 Kacey Musgraves",
+    bg: 'linear-gradient(135deg, #ec008c 0%, #fc6767 100%)',
+    art: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'bento-latin',
+    title: '¡Dale Play!: Best of 2026',
+    sub: 'Apple Music Latin',
+    badge: '¡DALE PLAY!',
+    year: '2026',
+    query: 'Dale Play Best of 2026 Bad Bunny Rauw Alejandro',
+    bg: 'linear-gradient(135deg, #00c6ff 0%, #0072ff 100%)',
+    art: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&auto=format&fit=crop&q=80',
+  },
+];
+
+const APPLE_NEW_SONGS = [
+  { id: 'new-1', title: 'Ya Hit (feat. Drake, Travis Scott & Loco)', artist: 'Future', duration: 216, query: 'Future Ya Hit Drake' },
+  { id: 'new-2', title: 'Blue Moon (Apple Music Sessions)', artist: 'Zara Larsson — Sessions', duration: 206, query: 'Zara Larsson Blue Moon' },
+  { id: 'new-3', title: 'Good Luck, Babe!', artist: 'Chappell Roan', duration: 218, query: 'Chappell Roan Good Luck Babe' },
+  { id: 'new-4', title: 'Birds of a Feather', artist: 'Billie Eilish', duration: 190, query: 'Billie Eilish Birds of a Feather' },
+  { id: 'new-5', title: 'Taste', artist: 'Sabrina Carpenter', duration: 157, query: 'Sabrina Carpenter Taste' },
+  { id: 'new-6', title: 'Too Sweet', artist: 'Hozier', duration: 251, query: 'Hozier Too Sweet' },
+  { id: 'new-7', title: 'Die With A Smile', artist: 'Lady Gaga & Bruno Mars', duration: 251, query: 'Lady Gaga Bruno Mars Die With A Smile' },
+  { id: 'new-8', title: 'Not Like Us', artist: 'Kendrick Lamar', duration: 274, query: 'Kendrick Lamar Not Like Us' },
+];
 
 if (typeof window !== 'undefined') {
   const isTouch = 'ontouchstart' in window || (navigator.maxTouchPoints > 0);
@@ -318,7 +412,7 @@ function LyricsTiming({ delay, onChange }) {
 }
 
 function App() {
-  const [page, setPage] = useState('home');
+  const [page, setPage] = useState('new');
   const [library, setLibrary] = useState([]);
   const [likes, setLikes] = useState([]);
   const [history, setHistory] = useState([]);
@@ -342,6 +436,8 @@ function App() {
   const [theme, setTheme] = useState('apple-dark');
   const [pureBlack, setPureBlack] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
+  const [upNextOpen, setUpNextOpen] = useState(false);
+  const [transitionModal, setTransitionModal] = useState(false);
   const [lyrics, setLyrics] = useState(null);
   const [lyricsLoading, setLyricsLoading] = useState(false);
   const [lyricDelays, setLyricDelays] = useState({});
@@ -379,6 +475,18 @@ function App() {
       break;
     }
   }
+  const isPauseNow = useMemo(() => {
+    if (!synced.length) return false;
+    if (lyricPosition < synced[0].time - 1.5 && synced[0].time > 3) return true;
+    if (lyricIndex >= 0 && lyricIndex < synced.length - 1) {
+      const curr = synced[lyricIndex];
+      const next = synced[lyricIndex + 1];
+      if (next.time - curr.time > 4.5 && lyricPosition > curr.time + 2 && lyricPosition < next.time - 0.8) {
+        return true;
+      }
+    }
+    return false;
+  }, [synced, lyricIndex, lyricPosition]);
   const forceScrollFullscreen = useSmoothLyricScroll(fullscreenLyricsRef, activeLyricRef, lyricIndex, fullScreen);
   const forceScrollPanel = useSmoothLyricScroll(panelLyricsRef, panelLyricRef, lyricIndex, panel === 'lyrics');
   const seekLyric = useCallback(value => {
@@ -536,10 +644,184 @@ function App() {
 
   return <div className={`app theme-${theme} ${pureBlack ? 'pure-black' : ''} ${expanded ? 'player-expanded' : ''}`} data-theme={theme} ref={motionRoot}>
     <input ref={input} type="file" accept="audio/*,.flac,.opus" multiple hidden onChange={e => { importFiles([...e.target.files]); e.target.value = ''; }}/>
-    <aside className="sidebar"><button className="brand" onClick={() => navigate('home')}><img src="/icon.png" alt=""/><span>xenn<span className="brand-dot">.</span></span></button><span className="sidebar-label">YOUR LITTLE UNIVERSE</span><nav>{[[Home, 'Home', 'home'], [Search, 'Search', 'search'], [Library, 'Your library', 'library'], [SlidersHorizontal, 'Audio Lab', 'audiolab']].map(([Icon, name, key]) => <button key={key} className={`nav-item ${page === key ? 'selected' : ''}`} onClick={() => navigate(key)}><Icon size={21}/>{name}{page === key && <span className="nav-dot"/>}</button>)}</nav><div className="sidebar-divider"/><div className="sidebar-heading"><span>YOUR COLLECTION</span><IconButton icon={Plus} label="Create playlist" onClick={() => setNewPlaylist(true)}/></div><button className={`collection ${page === 'likes' ? 'selected' : ''}`} onClick={() => navigate('likes')}><span className="collection-icon pink"><Heart size={19}/></span><span>Liked songs<small>{likes.length} songs</small></span></button><button className={`collection ${page === 'local' ? 'selected' : ''}`} onClick={() => navigate('local')}><span className="collection-icon green"><Download size={19}/></span><span>On this device<small>{library.filter(t => t.source === 'local').length} songs</small></span></button>{playlists.map(p => <button className="collection" key={p.id} onClick={() => openPlaylist(p.id)}><span className="collection-icon"><ListMusic size={19}/></span><span>{p.name}<small>{p.tracks.length} songs</small></span></button>)}<button className="create-playlist" onClick={() => setNewPlaylist(true)}><Plus size={17}/> Create playlist</button><div className="sidebar-bottom"><button className={`nav-item ${page === 'settings' ? 'selected' : ''}`} onClick={() => navigate('settings')}><Settings size={20}/>Settings<span className="version">WEB BETA</span></button></div></aside>
+    <aside className="sidebar">
+      <button className="am-brand" onClick={() => navigate('new')} aria-label="Apple Music">
+        <span className="am-brand-logo">
+          <svg viewBox="0 0 170 170" width="22" height="22" fill="currentColor">
+            <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.6-7.85-11.7-14.43-6.09-9.78-10.9-20.93-14.43-33.45-3.53-12.52-5.3-24.16-5.3-34.92 0-14.13 3.48-26.04 10.45-35.73 6.96-9.68 15.82-14.58 26.57-14.71 4.58 0 9.84 1.15 15.78 3.44 5.94 2.29 9.84 3.44 11.7 3.44 1.64 0 5.65-1.15 12.04-3.44 6.39-2.29 11.7-3.32 15.93-3.09 11.96.65 21.6 4.79 28.93 12.43-10.44 6.32-15.56 15.11-15.35 26.38.22 8.71 3.59 16.08 10.12 22.11 6.53 6.03 14.28 9.51 23.25 10.44-2.17 6.74-4.89 13.59-8.15 20.55zM119.22 32.64c0-7.39 2.61-14.35 7.83-20.87 5.22-6.52 11.63-10.76 19.23-12.72.65 1.52.98 3.15.98 4.89 0 7.39-2.72 14.46-8.15 21.2-5.44 6.74-11.96 10.76-19.57 12.06-.22-1.52-.32-3.04-.32-4.56z"/>
+          </svg>
+        </span>
+        <span className="am-brand-text">Music</span>
+      </button>
+
+      <nav>
+        {[
+          [Search, 'Search', 'search'],
+          [Home, 'Home', 'home'],
+          [LayoutGrid, 'New', 'new'],
+          [Radio, 'Radio', 'radio'],
+          [Library, 'Your library', 'library'],
+          [SlidersHorizontal, 'Audio Lab', 'audiolab']
+        ].map(([Icon, name, key]) => (
+          <button
+            key={key}
+            className={`nav-item ${page === key ? 'selected am-active-pill' : ''}`}
+            onClick={() => navigate(key)}
+          >
+            <Icon size={21}/>
+            {name}
+            {page === key && <span className="nav-dot"/>}
+          </button>
+        ))}
+      </nav>
+
+      <div className="sidebar-divider"/>
+      <div className="sidebar-heading">
+        <span>YOUR COLLECTION</span>
+        <IconButton icon={Plus} label="Create playlist" onClick={() => setNewPlaylist(true)}/>
+      </div>
+
+      <button className={`collection ${page === 'likes' ? 'selected' : ''}`} onClick={() => navigate('likes')}>
+        <span className="collection-icon pink"><Heart size={19}/></span>
+        <span>Liked songs<small>{likes.length} songs</small></span>
+      </button>
+
+      <button className={`collection ${page === 'local' ? 'selected' : ''}`} onClick={() => navigate('local')}>
+        <span className="collection-icon green"><Download size={19}/></span>
+        <span>On this device<small>{library.filter(t => t.source === 'local').length} songs</small></span>
+      </button>
+
+      {playlists.map(p => (
+        <button className="collection" key={p.id} onClick={() => openPlaylist(p.id)}>
+          <span className="collection-icon"><ListMusic size={19}/></span>
+          <span>{p.name}<small>{p.tracks.length} songs</small></span>
+        </button>
+      ))}
+
+      <button className="create-playlist" onClick={() => setNewPlaylist(true)}>
+        <Plus size={17}/> Create playlist
+      </button>
+
+      <div className="sidebar-bottom-actions">
+        <button className={`nav-item ${page === 'settings' ? 'selected' : ''}`} onClick={() => navigate('settings')}>
+          <Settings size={20}/>Settings<span className="version">WEB BETA</span>
+        </button>
+        <a className="am-open-in-music" href="https://music.apple.com" target="_blank" rel="noreferrer">
+          Open in Music <ArrowUpRight size={14}/>
+        </a>
+        <button className="am-signin-btn" onClick={() => navigate('settings')}>
+          Sign In
+        </button>
+      </div>
+    </aside>
     <main>
-      <header className="topbar"><div className="breadcrumb">Xenn <span>/</span> <strong>{({ home: 'Home', search: 'Search', library: 'Your library', likes: 'Liked songs', local: 'On this device', history: 'Listening history', playlist: playlist?.name, settings: 'Settings', audiolab: 'Audio Lab' })[page]}</strong></div><div className="topbar-actions">{!online && <span className="offline-pill"><WifiOff size={14}/>Offline</span>}{install && <button className="install-button" onClick={async () => { await install.prompt(); setInstall(null); }}><Download size={15}/>Install app</button>}<IconButton icon={Clock3} label="Listening history" onClick={() => navigate('history')}/><button className="avatar" aria-label="Open settings" onClick={() => navigate('settings')}>x<span/></button></div></header>
-      {page === 'home' ? <div className="page home-page"><div className="greeting"><div><span className="eyebrow">{greeting} <Sparkles size={12} className="sparkle" style={{ display: 'inline', verticalAlign: '-1px', marginLeft: 4 }} /></span><h1>A little music.<br className="mobile-break"/> A little you.</h1><p>Settle in. Your next favorite is waiting.</p></div><span className="date-stamp">{new Date().toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+      <header className="topbar"><div className="breadcrumb">Xenn <span>/</span> <strong>{({ new: 'New', home: 'Home', radio: 'Radio', search: 'Search', library: 'Your library', likes: 'Liked songs', local: 'On this device', history: 'Listening history', playlist: playlist?.name, settings: 'Settings', audiolab: 'Audio Lab' })[page] || 'New'}</strong></div><div className="topbar-actions"><button className="text-button" style={{ fontSize: 12, padding: '5px 12px', borderRadius: 16, background: 'rgba(255, 255, 255, 0.08)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.08)' }} onClick={() => setTransitionModal(true)} title="Configure track transition">Transition: {audioLabSettings.transition === 'crossfade_5s' ? '5s' : audioLabSettings.transition === 'gapless' ? 'Gapless' : audioLabSettings.transition === 'off' ? 'Off' : 'Auto 3s'}</button>{!online && <span className="offline-pill"><WifiOff size={14}/>Offline</span>}{install && <button className="install-button" onClick={async () => { await install.prompt(); setInstall(null); }}><Download size={15}/>Install app</button>}<IconButton icon={Clock3} label="Listening history" onClick={() => navigate('history')}/><button className="avatar" aria-label="Open settings" onClick={() => navigate('settings')}>x<span/></button></div></header>
+      {page === 'new' ? (
+        <div className="page new-page-container">
+          <div className="new-page-header">
+            <h1>New</h1>
+          </div>
+          
+          {/* 3-Column Hero Featured Carousel */}
+          <div className="am-hero-carousel">
+            {APPLE_HERO_CAROUSEL.map(item => (
+              <div className="am-hero-card" key={item.id} onClick={() => search(item.query)} role="button" tabIndex={0}>
+                <div className="am-hero-meta">
+                  <span className="am-hero-eyebrow">{item.eyebrow}</span>
+                  <strong className="am-hero-title">{item.title}</strong>
+                  <span className="am-hero-subtitle">{item.subtitle}</span>
+                </div>
+                <div className="am-hero-banner">
+                  <img src={item.image} alt={item.title} loading="lazy" />
+                </div>
+                <div className="am-hero-footer">
+                  <p>{item.tagline}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 5-Column 2026 Bento Grid */}
+          <div className="am-section-header" onClick={() => search('Best of 2026')}>
+            <h2 className="am-section-title">Best of 2026</h2>
+            <ChevronRight size={18} color="rgba(255, 255, 255, 0.6)"/>
+          </div>
+          <div className="am-bento-grid">
+            {APPLE_BENTO_2026.map(item => (
+              <div key={item.id} onClick={() => search(item.query)} role="button" tabIndex={0}>
+                <div className="am-bento-card" style={{ background: item.bg }}>
+                  <div className="am-bento-art">
+                    <img src={item.art} alt={item.title} loading="lazy" />
+                    <span className="am-bento-badge">{item.badge}</span>
+                    <span className="am-bento-year">{item.year}</span>
+                  </div>
+                </div>
+                <div className="am-bento-meta">
+                  <div className="am-bento-title">{item.title}</div>
+                  <div className="am-bento-sub">{item.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Best New Songs Scannable Rows */}
+          <div className="am-section-header" onClick={() => search('Best New Songs 2026')}>
+            <h2 className="am-section-title">Best New Songs</h2>
+            <ChevronRight size={18} color="rgba(255, 255, 255, 0.6)"/>
+          </div>
+          <div className="am-track-grid">
+            {APPLE_NEW_SONGS.map(song => (
+              <div
+                key={song.id}
+                className={`am-track-row ${current?.title === song.title ? 'is-active' : ''}`}
+                onClick={() => search(song.query)}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="am-track-left">
+                  <div className="am-track-thumb">
+                    <img src={`https://images.unsplash.com/photo-${song.id === 'new-1' ? '1511671782779-c97d3d27a1d4' : song.id === 'new-2' ? '1514525253161-7a46d19cd819' : '1470225620780-dba8ba36b745'}?w=120&auto=format&fit=crop&q=80`} alt="" />
+                  </div>
+                  <div className="am-track-info">
+                    <strong className="am-track-title">{song.title}</strong>
+                    <div className="am-track-artist">{song.artist}</div>
+                  </div>
+                </div>
+                <span className="am-track-duration">{time(song.duration)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : page === 'radio' ? (
+        <div className="page new-page-container">
+          <div className="new-page-header">
+            <h1>Radio</h1>
+          </div>
+          <div className="am-section-header">
+            <h2 className="am-section-title">Live & Premier Stations</h2>
+          </div>
+          <div className="am-bento-grid">
+            {[
+              { name: 'Apple Music 1', sub: 'The new music that matters', bg: '#D43852', query: 'Apple Music 1 Hits' },
+              { name: 'Apple Music Hits', sub: 'The songs you know and love', bg: '#2B50ED', query: 'Apple Music Hits' },
+              { name: 'Apple Music Country', sub: 'Where country lives', bg: '#D97706', query: 'Apple Music Country' },
+              { name: 'Chill Station', sub: 'Mellow beats and gentle vibes', bg: '#059669', query: 'Chill Lo-Fi Jazz' },
+              { name: 'Acoustic Sunrise', sub: 'Pure acoustic warmth', bg: '#7C3AED', query: 'Acoustic Morning' },
+            ].map(st => (
+              <div key={st.name} onClick={() => search(st.query)} role="button" tabIndex={0}>
+                <div className="am-bento-card" style={{ background: st.bg, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: 18 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)' }}>LIVE RADIO</span>
+                  <strong style={{ fontSize: 20, color: '#FFFFFF', marginTop: 4 }}>{st.name}</strong>
+                </div>
+                <div className="am-bento-meta">
+                  <div className="am-bento-title">{st.name}</div>
+                  <div className="am-bento-sub">{st.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : page === 'home' ? <div className="page home-page"><div className="greeting"><div><span className="eyebrow">{greeting} <Sparkles size={12} className="sparkle" style={{ display: 'inline', verticalAlign: '-1px', marginLeft: 4 }} /></span><h1>A little music.<br className="mobile-break"/> A little you.</h1><p>Settle in. Your next favorite is waiting.</p></div><span className="date-stamp">{new Date().toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
         <section className="hero"><div className="hero-text"><span className="hero-label"><span/>YOUR DAILY SOUNDTRACK</span><h2>{history.length ? 'Right where\nyou left off.' : 'Find your\nlittle escape.'}</h2><p>{hero ? `${hero.artist}, a deep breath, and a moment just for you.` : 'The songs you love. The ones you haven’t met yet.'}</p><button className="primary" disabled={!hero} onClick={() => hero && play(hero, history.length ? history : feed)}><Play size={17} fill="currentColor"/>{history.length ? 'Keep listening' : 'Start listening'}</button><span className="hero-footnote">A sound for every version of you.</span></div><div className="hero-visual"><span className="orbit orbit-one"/><span className="orbit orbit-two"/><span className="hero-star"><Sparkles size={14} /></span><div className="hero-cover"><Cover track={hero}/></div><span className="hero-caption">a little out of this world <ArrowUpRight size={12} style={{ display: 'inline', verticalAlign: '-2px' }} /></span></div></section>
         <div className="mood-row">{['For you', 'Chill', 'Focus', 'Feel good', 'Late night', 'Romance', 'Workout'].map((m, i) => <button className={i === 0 ? 'selected' : ''} key={m} onClick={() => i === 0 ? navigate('home') : search(`${m} music`)}>{i === 0 && <Sparkles size={12} style={{ display: 'inline', marginRight: 4, verticalAlign: '-1px' }} />}{m}</button>)}</div>
         {history.length > 0 && <section><SectionHead title="Back in your rotation" subtitle="SOUNDS LIKE YOU" action="History" onClick={() => navigate('history')}/><div className="quick-grid"><Tracks tracks={history.slice(0, 6)} numbered={false} currentId={currentId} isPlaying={isPlaying} likesSet={likesSet} onPlay={play} onLike={like} onMenu={setMenu}/></div></section>}
@@ -576,7 +858,154 @@ function App() {
   const next = cycle[audioLabSettings.beatIntensity || 'normal'] || 'normal';
   setAudioLabSettings(old => ({ ...old, beatIntensity: next }));
   notify(`Beat motion: ${next.toUpperCase()}`);
-}} title={`Beat Motion: ${(audioLabSettings.beatIntensity || 'normal').toUpperCase()}. Click to cycle (Low, Normal, Aggressive)`}><Sparkles size={14}/>Beat: <span className="beat-badge">{audioLabSettings.beatIntensity || 'normal'}</span></button><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/><IconButton icon={Minimize2} label="Exit full screen (Esc)" onClick={() => setFullScreen(false)}/></div></header><div className={`af-content ${noLyrics ? 'no-lyrics' : ''}`}><div className="af-left"><div className={`af-cover-box ${shape}`}><Cover track={displayCurrent}/></div><div className="af-meta"><div className="af-meta-heading"><h2>{current.title}</h2></div><p>{current.artist}</p>{lyrics?.instrumental && <span className="af-instrumental-tag"><Music2 size={12} style={{ display: 'inline', verticalAlign: '-1px', marginRight: 4 }} />Instrumental</span>}{displayCurrent.artworkLink && <a className="artwork-credit" href={displayCurrent.artworkLink} target="_blank" rel="noreferrer">View album on {displayCurrent.artworkProvider}<ArrowUpRight size={11}/></a>}</div><div className="af-controls"><div className="seek-bar af-seek"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))}/><div><span>{time(player.position)}</span><span>{time(player.duration)}</span></div></div><div className="transport af-transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} className="play-button af-play" onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume af-volume"><Volume2 size={18}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div></div></div><div className="af-lyrics">{synced.length > 0 && <LyricsTiming delay={lyricDelay} onChange={setLyricDelay}/>}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><Music2 size={28} style={{ opacity: 0.6, marginBottom: 8 }} /><p>Instrumental</p></div> : synced.length ? <div className="af-lyrics-scroll" ref={fullscreenLyricsRef}>{synced.map((line, i) => <LyricItem key={i} line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? activeLyricRef : null} onSeek={seekLyric}/>)}<div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : lyrics?.plainLyrics ? <div className="af-lyrics-scroll plain" ref={fullscreenLyricsRef}><p className="plain-lyrics">{lyrics.plainLyrics}</p><div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : <div className="af-lyrics-empty"><p>No lyrics found for this song.</p></div>}</div></div></div>}
+}} title={`Beat Motion: ${(audioLabSettings.beatIntensity || 'normal').toUpperCase()}. Click to cycle (Low, Normal, Aggressive)`}><Sparkles size={14}/>Beat: <span className="beat-badge">{audioLabSettings.beatIntensity || 'normal'}</span></button><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/><IconButton icon={Minimize2} label="Exit full screen (Esc)" onClick={() => setFullScreen(false)}/></div></header><div className={`af-content ${noLyrics ? 'no-lyrics' : ''}`}><div className="af-left"><div className={`af-cover-box ${shape}`}><Cover track={displayCurrent}/></div><div className="af-meta"><div className="af-meta-heading"><h2>{current.title}</h2></div><p>{current.artist}</p>{lyrics?.instrumental && <span className="af-instrumental-tag"><Music2 size={12} style={{ display: 'inline', verticalAlign: '-1px', marginRight: 4 }} />Instrumental</span>}{displayCurrent.artworkLink && <a className="artwork-credit" href={displayCurrent.artworkLink} target="_blank" rel="noreferrer">View album on {displayCurrent.artworkProvider}<ArrowUpRight size={11}/></a>}</div><div className="af-controls"><div className="seek-bar af-seek"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))}/><div><span>{time(player.position)}</span><span>-{time(Math.max(0, (player.duration || 0) - player.position))}</span></div></div><div className="transport af-transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} className="play-button af-play" onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume af-volume"><Volume2 size={18}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div></div></div><div className="af-lyrics">{synced.length > 0 && <LyricsTiming delay={lyricDelay} onChange={setLyricDelay}/>}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><Music2 size={28} style={{ opacity: 0.6, marginBottom: 8 }} /><p>Instrumental</p></div> : synced.length ? <div className="af-lyrics-scroll" ref={fullscreenLyricsRef}>{isPauseNow && lyricIndex === -1 && (
+                <div className="af-pause-indicator" aria-label="Instrumental intro">
+                  <span className="af-pause-dot dot-1" />
+                  <span className="af-pause-dot dot-2" />
+                  <span className="af-pause-dot dot-3" />
+                </div>
+              )}
+              {synced.map((line, i) => (
+                <React.Fragment key={i}>
+                  <LyricItem line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? activeLyricRef : null} onSeek={seekLyric}/>
+                  {isPauseNow && i === lyricIndex && (
+                    <div className="af-pause-indicator" aria-label="Instrumental break">
+                      <span className="af-pause-dot dot-1" />
+                      <span className="af-pause-dot dot-2" />
+                      <span className="af-pause-dot dot-3" />
+                    </div>
+                  )}
+                </React.Fragment>
+              ))}<div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : lyrics?.plainLyrics ? <div className="af-lyrics-scroll plain" ref={fullscreenLyricsRef}><p className="plain-lyrics">{lyrics.plainLyrics}</p><div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : <div className="af-lyrics-empty"><p>No lyrics found for this song.</p></div>}</div></div></div>}
+  
+    {/* Centered Floating Liquid Glass Player Capsule (Desktop) */}
+    {current && (
+      <div className="floating-player-capsule">
+        <div className="fpc-left">
+          <IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/>
+          <IconButton icon={SkipBack} label="Previous song" onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/>
+          <button className="fpc-play-btn" aria-label={player.playing ? 'Pause' : 'Play'} onClick={player.toggle}>
+            {player.playing ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" style={{ marginLeft: 2 }} />}
+          </button>
+          <IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/>
+          <IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/>
+        </div>
+        <div className="fpc-center">
+          <div className="fpc-thumb" onClick={() => setFullScreen(true)} role="button" tabIndex={0} title="Open Fullscreen Lyrics">
+            <Cover track={displayCurrent}/>
+          </div>
+          <div className="fpc-meta">
+            <div className="fpc-title">{current.title}</div>
+            <div className="fpc-artist">{current.artist}</div>
+          </div>
+          <span className="fpc-badge">PREVIEW</span>
+          <IconButton icon={MoreHorizontal} label="Song options" onClick={() => setMenu(current)}/>
+        </div>
+        <div className="fpc-right">
+          <Volume2 size={16} style={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+          <input type="range" className="fpc-vol-slider" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/>
+          <IconButton icon={Mic2} label="Synced Lyrics (Full Screen)" active={fullScreen} onClick={() => setFullScreen(true)}/>
+          <IconButton icon={ListMusic} label="Up Next Queue" active={upNextOpen} onClick={() => setUpNextOpen(!upNextOpen)}/>
+        </div>
+      </div>
+    )}
+
+    {/* Right Frosted "Up Next" Queue Drawer */}
+    {upNextOpen && (
+      <aside className="up-next-drawer" aria-label="Up Next Queue">
+        <div className="und-header">
+          <h2 className="und-title">Up Next</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button className="und-clear-btn" onClick={() => { if (current) player.setQueue([current]); }}>Clear</button>
+            <IconButton icon={X} label="Close Up Next" onClick={() => setUpNextOpen(false)}/>
+          </div>
+        </div>
+        <div className="und-list">
+          {player.queue.map((track, i) => {
+            const isCur = i === player.index;
+            return (
+              <div
+                key={`${track.id}-${i}`}
+                className={`und-item ${isCur ? 'is-current' : ''}`}
+                onClick={() => player.start(track, player.queue, i)}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="und-item-left">
+                  <div className="und-item-thumb">
+                    <Cover track={track}/>
+                  </div>
+                  <div className="und-item-info">
+                    <div className="und-item-title">{track.title}</div>
+                    <div className="und-item-artist">{track.artist}</div>
+                  </div>
+                </div>
+                {isCur && player.playing ? (
+                  <Volume2 size={14} color="#007AFF" style={{ marginRight: 6 }} />
+                ) : null}
+                <span className="und-item-duration">{time(track.duration)}</span>
+              </div>
+            );
+          })}
+        </div>
+      </aside>
+    )}
+
+    {/* Apple Transition Modal (Verified from User Attachment) */}
+    {transitionModal && (
+      <div className="modal-backdrop" onClick={() => setTransitionModal(false)}>
+        <section className="modal al-transition-modal" style={{ maxWidth: 440, width: '100%', background: '#1C1E22', borderRadius: 20, border: '1px solid rgba(255, 255, 255, 0.12)' }} role="dialog" aria-modal="true" aria-label="Transition" onClick={e => e.stopPropagation()}>
+          <div className="modal-heading" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#FFFFFF', margin: 0 }}>Transition</h2>
+            <IconButton icon={X} label="Close transition settings" onClick={() => setTransitionModal(false)}/>
+          </div>
+          <div className="al-modes-stack" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {TRANSITION_PRESETS.map(preset => {
+              const isSelected = audioLabSettings.transition === preset.id || (preset.id === 'auto' && (!audioLabSettings.transition || audioLabSettings.transition === 'auto'));
+              return (
+                <button
+                  key={preset.id}
+                  className={`al-mode-card ${isSelected ? 'active' : ''}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px 20px',
+                    borderRadius: 16,
+                    background: '#24272E',
+                    border: isSelected ? '2px solid #30D158' : '1px solid rgba(255, 255, 255, 0.08)',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    width: '100%',
+                    transition: 'border-color 0.15s ease',
+                  }}
+                  onClick={() => {
+                    setAudioLabSettings(old => ({
+                      ...old,
+                      transition: preset.id,
+                      transitionDuration: preset.duration,
+                    }));
+                    notify(`Transition: ${preset.name}`);
+                  }}
+                >
+                  <div className="al-mode-body">
+                    <strong className="al-mode-title" style={{ fontSize: 15, fontWeight: 600, color: '#FFFFFF' }}>{preset.name}</strong>
+                    <p className="al-mode-desc" style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.6)', margin: '4px 0 0' }}>{preset.description}</p>
+                  </div>
+                  <div className="al-mode-radio">
+                    {isSelected ? (
+                      <Check size={20} color="#30D158" strokeWidth={2.5} />
+                    ) : (
+                      <span style={{ width: 20, height: 20, display: 'inline-block' }} />
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+    )}
   <div className="youtube-audio-only" aria-hidden="true" style={{ position: 'fixed', bottom: 0, right: 0, width: '160px', height: '90px', opacity: 0.001, pointerEvents: 'none', overflow: 'hidden', zIndex: -999 }}><div id="youtube-player"/></div></div>;
 }
 

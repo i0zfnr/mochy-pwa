@@ -337,10 +337,7 @@ export function AudioLab({ settings, onChange, onBack }) {
         <div className="modal-backdrop" onClick={() => setActiveModal(null)}>
           <div className="modal al-transition-modal" style={{ maxWidth: 480, width: '100%' }} onClick={e => e.stopPropagation()}>
             <div className="modal-heading al-modal-heading">
-              <div>
-                <h2>Audio Transition</h2>
-                <p className="al-modal-desc">Seamless blending and crossfade between tracks</p>
-              </div>
+              <h2>Transition</h2>
               <button className="al-modal-close-btn" onClick={() => setActiveModal(null)} aria-label="Close">
                 <X size={18} />
               </button>
@@ -473,86 +470,38 @@ export function AudioLab({ settings, onChange, onBack }) {
               </div>
             )}
 
-            {/* Mode Selection Cards */}
+            {/* Mode Selection Cards (Faithful to Apple Music & User Specification) */}
             <div className="al-modes-stack">
-              {/* Option 1: Crossfade */}
-              <div
-                className={`al-mode-card ${isCrossfade ? 'active' : ''}`}
-                onClick={() => {
-                  onChange({
-                    ...settings,
-                    transition: transitionDuration === 5 ? 'crossfade_5s' : 'auto',
-                    transitionDuration: transitionDuration || 3,
-                  });
-                }}
-                role="button"
-                tabIndex={0}
-              >
-                <div className="al-mode-body">
-                  <div className="al-mode-badge-line">
-                    <span className="al-mode-badge">RECOMMENDED</span>
+              {TRANSITION_PRESETS.map(preset => {
+                const isSelected = settings.transition === preset.id || (preset.id === 'auto' && (!settings.transition || settings.transition === 'auto'));
+                return (
+                  <div
+                    key={preset.id}
+                    className={`al-mode-card ${isSelected ? 'active' : ''}`}
+                    onClick={() => {
+                      onChange({
+                        ...settings,
+                        transition: preset.id,
+                        transitionDuration: preset.duration || (preset.id === 'crossfade_5s' ? 5 : 3),
+                      });
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="al-mode-body">
+                      <strong className="al-mode-title">{preset.name}</strong>
+                      <p className="al-mode-desc">{preset.description}</p>
+                    </div>
+                    <div className="al-mode-radio">
+                      {isSelected ? (
+                        <Check size={20} color="#30D158" strokeWidth={2.5} />
+                      ) : (
+                        <span className="al-empty-circle" />
+                      )}
+                    </div>
                   </div>
-                  <strong className="al-mode-title">Crossfade</strong>
-                  <p className="al-mode-desc">Smoothly blend between songs without abrupt silence.</p>
-                </div>
-                <div className="al-mode-radio">
-                  {isCrossfade ? (
-                    <span className="al-check-circle"><Check size={14} strokeWidth={3} /></span>
-                  ) : (
-                    <span className="al-empty-circle" />
-                  )}
-                </div>
-              </div>
-
-              {/* Option 2: Gapless */}
-              <div
-                className={`al-mode-card ${settings.transition === 'gapless' ? 'active' : ''}`}
-                onClick={() => {
-                  onChange({ ...settings, transition: 'gapless' });
-                }}
-                role="button"
-                tabIndex={0}
-              >
-                <div className="al-mode-body">
-                  <div className="al-mode-badge-line">
-                    <span className="al-mode-badge neutral">SEAMLESS</span>
-                  </div>
-                  <strong className="al-mode-title">Gapless</strong>
-                  <p className="al-mode-desc">Zero delay between tracks. Seamless playback for live concerts and concept albums.</p>
-                </div>
-                <div className="al-mode-radio">
-                  {settings.transition === 'gapless' ? (
-                    <span className="al-check-circle"><Check size={14} strokeWidth={3} /></span>
-                  ) : (
-                    <span className="al-empty-circle" />
-                  )}
-                </div>
-              </div>
-
-              {/* Option 3: Off */}
-              <div
-                className={`al-mode-card ${settings.transition === 'off' ? 'active' : ''}`}
-                onClick={() => {
-                  onChange({ ...settings, transition: 'off' });
-                }}
-                role="button"
-                tabIndex={0}
-              >
-                <div className="al-mode-body">
-                  <div className="al-mode-badge-line">
-                    <span className="al-mode-badge neutral">DIRECT</span>
-                  </div>
-                  <strong className="al-mode-title">Off</strong>
-                  <p className="al-mode-desc">Standard cut on track change without fading.</p>
-                </div>
-                <div className="al-mode-radio">
-                  {settings.transition === 'off' ? (
-                    <span className="al-check-circle"><Check size={14} strokeWidth={3} /></span>
-                  ) : (
-                    <span className="al-empty-circle" />
-                  )}
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </div>

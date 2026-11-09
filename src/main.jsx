@@ -307,25 +307,29 @@ const SectionHead = memo(function SectionHead({ title, subtitle, action, onClick
 });
 
 const LyricItem = memo(function LyricItem({ line, position, isCurrent, isPast, activeRef, onSeek, distance = 0 }) {
-  // LRC gives line times. Only animate words when the source provides word times.
+  const hasWords = isCurrent && Boolean(line.words?.length);
+
   return (
     <button
       ref={activeRef}
-      className={`af-lyric-line ${isCurrent ? 'active' : isPast ? 'past' : 'upcoming'}`}
+      className={`af-lyric-line ${isCurrent ? 'active' : isPast ? 'past' : 'upcoming'} ${hasWords ? 'has-word-timing' : ''}`}
       data-distance={Math.min(3, Math.abs(distance))}
       onClick={() => onSeek(line.time)}
     >
-      {isCurrent && line.words?.length ? (
-        line.words.map((word, i) => (
-          <span
-            key={i}
-            className={`af-timed-word af-word ${position >= word.time ? 'sung active' : ''}`}
-          >
-            {word.text}
-          </span>
-        ))
+      {hasWords ? (
+        line.words.map((word, i) => {
+          const isSung = position >= word.time;
+          return (
+            <span
+              key={i}
+              className={`af-word ${isSung ? 'sung active' : 'upcoming'}`}
+            >
+              {word.text}
+            </span>
+          );
+        })
       ) : line.text ? (
-        line.text
+        <span className="af-line-text">{line.text}</span>
       ) : (
         <Music2 size={16} style={{ display: 'inline', verticalAlign: 'middle', opacity: 0.5 }} />
       )}
@@ -345,7 +349,9 @@ const LyricItem = memo(function LyricItem({ line, position, isCurrent, isPast, a
 
 function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled = true) {
   const isUserInteractingRef = useRef(false);
+  const [isSuspended, setIsSuspended] = useState(false);
   const userScrollTimeoutRef = useRef(null);
+  const animationFrameRef = useRef(null);
 
   const scrollToActive = useCallback((force = false) => {
     if (!isEnabled) return;
@@ -358,14 +364,46 @@ function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled
     const activeRect = activeEl.getBoundingClientRect();
 
     const relativeTop = activeRect.top - containerRect.top;
-    // Golden ratio offset: active line positioned comfortably at 38% from top of container
-    const targetScrollTop = container.scrollTop + relativeTop - (containerRect.height * 0.38) + (activeRect.height / 2);
+    // Consistent focus position around 40% of the lyric viewport height
+    const targetScrollTop = container.scrollTop + relativeTop - (containerRect.height * 0.40) + (activeRect.height / 2);
 
-    container.scrollTo({
-      top: Math.max(0, targetScrollTop),
-      behavior: 'smooth'
-    });
+    const isReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isReducedMotion) {
+      container.scrollTop = Math.max(0, targetScrollTop);
+      return;
+    }
+
+    // Restrained 300–450ms ease-out transition (duration: 380ms)
+    const startScrollTop = container.scrollTop;
+    const finalScrollTop = Math.max(0, targetScrollTop);
+    const delta = finalScrollTop - startScrollTop;
+    if (Math.abs(delta) < 1) return;
+
+    const duration = 380;
+    const startTime = performance.now();
+
+    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+
+    const step = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      // Restrained ease-out curve (cubic: 1 - Math.pow(1 - progress, 3))
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      container.scrollTop = startScrollTop + delta * easeOut;
+
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(step);
+      }
+    };
+    animationFrameRef.current = requestAnimationFrame(step);
   }, [containerRef, activeLineRef, isEnabled]);
+
+  const returnToCurrentLyric = useCallback(() => {
+    isUserInteractingRef.current = false;
+    setIsSuspended(false);
+    if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
+    requestAnimationFrame(() => scrollToActive(true));
+  }, [scrollToActive]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -373,11 +411,13 @@ function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled
 
     const onUserInteraction = () => {
       isUserInteractingRef.current = true;
+      setIsSuspended(true);
       if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
       userScrollTimeoutRef.current = setTimeout(() => {
         isUserInteractingRef.current = false;
+        setIsSuspended(false);
         scrollToActive();
-      }, 3500);
+      }, 8000);
     };
 
     container.addEventListener('wheel', onUserInteraction, { passive: true });
@@ -389,6 +429,7 @@ function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled
       container.removeEventListener('touchstart', onUserInteraction);
       container.removeEventListener('pointerdown', onUserInteraction);
       if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
   }, [containerRef, scrollToActive]);
 
@@ -398,11 +439,18 @@ function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled
     }
   }, [lyricIndex, isEnabled, scrollToActive]);
 
-  return useCallback(() => {
+  const forceScroll = useCallback(() => {
     isUserInteractingRef.current = false;
+    setIsSuspended(false);
     if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
     requestAnimationFrame(() => scrollToActive(true));
   }, [scrollToActive]);
+
+  return {
+    forceScroll,
+    isSuspended,
+    returnToCurrentLyric
+  };
 }
 function LyricsTiming({ delay, onChange }) {
   return <details className="lyrics-timing"><summary><Clock3 size={14}/>Adjust lyric timing{delay !== 0 && <span>{delay > 0 ? '+' : ''}{delay.toFixed(2)}s</span>}</summary>
@@ -487,8 +535,8 @@ function App() {
     }
     return false;
   }, [synced, lyricIndex, lyricPosition]);
-  const forceScrollFullscreen = useSmoothLyricScroll(fullscreenLyricsRef, activeLyricRef, lyricIndex, fullScreen);
-  const forceScrollPanel = useSmoothLyricScroll(panelLyricsRef, panelLyricRef, lyricIndex, panel === 'lyrics');
+  const { forceScroll: forceScrollFullscreen, isSuspended: isLyricSuspended, returnToCurrentLyric } = useSmoothLyricScroll(fullscreenLyricsRef, activeLyricRef, lyricIndex, fullScreen);
+  const { forceScroll: forceScrollPanel } = useSmoothLyricScroll(panelLyricsRef, panelLyricRef, lyricIndex, panel === 'lyrics');
   const seekLyric = useCallback(value => {
     player.seek(Math.max(0, value + lyricDelay));
     forceScrollFullscreen();
@@ -645,13 +693,9 @@ function App() {
   return <div className={`app theme-${theme} ${pureBlack ? 'pure-black' : ''} ${expanded ? 'player-expanded' : ''}`} data-theme={theme} ref={motionRoot}>
     <input ref={input} type="file" accept="audio/*,.flac,.opus" multiple hidden onChange={e => { importFiles([...e.target.files]); e.target.value = ''; }}/>
     <aside className="sidebar">
-      <button className="am-brand" onClick={() => navigate('new')} aria-label="Apple Music">
-        <span className="am-brand-logo">
-          <svg viewBox="0 0 170 170" width="22" height="22" fill="currentColor">
-            <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.6-7.85-11.7-14.43-6.09-9.78-10.9-20.93-14.43-33.45-3.53-12.52-5.3-24.16-5.3-34.92 0-14.13 3.48-26.04 10.45-35.73 6.96-9.68 15.82-14.58 26.57-14.71 4.58 0 9.84 1.15 15.78 3.44 5.94 2.29 9.84 3.44 11.7 3.44 1.64 0 5.65-1.15 12.04-3.44 6.39-2.29 11.7-3.32 15.93-3.09 11.96.65 21.6 4.79 28.93 12.43-10.44 6.32-15.56 15.11-15.35 26.38.22 8.71 3.59 16.08 10.12 22.11 6.53 6.03 14.28 9.51 23.25 10.44-2.17 6.74-4.89 13.59-8.15 20.55zM119.22 32.64c0-7.39 2.61-14.35 7.83-20.87 5.22-6.52 11.63-10.76 19.23-12.72.65 1.52.98 3.15.98 4.89 0 7.39-2.72 14.46-8.15 21.2-5.44 6.74-11.96 10.76-19.57 12.06-.22-1.52-.32-3.04-.32-4.56z"/>
-          </svg>
-        </span>
-        <span className="am-brand-text">Music</span>
+      <button className="brand" onClick={() => navigate('new')} aria-label="xenn">
+        <img src="/icon.png" alt="" />
+        <span>xenn<span className="brand-dot">.</span></span>
       </button>
 
       <nav>
@@ -858,7 +902,12 @@ function App() {
   const next = cycle[audioLabSettings.beatIntensity || 'normal'] || 'normal';
   setAudioLabSettings(old => ({ ...old, beatIntensity: next }));
   notify(`Beat motion: ${next.toUpperCase()}`);
-}} title={`Beat Motion: ${(audioLabSettings.beatIntensity || 'normal').toUpperCase()}. Click to cycle (Low, Normal, Aggressive)`}><Sparkles size={14}/>Beat: <span className="beat-badge">{audioLabSettings.beatIntensity || 'normal'}</span></button><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/><IconButton icon={Minimize2} label="Exit full screen (Esc)" onClick={() => setFullScreen(false)}/></div></header><div className={`af-content ${noLyrics ? 'no-lyrics' : ''}`}><div className="af-left"><div className={`af-cover-box ${shape}`}><Cover track={displayCurrent}/></div><div className="af-meta"><div className="af-meta-heading"><h2>{current.title}</h2></div><p>{current.artist}</p>{lyrics?.instrumental && <span className="af-instrumental-tag"><Music2 size={12} style={{ display: 'inline', verticalAlign: '-1px', marginRight: 4 }} />Instrumental</span>}{displayCurrent.artworkLink && <a className="artwork-credit" href={displayCurrent.artworkLink} target="_blank" rel="noreferrer">View album on {displayCurrent.artworkProvider}<ArrowUpRight size={11}/></a>}</div><div className="af-controls"><div className="seek-bar af-seek"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))}/><div><span>{time(player.position)}</span><span>-{time(Math.max(0, (player.duration || 0) - player.position))}</span></div></div><div className="transport af-transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} className="play-button af-play" onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume af-volume"><Volume2 size={18}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div></div></div><div className="af-lyrics">{synced.length > 0 && <LyricsTiming delay={lyricDelay} onChange={setLyricDelay}/>}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><Music2 size={28} style={{ opacity: 0.6, marginBottom: 8 }} /><p>Instrumental</p></div> : synced.length ? <div className="af-lyrics-scroll" ref={fullscreenLyricsRef}>{isPauseNow && lyricIndex === -1 && (
+}} title={`Beat Motion: ${(audioLabSettings.beatIntensity || 'normal').toUpperCase()}. Click to cycle (Low, Normal, Aggressive)`}><Sparkles size={14}/>Beat: <span className="beat-badge">{audioLabSettings.beatIntensity || 'normal'}</span></button><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/><IconButton icon={Minimize2} label="Exit full screen (Esc)" onClick={() => setFullScreen(false)}/></div></header><div className={`af-content ${noLyrics ? 'no-lyrics' : ''}`}><div className="af-left"><div className={`af-cover-box ${shape}`}><Cover track={displayCurrent}/></div><div className="af-meta"><div className="af-meta-heading"><h2>{current.title}</h2></div><p>{current.artist}</p>{lyrics?.instrumental && <span className="af-instrumental-tag"><Music2 size={12} style={{ display: 'inline', verticalAlign: '-1px', marginRight: 4 }} />Instrumental</span>}{displayCurrent.artworkLink && <a className="artwork-credit" href={displayCurrent.artworkLink} target="_blank" rel="noreferrer">View album on {displayCurrent.artworkProvider}<ArrowUpRight size={11}/></a>}</div><div className="af-controls af-controls-card"><div className="seek-bar af-seek"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))}/><div><span>{time(player.position)}</span><span>-{time(Math.max(0, (player.duration || 0) - player.position))}</span></div></div><div className="transport af-transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><button className="af-play-button" aria-label={player.playing ? 'Pause' : 'Play'} onClick={player.toggle}>{player.playing ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" style={{ marginLeft: 3 }} />}</button><IconButton icon={SkipForward} label="Next song" onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume af-volume"><Volume2 size={18}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div></div></div><div className="af-lyrics">{synced.length > 0 && <LyricsTiming delay={lyricDelay} onChange={setLyricDelay}/>}{isLyricSuspended && lyricIndex >= 0 && (
+          <button className="af-return-lyrics" onClick={returnToCurrentLyric} aria-label="Return to current lyric">
+            <ChevronDown size={14} />
+            <span>Return to current lyric</span>
+          </button>
+        )}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><Music2 size={28} style={{ opacity: 0.6, marginBottom: 8 }} /><p>Instrumental</p></div> : synced.length ? <div className="af-lyrics-scroll" ref={fullscreenLyricsRef}>{isPauseNow && lyricIndex === -1 && (
                 <div className="af-pause-indicator" aria-label="Instrumental intro">
                   <span className="af-pause-dot dot-1" />
                   <span className="af-pause-dot dot-2" />

@@ -67,7 +67,13 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
   function handleYoutubeStateChange(e) {
     if (currentRef.current?.source !== 'youtube') return;
     if (e.data === 1) {
-      isUserExplicitlyPaused.current = false;
+      // Seeking a paused iframe can emit a transient PLAYING event. Respect the user's pause.
+      if (isUserExplicitlyPaused.current) {
+        youtube.current?.pauseVideo?.();
+        silentAudioRef.current?.pause();
+        setPlaying(false);
+        return;
+      }
       setPlaying(true);
       silentAudioRef.current?.play().catch(() => {});
     } else if (e.data === 2) {
@@ -314,6 +320,9 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
       }
     } else if (playing) {
       isUserExplicitlyPaused.current = true;
+      const pausedAt = youtube.current?.getCurrentTime?.();
+      if (Number.isFinite(pausedAt)) setPosition(pausedAt);
+      setPlaying(false);
       silentAudioRef.current?.pause();
       youtube.current?.pauseVideo();
     } else {
@@ -326,7 +335,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
   useEffect(() => {
     const el = audio.current;
     const update = () => { setPosition(el.currentTime || 0); setDuration(Number.isFinite(el.duration) ? el.duration : 0); };
-    const play = () => setPlaying(true), pause = () => setPlaying(false), ended = () => advanceRef.current?.(1, true);
+    const play = () => setPlaying(true), pause = () => { update(); setPlaying(false); }, ended = () => advanceRef.current?.(1, true);
     const error = () => { setPlaying(false); notify('Your browser could not decode this audio file. Try MP3, M4A, WAV, or OGG.'); };
     el.addEventListener('timeupdate', update); el.addEventListener('loadedmetadata', update); el.addEventListener('play', play); el.addEventListener('pause', pause); el.addEventListener('ended', ended); el.addEventListener('error', error);
     let lastPos = -1;
@@ -334,7 +343,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
       if (currentRef.current?.source === 'youtube' && youtube.current?.getCurrentTime) {
         const t = youtube.current.getCurrentTime();
         if (typeof t === 'number' && !Number.isNaN(t)) {
-          if (Math.abs(t - lastPos) >= 0.025) {
+          if (!isUserExplicitlyPaused.current && Math.abs(t - lastPos) >= 0.025) {
             lastPos = t;
             setPosition(t);
           }

@@ -33,3 +33,8 @@ Apple references reviewed:
 - [Providing animated artwork](https://developer.apple.com/documentation/mediaplayer/providing-animated-artwork-for-media-items): artwork asset fallbacks and Reduce Motion behavior. This is about media artwork rather than Music's lyric-background implementation.
 
 These references do not specify Music's proprietary background shader. XENN does not claim to reproduce that internal algorithm. Estimated word timings remain approximate, as explicitly requested.
+
+
+## System lyric typography
+
+Lyrics now prefer `-apple-system` / `BlinkMacSystemFont` at semibold 600, then Segoe UI Variable Display on Windows, with the bundled licensed Inter Semibold as fallback. Tracking is -0.018em on desktop and -0.015em on mobile. This uses the Apple platform's installed system typeface without bundling proprietary font files. Verified through Chrome's platform-font inspection on Windows: Segoe-UI-Variable-Display-Semibold. Production build passed.

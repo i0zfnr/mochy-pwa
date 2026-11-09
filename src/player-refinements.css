@@ -132,10 +132,10 @@
 }
 .apple-fullscreen-player .af-lyrics-scroll .af-lyric-line,
 .lyrics-panel .af-lyric-line {
-  font-family:'Xenn Lyrics',Inter,system-ui,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Display','Segoe UI Variable','Segoe UI','Xenn Lyrics',sans-serif;
   font-size:clamp(30px,2.9vw,40px);
   font-weight:600 !important;
-  letter-spacing:-.025em;
+  letter-spacing:-.018em;
   line-height:1.38;
   margin-bottom:32px;
   padding-block:6px;
@@ -145,7 +145,7 @@
 }
 @media(max-width:760px) {
   .apple-fullscreen-player .af-lyrics-scroll .af-lyric-line {
-    font-size:clamp(25px,6.6vw,31px); letter-spacing:-.02em; margin-bottom:26px;
+    font-size:clamp(25px,6.6vw,31px); letter-spacing:-.015em; margin-bottom:26px;
   }
 }
 

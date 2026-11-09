@@ -110,3 +110,17 @@
 .lyrics-panel .af-lyric-line[data-distance="1"] { opacity:.4 !important; }
 .apple-fullscreen-player .af-lyrics-scroll .af-lyric-line.active[data-distance],
 .lyrics-panel .af-lyric-line.active[data-distance] { opacity:1 !important; }
+/* Spacers belong inside the scroll content: viewport padding must not enlarge
+   the flex item and push the fixed fullscreen header offscreen on focus. */
+.apple-fullscreen-player { overflow:clip; }
+.apple-fullscreen-player .af-lyrics { min-height:0; }
+.apple-fullscreen-player .af-lyrics-scroll {
+  flex:1; min-height:0; height:0; padding-block:0;
+}
+.apple-fullscreen-player .af-lyrics-scroll::before,
+.apple-fullscreen-player .af-lyrics-scroll::after {
+  content:''; display:block; pointer-events:none;
+}
+.apple-fullscreen-player .af-lyrics-scroll::before { height:40dvh; }
+.apple-fullscreen-player .af-lyrics-scroll::after { height:60dvh; }
+.apple-fullscreen-player .af-lyrics-scroll.plain { height:auto; }

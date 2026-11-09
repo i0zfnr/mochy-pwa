@@ -27,3 +27,12 @@ test('estimated words preserve source timings and remain within recording bounda
   assert.ok(result[3].words.at(-1).end <=18);
   assert.equal(result[0].estimatedWordTiming,true);
 });
+import { visualLyricPosition } from '../src/lyric-progress.js';
+test('visual lyric clock interpolates frames but freezes on pause and clamps stalls', () => {
+ const sample={position:10,at:1000};
+ assert.equal(visualLyricPosition(sample,1016,true),10.016);
+ assert.equal(visualLyricPosition(sample,1100,false),10);
+ assert.equal(visualLyricPosition(sample,5000,true),10.2);
+ assert.equal(visualLyricPosition({position:2,at:2000},2000,true),2);
+ assert.equal(visualLyricPosition(sample,999,true),10);
+});

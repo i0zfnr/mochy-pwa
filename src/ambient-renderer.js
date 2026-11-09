@@ -34,8 +34,16 @@ void main() {
   col += colorDepth(seamLeft) * left * .65;
   col += colorDepth(seamRight) * right * .58;
   col += colorDepth(accent) * glow * (.52 + energy * .15);
-  // Local light expands into surrounding color rather than flashing the whole screen.
-  col *= 1. + energy * .16;
+  // Wide, feathered aurora fold: its crest moves through the album colors.
+  float fold = .48 + .20 * sin(p.x * 2.7 + t * .85)
+    + .09 * sin(p.x * 5.0 - t * .60);
+  float distanceToFold = abs(p.y - fold);
+  float curtain = exp(-pow(distanceToFold / (.20 + energy * .04), 2.0));
+  float crest = exp(-pow(distanceToFold / (.075 + energy * .025), 2.0));
+  vec3 foldColor = mix(colorDepth(seamLeft), colorDepth(accent), .5 + .5 * sin(p.x * 2. + t * .6));
+  col += foldColor * curtain * .22;
+  // A bass transient illuminates the fold locally, then gently falls away.
+  col += foldColor * crest * energy * .32;
   float vignette = 1. - smoothstep(.25,.9,length((uv-.5)*vec2(1.,.8))) * .30;
   gl_FragColor = vec4(col * vignette * .84, 1.);
 }`;

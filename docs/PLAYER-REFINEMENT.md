@@ -16,3 +16,20 @@ Verified: 51 Node tests; production build; desktop screenshots of both views; li
 Reviewed the supplied 28-second Apple Music screen recording. Replaced layered CSS aurora/glows and blurred artwork with a single slowly warped, soft album-color field. The shader uses real analysed bass for modest local brightness/expansion; without tab-audio access streaming uses ambient drift, with an explicit Connect beat sync button. Removed the synthetic fixed 120 BPM pulse. Fixed local analyser eligibility. Rendering still stops on pause, hidden documents and reduced motion, and releases resources on unmount.
 
 Lyrics now use the upstream licensed Inter Semibold face at its actual 600 weight, with gentler spacing. At the user's explicit request, line-only lyrics receive automatically estimated word intervals, bounded by line timestamps and recording duration. Estimated intervals are visibly labelled and never presented as source timing. Real word timestamps always take priority; joining scripts stay intact. Highlighting uses the same adjusted playback position, freezes on pause, and recomputes on seek. Untimed plain lyrics cannot produce synchronized animation.
+
+
+## Smooth playback and Settings-only beat controls
+
+Moved Connect beat sync and beat intensity out of fullscreen into Settings. The fullscreen header now contains only Like and Exit. Settings explains the distinction between local audio analysis and explicitly shared streaming tab audio.
+
+The old word fill followed discrete 150ms playback samples. The active line now paints at animation-frame cadence, interpolating between authoritative playback samples with a 200ms stall cap; player polling is 50ms. Pausing and seeking immediately reset the visual clock. Inactive lines have no frame loop, and callbacks/listeners stop on pause, hidden documents, reduced motion, track changes and unmount.
+
+The album field now includes a broad, feathered aurora fold. Real bass transients illuminate the fold with a fast attack and gentle release, without flashing the whole background. It remains an independent WebGL implementation inspired by the supplied video.
+
+Apple references reviewed:
+- [Motion guidance](https://developer.apple.com/design/human-interface-guidelines/motion): purposeful, restrained, optional motion and accessibility.
+- [Create custom visual effects with SwiftUI, WWDC24](https://developer.apple.com/videos/play/wwdc2024/10151/): animated mesh color fields, custom text effects and shaders.
+- [MeshGradient smoothsColors](https://developer.apple.com/documentation/swiftui/meshgradient/smoothscolors): smooth interpolation of mesh colors.
+- [Providing animated artwork](https://developer.apple.com/documentation/mediaplayer/providing-animated-artwork-for-media-items): artwork asset fallbacks and Reduce Motion behavior. This is about media artwork rather than Music's lyric-background implementation.
+
+These references do not specify Music's proprietary background shader. XENN does not claim to reproduce that internal algorithm. Estimated word timings remain approximate, as explicitly requested.

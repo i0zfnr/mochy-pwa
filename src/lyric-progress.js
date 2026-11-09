@@ -34,3 +34,8 @@ export function estimateWordTimes(lines, duration = 0) {
     return { ...line, words, estimatedWordTiming:true };
   });
 }
+
+// Extrapolate only between recent clock samples; never run ahead through a stalled player.
+export function visualLyricPosition(anchor, now, playing) {
+  return anchor.position + (playing ? Math.max(0, Math.min(.20, (now - anchor.at) / 1000)) : 0);
+}

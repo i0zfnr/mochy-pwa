@@ -334,7 +334,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
       if (currentRef.current?.source === 'youtube' && youtube.current?.getCurrentTime) {
         const t = youtube.current.getCurrentTime();
         if (typeof t === 'number' && !Number.isNaN(t)) {
-          if (Math.abs(t - lastPos) >= 0.1) {
+          if (Math.abs(t - lastPos) >= 0.025) {
             lastPos = t;
             setPosition(t);
           }
@@ -352,13 +352,13 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
           }
         }
       } else if (currentRef.current?.source === 'local' && el && !el.paused) {
-        if (Math.abs(el.currentTime - lastPos) >= 0.1) {
+        if (Math.abs(el.currentTime - lastPos) >= 0.025) {
           lastPos = el.currentTime;
           setPosition(el.currentTime || 0);
         }
         if (Number.isFinite(el.duration)) setDuration(el.duration);
       }
-    }, 150);
+    }, 50);
     return () => { clearInterval(timer); el.pause(); for (const [event, handler] of [['timeupdate', update], ['loadedmetadata', update], ['play', play], ['pause', pause], ['ended', ended], ['error', error]]) el.removeEventListener(event, handler); };
   }, []);
   useEffect(() => { audio.current.volume = volume; youtube.current?.setVolume?.(volume * 100); }, [volume]);

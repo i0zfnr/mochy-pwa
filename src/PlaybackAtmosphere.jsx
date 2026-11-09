@@ -30,7 +30,7 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
     const renderer = createAmbientRenderer(target);
     if (!renderer) return;
     holder.dataset.renderer = 'shader';
-    let frame = 0, previous = performance.now(), lastDraw = 0, clock = 0;
+    let frame = 0, previous = performance.now(), lastDraw = 0, clock = 0, glowEnergy = 0;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 
     function draw(now) {
@@ -43,7 +43,9 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
         lastDraw = now;
         const eased = progress * progress * (3 - 2 * progress);
         shown.current = fade.current.from.map((color, i) => color.map((value, channel) => value + (fade.current.to[i][channel] - value) * eased));
-        const energy = active ? currentBeatEnergy : 0;
+        const targetEnergy = active ? currentBeatEnergy : 0;
+        glowEnergy += (targetEnergy - glowEnergy) * (targetEnergy > glowEnergy ? .55 : .14);
+        const energy = active ? glowEnergy : 0;
         renderer.draw(clock, shown.current, energy);
         // Only set --beat-energy on this atmosphere container, never on the app root
         holder.style.setProperty('--beat-energy', energy.toFixed(2));

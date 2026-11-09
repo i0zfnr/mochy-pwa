@@ -150,3 +150,9 @@
 }
 
 .lyric-timing-note{font-size:10px;color:#ffffff75;line-height:1.5;margin-bottom:5px;flex-shrink:0}
+
+/* Frame-driven fills must never inherit discrete CSS color/transform transitions. */
+.apple-fullscreen-player .timed-word { --word-progress:0%; }
+.apple-fullscreen-player .timed-word.has-graphemes { background:none; }
+.af-grapheme { --fill:0%; --lift:0px; transition:none !important; }
+.setting-note{max-width:220px;color:var(--am-secondary,#999);font-size:12px;line-height:1.5}

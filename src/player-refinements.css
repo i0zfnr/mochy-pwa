@@ -124,3 +124,29 @@
 .apple-fullscreen-player .af-lyrics-scroll::before { height:40dvh; }
 .apple-fullscreen-player .af-lyrics-scroll::after { height:60dvh; }
 .apple-fullscreen-player .af-lyrics-scroll.plain { height:auto; }
+
+/* Dedicated real semibold face avoids mapping every lyric weight to the bold UI font. */
+@font-face {
+  font-family:'Xenn Lyrics'; src:url('/fonts/inter-semibold.ttf') format('truetype');
+  font-weight:600; font-style:normal; font-display:swap;
+}
+.apple-fullscreen-player .af-lyrics-scroll .af-lyric-line,
+.lyrics-panel .af-lyric-line {
+  font-family:'Xenn Lyrics',Inter,system-ui,sans-serif;
+  font-size:clamp(30px,2.9vw,40px);
+  font-weight:600 !important;
+  letter-spacing:-.025em;
+  line-height:1.38;
+  margin-bottom:32px;
+  padding-block:6px;
+  word-break:normal;
+  overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;
+}
+@media(max-width:760px) {
+  .apple-fullscreen-player .af-lyrics-scroll .af-lyric-line {
+    font-size:clamp(25px,6.6vw,31px); letter-spacing:-.02em; margin-bottom:26px;
+  }
+}
+
+.lyric-timing-note{font-size:10px;color:#ffffff75;line-height:1.5;margin-bottom:5px;flex-shrink:0}

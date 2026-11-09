@@ -1,20 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { readState, writeState } from './storage';
 
-// Built-in automatic beat sync with optional direct hardware tab PCM capture.
-// Active by default so the ambient atmosphere automatically pulses and reacts to the beat.
+// Streaming audio analysis requires explicit tab-audio sharing. No capture starts automatically.
 export function useTabBeatSync(notify) {
   const analyserRef = useRef(null);
   const streamRef = useRef(null);
-  const [active, setActive] = useState(true);
+  const [active, setActive] = useState(false);
   const [connecting, setConnecting] = useState(false);
-  const available = true;
-
-  useEffect(() => {
-    readState('beatSync', true).then(saved => {
-      if (typeof saved === 'boolean') setActive(saved);
-    }).catch(() => {});
-  }, []);
+  const available = typeof navigator.mediaDevices?.getDisplayMedia === 'function';
 
   function stop() {
     streamRef.current?.getTracks().forEach(track => track.stop());
@@ -23,17 +15,9 @@ export function useTabBeatSync(notify) {
     analyserRef.current?.context?.close().catch(() => {});
     analyserRef.current = null;
     setActive(false);
-    writeState('beatSync', false).catch(() => {});
   }
 
-  async function toggle() {
-    if (active) {
-      stop();
-      return;
-    }
-    setActive(true);
-    writeState('beatSync', true).catch(() => {});
-  }
+  async function toggle() { if (active) stop(); else await connectTabAudio(); }
 
   async function connectTabAudio() {
     if (typeof navigator.mediaDevices?.getDisplayMedia !== 'function' || connecting) return;
@@ -64,12 +48,11 @@ export function useTabBeatSync(notify) {
       streamRef.current = stream;
       stream.getTracks().forEach(track => track.addEventListener('ended', stop, { once: true }));
       setActive(true);
-      writeState('beatSync', true).catch(() => {});
     } catch (error) {
       stream?.getTracks().forEach(track => track.stop());
       context?.close().catch(() => {});
       if (!['NotAllowedError', 'AbortError'].includes(error.name)) {
-        notify?.('Hardware tab audio unavailable. Automatic beat sync is active.');
+        notify?.('Tab audio is unavailable. The background will continue its ambient movement.');
       }
     } finally {
       setConnecting(false);

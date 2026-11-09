@@ -37,7 +37,7 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
       frame = 0;
       const active = app?.dataset.motion === 'playing' && !document.hidden && !reduced.matches;
       const progress = reduced.matches ? 1 : Math.min(1, Math.max(0, (now - fade.current.start) / 1400));
-      if (active) clock = (clock + Math.min(.1, (now - previous) / 1000)) % 100;
+      if (active) clock += Math.min(.1, (now - previous) / 1000);
       previous = now;
       if (now - lastDraw >= 33 || !active) {
         lastDraw = now;
@@ -81,32 +81,9 @@ export const AlbumAtmosphere = memo(function AlbumAtmosphere({ artwork = '', com
 
   const colors = Object.fromEntries(tones.map((rgb, i) => [`--album-tone-${i}`, `rgb(${rgb.map(channel => Math.round(channel * 255)).join(' ')})`]));
 
-  // Dynamically extract most vibrant album accent tone for the living aurora
-  const tone0 = tones[0] || [0.2, 0.2, 0.2];
-  const tone1 = tones[1] || [0.2, 0.2, 0.2];
-  const tone3 = tones[3] || [0.3, 0.3, 0.3];
-  const chroma = t => Math.max(...t) - Math.min(...t);
-  const bestAccent = [tone3, tone0, tone1].sort((a, b) => chroma(b) - chroma(a))[0];
-  const accentRgb = bestAccent.map(c => Math.round(c * 255)).join(' ');
-  colors['--album-accent'] = `rgb(${accentRgb})`;
-  colors['--album-accent-glow'] = `rgba(${accentRgb}, 0.55)`;
-
   return <div ref={element} className={`album-atmosphere ${compact ? 'is-compact' : ''}`} style={colors} aria-hidden="true">
-    {artwork ? (
-      <div className="album-artwork-field">
-        <img src={artwork} alt="" className="album-artwork-blur" />
-      </div>
-    ) : null}
     <div className="album-color-fallback"/>
     {!compact && <canvas ref={canvas}/>}
-    {!compact && (
-      <div className="album-accent-aurora">
-        <div className="aurora-curtain curtain-a"/>
-        <div className="aurora-curtain curtain-b"/>
-        <div className="aurora-curtain curtain-c"/>
-        <div className="aurora-glow-core"/>
-      </div>
-    )}
     <div className="album-atmosphere-shade"/>
   </div>;
 });
@@ -169,22 +146,7 @@ export function usePlaybackMotion(rootRef, analyserRef, playing, analysable, bea
         const rawEnergy = bassPeak * 0.75 + currentBass * 0.25;
         energy = Math.min(1.0, Math.max(0.04, rawEnergy * mult));
       } else {
-        root.dataset.audioMotion = 'audio';
-        // Pure 808 bass kick drum envelope pattern
-        const nowSec = now / 1000;
-        const beatPeriod = 0.50; // ~120 BPM
-        const measureTime = nowSec % (beatPeriod * 4);
-        const beatNum = Math.floor(measureTime / beatPeriod);
-        const beatPhase = (measureTime % beatPeriod) / beatPeriod;
-
-        // Bass kick hits hard on downbeats (1 and 3)
-        const isKickBeat = beatNum === 0 || beatNum === 2;
-        const kickAmp = isKickBeat ? 0.85 : 0.45;
-        // Pure exponential kick drum decay: sharp instant attack, smooth bass decay
-        const kickDecay = Math.exp(-beatPhase * 5.2) * kickAmp;
-        const subRumble = Math.sin(nowSec * 1.6) * 0.08 + 0.10;
-        const raw = kickDecay * 0.78 + subRumble * 0.22;
-        energy = Math.min(1.0, Math.max(0.04, raw * mult));
+        root.dataset.audioMotion = 'ambient';
       }
 
       currentBeatEnergy = energy;

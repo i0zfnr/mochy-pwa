@@ -9,6 +9,7 @@ The observed Node deployment installed dependencies but did not run the frontend
 ```sh
 git pull --ff-only origin main
 npm ci --include=dev
+git restore --source=HEAD -- index.html
 npm run build
 npx pm2 startOrRestart ecosystem.config.cjs --only mochy-web --update-env
 npx pm2 save
@@ -80,6 +81,8 @@ Keep secrets out of source and chat. This project does not require music-service
 
 ## Verified XENN redeploy (9 November 2026)
 
-Player implementation commit: `954aeae`. The managed **Redeploy Sekarang** action refreshed the container proxy to the provider-observed destination `172.18.0.4:8000` and wrote `.port` as `8000`. This address is deployment-specific; let Ryaze discover it. A loopback custom proxy produced a gateway error and was reverted. Keep the dashboard's default routing.
+Player implementation commits: `954aeae` and `d8519f8` (fullscreen focus fix). The managed **Redeploy Sekarang** action refreshed the container proxy to the provider-observed destination `172.18.0.4:8000` and wrote `.port` as `8000`. This address is deployment-specific; let Ryaze discover it. A loopback custom proxy produced a gateway error and was reverted. Keep the dashboard's default routing.
 
 The managed log reported its existing PM2 script was already launched. Restarted only `mochy-web` with the ecosystem commands above so it reread `.port`, then saved its process list. The public `/api/health` returned JSON `ok: true`; the homepage served the new XENN bundle, and the artwork endpoint returned a matching catalog cover. Before the managed redeploy the static fallback returned HTML for `/api/health`, which is a failure even with HTTP 200. Always validate response content, not just status.
+
+Ryaze copies built HTML into the repository root during managed deployment, overwriting the Vite source entry. Before rebuilding after that action, restore only the generated root `index.html` from HEAD as shown above. Otherwise Vite may bundle the previously built application instead of `src/main.jsx`.

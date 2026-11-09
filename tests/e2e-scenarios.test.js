@@ -74,11 +74,11 @@ test('Tier 1 [Player & Fullscreen]: interactive synced lyrics parser and timing 
   assert.equal(parsed[1].words[0].text, 'Sweet ');
   assert.equal(parsed[1].words[0].time, 4.25);
 
-  // Golden ratio line positioning (38%) check
+  // Focus position (40%) check
   const activeIndex = 1;
   const containerHeight = 600;
-  const goldenOffset = containerHeight * 0.38;
-  assert.ok(goldenOffset > 200 && goldenOffset < 250, '38% golden ratio offset accurately calculated');
+  const focusOffset = containerHeight * 0.40;
+  assert.ok(focusOffset > 220 && focusOffset < 260, '40% focus position offset accurately calculated');
 });
 
 test('Tier 1 [Search & Spotify Import]: Spotify URL pattern matching and link detection', () => {

@@ -33,7 +33,7 @@ class ErrorBoundary extends React.Component {
 
 import React, { useEffect, useMemo, useRef, useState, useCallback, memo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Home, Search, Library, Settings, Heart, Plus, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1, ListMusic, Mic2, Volume2, ChevronDown, ChevronRight, ArrowUpRight, Upload, Music2, X, Download, Check, MoreHorizontal, Clock3, Disc3, Headphones, WifiOff, Trash2, Maximize2, Minimize2, Link2, SlidersHorizontal, Sparkles, LayoutGrid, Radio } from 'lucide-react';
+import { Home, Search, Library, Settings, Heart, Plus, Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1, ListMusic, Mic2, Volume2, ChevronDown, ChevronRight, ArrowUpRight, Upload, Music2, X, Download, Check, MoreHorizontal, Clock3, Disc3, Headphones, WifiOff, Trash2, Maximize2, Minimize2, Link2, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { getLibrary, saveTrack, readState, writeState, importAudio, removeTrack } from './storage';
 import { findMusic, time, parseLrc } from './music';
 import { usePlayer } from './usePlayer';
@@ -43,102 +43,12 @@ import { AlbumAtmosphere, usePlaybackMotion } from './PlaybackAtmosphere';
 import { highResolutionArtwork } from './artwork';
 import { useArtwork } from './useArtwork';
 import { useTabBeatSync } from './useTabBeatSync';
+import './player-refinements.css';
+import { timedWordProgress, lyricGraphemes } from './lyric-progress';
 import { AudioLab } from './AudioLab';
 import { DEFAULT_AUDIO_LAB, TRANSITION_PRESETS } from './audio-lab';
 
-const APPLE_HERO_CAROUSEL = [
-  {
-    id: 'hero-1',
-    eyebrow: 'NEW PLAYLIST',
-    title: 'Best Songs of 2026',
-    subtitle: 'Apple Music',
-    query: 'Best Songs of 2026',
-    tagline: 'The tracks that made our year.',
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'hero-2',
-    eyebrow: 'BEST OF 2026',
-    title: 'Before we reveal Artist of the Year, check out more of our 2026 picks.',
-    subtitle: 'Apple Music',
-    query: 'Top Hits 2026',
-    tagline: 'Explore our picks across hip-hop, pop, R&B and dance.',
-    image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'hero-3',
-    eyebrow: 'NEW ALBUM',
-    title: 'FRESH',
-    subtitle: 'Lil Baby',
-    query: 'Lil Baby',
-    tagline: 'A decade into his career, an era-defining rap star asserts his resilience.',
-    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format&fit=crop&q=80',
-  },
-];
 
-const APPLE_BENTO_2026 = [
-  {
-    id: 'bento-rap',
-    title: 'Rap Life: Best of 2026',
-    sub: 'Apple Music Hip-Hop',
-    badge: 'RAP LIFE',
-    year: '2026',
-    query: 'Rap Life Best of 2026 Drake',
-    bg: 'linear-gradient(135deg, #1f1c2c 0%, #928DAB 100%)',
-    art: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'bento-rnb',
-    title: 'R&B Now: Best of 2026',
-    sub: 'Apple Music R&B',
-    badge: 'R&B NOW',
-    year: '2026',
-    query: 'R&B Now Best of 2026 SZA Kehlani',
-    bg: 'linear-gradient(135deg, #f12711 0%, #f5af19 100%)',
-    art: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'bento-pop',
-    title: 'A-List Pop: Best of 2026',
-    sub: 'Apple Music Pop',
-    badge: 'A-LIST POP',
-    year: '2026',
-    query: 'A-List Pop Best of 2026 Zara Larsson Sabrina Carpenter',
-    bg: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
-    art: 'https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?w=600&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'bento-country',
-    title: "Today's Country: Best of 2026",
-    sub: 'Apple Music Country',
-    badge: "TODAY'S COUNTRY",
-    year: '2026',
-    query: "Today's Country Best of 2026 Kacey Musgraves",
-    bg: 'linear-gradient(135deg, #ec008c 0%, #fc6767 100%)',
-    art: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'bento-latin',
-    title: '¡Dale Play!: Best of 2026',
-    sub: 'Apple Music Latin',
-    badge: '¡DALE PLAY!',
-    year: '2026',
-    query: 'Dale Play Best of 2026 Bad Bunny Rauw Alejandro',
-    bg: 'linear-gradient(135deg, #00c6ff 0%, #0072ff 100%)',
-    art: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&auto=format&fit=crop&q=80',
-  },
-];
-
-const APPLE_NEW_SONGS = [
-  { id: 'new-1', title: 'Ya Hit (feat. Drake, Travis Scott & Loco)', artist: 'Future', duration: 216, query: 'Future Ya Hit Drake' },
-  { id: 'new-2', title: 'Blue Moon (Apple Music Sessions)', artist: 'Zara Larsson — Sessions', duration: 206, query: 'Zara Larsson Blue Moon' },
-  { id: 'new-3', title: 'Good Luck, Babe!', artist: 'Chappell Roan', duration: 218, query: 'Chappell Roan Good Luck Babe' },
-  { id: 'new-4', title: 'Birds of a Feather', artist: 'Billie Eilish', duration: 190, query: 'Billie Eilish Birds of a Feather' },
-  { id: 'new-5', title: 'Taste', artist: 'Sabrina Carpenter', duration: 157, query: 'Sabrina Carpenter Taste' },
-  { id: 'new-6', title: 'Too Sweet', artist: 'Hozier', duration: 251, query: 'Hozier Too Sweet' },
-  { id: 'new-7', title: 'Die With A Smile', artist: 'Lady Gaga & Bruno Mars', duration: 251, query: 'Lady Gaga Bruno Mars Die With A Smile' },
-  { id: 'new-8', title: 'Not Like Us', artist: 'Kendrick Lamar', duration: 274, query: 'Kendrick Lamar Not Like Us' },
-];
 
 if (typeof window !== 'undefined') {
   const isTouch = 'ontouchstart' in window || (navigator.maxTouchPoints > 0);
@@ -306,7 +216,7 @@ const SectionHead = memo(function SectionHead({ title, subtitle, action, onClick
   );
 });
 
-const LyricItem = memo(function LyricItem({ line, position, isCurrent, isPast, activeRef, onSeek, distance = 0 }) {
+const LyricItem = memo(function LyricItem({ line, nextLine, position, isCurrent, isPast, activeRef, onSeek, distance = 0 }) {
   const hasWords = isCurrent && Boolean(line.words?.length);
 
   return (
@@ -318,15 +228,14 @@ const LyricItem = memo(function LyricItem({ line, position, isCurrent, isPast, a
     >
       {hasWords ? (
         line.words.map((word, i) => {
-          const isSung = position >= word.time;
-          return (
-            <span
-              key={i}
-              className={`af-word ${isSung ? 'sung active' : 'upcoming'}`}
-            >
-              {word.text}
-            </span>
-          );
+          const progress = timedWordProgress(word.time, line.words[i + 1]?.time ?? nextLine?.time, position);
+          const graphemes = lyricGraphemes(word.text);
+          return <span key={i} className="af-word timed-word" style={{ '--word-progress': `${progress * 100}%` }}>
+            {graphemes ? graphemes.map((text, index) => {
+              const fill = Math.max(0, Math.min(1, progress * graphemes.length - index));
+              return <span key={index} className="af-grapheme" style={{ '--fill': `${fill * 100}%`, '--lift': `${-.9 * fill}px` }}>{text}</span>;
+            }) : word.text}
+          </span>;
         })
       ) : line.text ? (
         <span className="af-line-text">{line.text}</span>
@@ -347,110 +256,50 @@ const LyricItem = memo(function LyricItem({ line, position, isCurrent, isPast, a
   return true;
 });
 
-function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled = true) {
-  const isUserInteractingRef = useRef(false);
+function useSmoothLyricScroll(containerRef, activeLineRef, lyricIndex, isEnabled = true, resetKey = '') {
+  const manual = useRef(false);
+  const frame = useRef(null);
   const [isSuspended, setIsSuspended] = useState(false);
-  const userScrollTimeoutRef = useRef(null);
-  const animationFrameRef = useRef(null);
-
-  const scrollToActive = useCallback((force = false) => {
-    if (!isEnabled) return;
-    if (isUserInteractingRef.current && !force) return;
-    const container = containerRef.current;
-    const activeEl = activeLineRef.current;
-    if (!container || !activeEl) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const activeRect = activeEl.getBoundingClientRect();
-
-    const relativeTop = activeRect.top - containerRect.top;
-    // Consistent focus position around 40% of the lyric viewport height
-    const targetScrollTop = container.scrollTop + relativeTop - (containerRect.height * 0.40) + (activeRect.height / 2);
-
-    const isReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isReducedMotion) {
-      container.scrollTop = Math.max(0, targetScrollTop);
-      return;
-    }
-
-    // Restrained 300–450ms ease-out transition (duration: 380ms)
-    const startScrollTop = container.scrollTop;
-    const finalScrollTop = Math.max(0, targetScrollTop);
-    const delta = finalScrollTop - startScrollTop;
-    if (Math.abs(delta) < 1) return;
-
-    const duration = 380;
-    const startTime = performance.now();
-
-    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-
-    const step = (now) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(1, elapsed / duration);
-      // Restrained ease-out curve (cubic: 1 - Math.pow(1 - progress, 3))
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      container.scrollTop = startScrollTop + delta * easeOut;
-
-      if (progress < 1) {
-        animationFrameRef.current = requestAnimationFrame(step);
-      }
+  const cancel = useCallback(() => { cancelAnimationFrame(frame.current); frame.current = null; }, []);
+  const scrollToActive = useCallback((immediate = false) => {
+    cancel();
+    if (!isEnabled || manual.current) return;
+    const container = containerRef.current, active = activeLineRef.current;
+    if (!container || !active) return;
+    const box = container.getBoundingClientRect(), line = active.getBoundingClientRect();
+    const from = container.scrollTop;
+    const to = Math.max(0, Math.min(container.scrollHeight - container.clientHeight,
+      from + line.top - box.top + line.height / 2 - box.height * .4));
+    if (immediate || matchMedia('(prefers-reduced-motion: reduce)').matches) { container.scrollTop = to; return; }
+    const start = performance.now();
+    const tick = now => {
+      const t = Math.min(1, (now - start) / 380);
+      container.scrollTop = from + (to - from) * (1 - Math.pow(1 - t, 3));
+      if (t < 1) frame.current = requestAnimationFrame(tick);
+      else frame.current = null;
     };
-    animationFrameRef.current = requestAnimationFrame(step);
-  }, [containerRef, activeLineRef, isEnabled]);
-
+    frame.current = requestAnimationFrame(tick);
+  }, [containerRef, activeLineRef, isEnabled, cancel]);
   const returnToCurrentLyric = useCallback(() => {
-    isUserInteractingRef.current = false;
-    setIsSuspended(false);
-    if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
-    requestAnimationFrame(() => scrollToActive(true));
+    manual.current = false; setIsSuspended(false); scrollToActive();
   }, [scrollToActive]);
-
+  useEffect(() => {
+    manual.current = false; setIsSuspended(false); scrollToActive(true);
+    return cancel;
+  }, [resetKey, isEnabled, scrollToActive, cancel]);
+  useEffect(() => { scrollToActive(); }, [lyricIndex, scrollToActive]);
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
-
-    const onUserInteraction = () => {
-      isUserInteractingRef.current = true;
-      setIsSuspended(true);
-      if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
-      userScrollTimeoutRef.current = setTimeout(() => {
-        isUserInteractingRef.current = false;
-        setIsSuspended(false);
-        scrollToActive();
-      }, 8000);
+    if (!container || !isEnabled) return;
+    const suspend = e => {
+      if (e.type === 'keydown' && !['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(e.key)) return;
+      manual.current = true; setIsSuspended(true); cancel();
     };
-
-    container.addEventListener('wheel', onUserInteraction, { passive: true });
-    container.addEventListener('touchstart', onUserInteraction, { passive: true });
-    container.addEventListener('pointerdown', onUserInteraction, { passive: true });
-
-    return () => {
-      container.removeEventListener('wheel', onUserInteraction);
-      container.removeEventListener('touchstart', onUserInteraction);
-      container.removeEventListener('pointerdown', onUserInteraction);
-      if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-    };
-  }, [containerRef, scrollToActive]);
-
-  useEffect(() => {
-    if (isEnabled && lyricIndex >= 0) {
-      scrollToActive();
-    }
-  }, [lyricIndex, isEnabled, scrollToActive]);
-
-  const forceScroll = useCallback(() => {
-    isUserInteractingRef.current = false;
-    setIsSuspended(false);
-    if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
-    requestAnimationFrame(() => scrollToActive(true));
-  }, [scrollToActive]);
-
-  return {
-    forceScroll,
-    isSuspended,
-    returnToCurrentLyric
-  };
+    const events = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+    events.forEach(event => container.addEventListener(event, suspend, { passive: true }));
+    return () => { events.forEach(event => container.removeEventListener(event, suspend)); cancel(); };
+  }, [containerRef, isEnabled, resetKey, cancel]);
+  return { forceScroll: returnToCurrentLyric, isSuspended, returnToCurrentLyric };
 }
 function LyricsTiming({ delay, onChange }) {
   return <details className="lyrics-timing"><summary><Clock3 size={14}/>Adjust lyric timing{delay !== 0 && <span>{delay > 0 ? '+' : ''}{delay.toFixed(2)}s</span>}</summary>
@@ -460,7 +309,7 @@ function LyricsTiming({ delay, onChange }) {
 }
 
 function App() {
-  const [page, setPage] = useState('new');
+  const [page, setPage] = useState('home');
   const [library, setLibrary] = useState([]);
   const [likes, setLikes] = useState([]);
   const [history, setHistory] = useState([]);
@@ -523,20 +372,8 @@ function App() {
       break;
     }
   }
-  const isPauseNow = useMemo(() => {
-    if (!synced.length) return false;
-    if (lyricPosition < synced[0].time - 1.5 && synced[0].time > 3) return true;
-    if (lyricIndex >= 0 && lyricIndex < synced.length - 1) {
-      const curr = synced[lyricIndex];
-      const next = synced[lyricIndex + 1];
-      if (next.time - curr.time > 4.5 && lyricPosition > curr.time + 2 && lyricPosition < next.time - 0.8) {
-        return true;
-      }
-    }
-    return false;
-  }, [synced, lyricIndex, lyricPosition]);
-  const { forceScroll: forceScrollFullscreen, isSuspended: isLyricSuspended, returnToCurrentLyric } = useSmoothLyricScroll(fullscreenLyricsRef, activeLyricRef, lyricIndex, fullScreen);
-  const { forceScroll: forceScrollPanel } = useSmoothLyricScroll(panelLyricsRef, panelLyricRef, lyricIndex, panel === 'lyrics');
+  const { forceScroll: forceScrollFullscreen, isSuspended: isLyricSuspended, returnToCurrentLyric } = useSmoothLyricScroll(fullscreenLyricsRef, activeLyricRef, lyricIndex, fullScreen, `${current?.id}:${player.seekRevision}:${lyricDelay}:${synced.length}`);
+  const { forceScroll: forceScrollPanel } = useSmoothLyricScroll(panelLyricsRef, panelLyricRef, lyricIndex, panel === 'lyrics', `${current?.id}:${player.seekRevision}:${lyricDelay}:${synced.length}`);
   const seekLyric = useCallback(value => {
     player.seek(Math.max(0, value + lyricDelay));
     forceScrollFullscreen();
@@ -693,7 +530,7 @@ function App() {
   return <div className={`app theme-${theme} ${pureBlack ? 'pure-black' : ''} ${expanded ? 'player-expanded' : ''}`} data-theme={theme} ref={motionRoot}>
     <input ref={input} type="file" accept="audio/*,.flac,.opus" multiple hidden onChange={e => { importFiles([...e.target.files]); e.target.value = ''; }}/>
     <aside className="sidebar">
-      <button className="brand" onClick={() => navigate('new')} aria-label="xenn">
+      <button className="brand" onClick={() => navigate('home')} aria-label="xenn">
         <img src="/icon.png" alt="" />
         <span>xenn<span className="brand-dot">.</span></span>
       </button>
@@ -702,8 +539,6 @@ function App() {
         {[
           [Search, 'Search', 'search'],
           [Home, 'Home', 'home'],
-          [LayoutGrid, 'New', 'new'],
-          [Radio, 'Radio', 'radio'],
           [Library, 'Your library', 'library'],
           [SlidersHorizontal, 'Audio Lab', 'audiolab']
         ].map(([Icon, name, key]) => (
@@ -750,122 +585,12 @@ function App() {
         <button className={`nav-item ${page === 'settings' ? 'selected' : ''}`} onClick={() => navigate('settings')}>
           <Settings size={20}/>Settings<span className="version">WEB BETA</span>
         </button>
-        <a className="am-open-in-music" href="https://music.apple.com" target="_blank" rel="noreferrer">
-          Open in Music <ArrowUpRight size={14}/>
-        </a>
-        <button className="am-signin-btn" onClick={() => navigate('settings')}>
-          Sign In
-        </button>
+
       </div>
     </aside>
     <main>
-      <header className="topbar"><div className="breadcrumb">Xenn <span>/</span> <strong>{({ new: 'New', home: 'Home', radio: 'Radio', search: 'Search', library: 'Your library', likes: 'Liked songs', local: 'On this device', history: 'Listening history', playlist: playlist?.name, settings: 'Settings', audiolab: 'Audio Lab' })[page] || 'New'}</strong></div><div className="topbar-actions"><button className="text-button" style={{ fontSize: 12, padding: '5px 12px', borderRadius: 16, background: 'rgba(255, 255, 255, 0.08)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.08)' }} onClick={() => setTransitionModal(true)} title="Configure track transition">Transition: {audioLabSettings.transition === 'crossfade_5s' ? '5s' : audioLabSettings.transition === 'gapless' ? 'Gapless' : audioLabSettings.transition === 'off' ? 'Off' : 'Auto 3s'}</button>{!online && <span className="offline-pill"><WifiOff size={14}/>Offline</span>}{install && <button className="install-button" onClick={async () => { await install.prompt(); setInstall(null); }}><Download size={15}/>Install app</button>}<IconButton icon={Clock3} label="Listening history" onClick={() => navigate('history')}/><button className="avatar" aria-label="Open settings" onClick={() => navigate('settings')}>x<span/></button></div></header>
-      {page === 'new' ? (
-        <div className="page new-page-container">
-          <div className="new-page-header">
-            <h1>New</h1>
-          </div>
-          
-          {/* 3-Column Hero Featured Carousel */}
-          <div className="am-hero-carousel">
-            {APPLE_HERO_CAROUSEL.map(item => (
-              <div className="am-hero-card" key={item.id} onClick={() => search(item.query)} role="button" tabIndex={0}>
-                <div className="am-hero-meta">
-                  <span className="am-hero-eyebrow">{item.eyebrow}</span>
-                  <strong className="am-hero-title">{item.title}</strong>
-                  <span className="am-hero-subtitle">{item.subtitle}</span>
-                </div>
-                <div className="am-hero-banner">
-                  <img src={item.image} alt={item.title} loading="lazy" />
-                </div>
-                <div className="am-hero-footer">
-                  <p>{item.tagline}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* 5-Column 2026 Bento Grid */}
-          <div className="am-section-header" onClick={() => search('Best of 2026')}>
-            <h2 className="am-section-title">Best of 2026</h2>
-            <ChevronRight size={18} color="rgba(255, 255, 255, 0.6)"/>
-          </div>
-          <div className="am-bento-grid">
-            {APPLE_BENTO_2026.map(item => (
-              <div key={item.id} onClick={() => search(item.query)} role="button" tabIndex={0}>
-                <div className="am-bento-card" style={{ background: item.bg }}>
-                  <div className="am-bento-art">
-                    <img src={item.art} alt={item.title} loading="lazy" />
-                    <span className="am-bento-badge">{item.badge}</span>
-                    <span className="am-bento-year">{item.year}</span>
-                  </div>
-                </div>
-                <div className="am-bento-meta">
-                  <div className="am-bento-title">{item.title}</div>
-                  <div className="am-bento-sub">{item.sub}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Best New Songs Scannable Rows */}
-          <div className="am-section-header" onClick={() => search('Best New Songs 2026')}>
-            <h2 className="am-section-title">Best New Songs</h2>
-            <ChevronRight size={18} color="rgba(255, 255, 255, 0.6)"/>
-          </div>
-          <div className="am-track-grid">
-            {APPLE_NEW_SONGS.map(song => (
-              <div
-                key={song.id}
-                className={`am-track-row ${current?.title === song.title ? 'is-active' : ''}`}
-                onClick={() => search(song.query)}
-                role="button"
-                tabIndex={0}
-              >
-                <div className="am-track-left">
-                  <div className="am-track-thumb">
-                    <img src={`https://images.unsplash.com/photo-${song.id === 'new-1' ? '1511671782779-c97d3d27a1d4' : song.id === 'new-2' ? '1514525253161-7a46d19cd819' : '1470225620780-dba8ba36b745'}?w=120&auto=format&fit=crop&q=80`} alt="" />
-                  </div>
-                  <div className="am-track-info">
-                    <strong className="am-track-title">{song.title}</strong>
-                    <div className="am-track-artist">{song.artist}</div>
-                  </div>
-                </div>
-                <span className="am-track-duration">{time(song.duration)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : page === 'radio' ? (
-        <div className="page new-page-container">
-          <div className="new-page-header">
-            <h1>Radio</h1>
-          </div>
-          <div className="am-section-header">
-            <h2 className="am-section-title">Live & Premier Stations</h2>
-          </div>
-          <div className="am-bento-grid">
-            {[
-              { name: 'Apple Music 1', sub: 'The new music that matters', bg: '#D43852', query: 'Apple Music 1 Hits' },
-              { name: 'Apple Music Hits', sub: 'The songs you know and love', bg: '#2B50ED', query: 'Apple Music Hits' },
-              { name: 'Apple Music Country', sub: 'Where country lives', bg: '#D97706', query: 'Apple Music Country' },
-              { name: 'Chill Station', sub: 'Mellow beats and gentle vibes', bg: '#059669', query: 'Chill Lo-Fi Jazz' },
-              { name: 'Acoustic Sunrise', sub: 'Pure acoustic warmth', bg: '#7C3AED', query: 'Acoustic Morning' },
-            ].map(st => (
-              <div key={st.name} onClick={() => search(st.query)} role="button" tabIndex={0}>
-                <div className="am-bento-card" style={{ background: st.bg, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: 18 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)' }}>LIVE RADIO</span>
-                  <strong style={{ fontSize: 20, color: '#FFFFFF', marginTop: 4 }}>{st.name}</strong>
-                </div>
-                <div className="am-bento-meta">
-                  <div className="am-bento-title">{st.name}</div>
-                  <div className="am-bento-sub">{st.sub}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : page === 'home' ? <div className="page home-page"><div className="greeting"><div><span className="eyebrow">{greeting} <Sparkles size={12} className="sparkle" style={{ display: 'inline', verticalAlign: '-1px', marginLeft: 4 }} /></span><h1>A little music.<br className="mobile-break"/> A little you.</h1><p>Settle in. Your next favorite is waiting.</p></div><span className="date-stamp">{new Date().toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
+      <header className="topbar"><div className="breadcrumb">Xenn <span>/</span> <strong>{({ home: 'Home', search: 'Search', library: 'Your library', likes: 'Liked songs', local: 'On this device', history: 'Listening history', playlist: playlist?.name, settings: 'Settings', audiolab: 'Audio Lab' })[page] || 'Home'}</strong></div><div className="topbar-actions"><button className="text-button" style={{ fontSize: 12, padding: '5px 12px', borderRadius: 16, background: 'rgba(255, 255, 255, 0.08)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.08)' }} onClick={() => setTransitionModal(true)} title="Configure track transition">Transition: {audioLabSettings.transition === 'crossfade_5s' ? '5s' : audioLabSettings.transition === 'gapless' ? 'Gapless' : audioLabSettings.transition === 'off' ? 'Off' : 'Auto 3s'}</button>{!online && <span className="offline-pill"><WifiOff size={14}/>Offline</span>}{install && <button className="install-button" onClick={async () => { await install.prompt(); setInstall(null); }}><Download size={15}/>Install app</button>}<IconButton icon={Clock3} label="Listening history" onClick={() => navigate('history')}/><button className="avatar" aria-label="Open settings" onClick={() => navigate('settings')}>x<span/></button></div></header>
+      {page === 'home' ? <div className="page home-page"><div className="greeting"><div><span className="eyebrow">{greeting} <Sparkles size={12} className="sparkle" style={{ display: 'inline', verticalAlign: '-1px', marginLeft: 4 }} /></span><h1>A little music.<br className="mobile-break"/> A little you.</h1><p>Settle in. Your next favorite is waiting.</p></div><span className="date-stamp">{new Date().toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' })}</span></div>
         <section className="hero"><div className="hero-text"><span className="hero-label"><span/>YOUR DAILY SOUNDTRACK</span><h2>{history.length ? 'Right where\nyou left off.' : 'Find your\nlittle escape.'}</h2><p>{hero ? `${hero.artist}, a deep breath, and a moment just for you.` : 'The songs you love. The ones you haven’t met yet.'}</p><button className="primary" disabled={!hero} onClick={() => hero && play(hero, history.length ? history : feed)}><Play size={17} fill="currentColor"/>{history.length ? 'Keep listening' : 'Start listening'}</button><span className="hero-footnote">A sound for every version of you.</span></div><div className="hero-visual"><span className="orbit orbit-one"/><span className="orbit orbit-two"/><span className="hero-star"><Sparkles size={14} /></span><div className="hero-cover"><Cover track={hero}/></div><span className="hero-caption">a little out of this world <ArrowUpRight size={12} style={{ display: 'inline', verticalAlign: '-2px' }} /></span></div></section>
         <div className="mood-row">{['For you', 'Chill', 'Focus', 'Feel good', 'Late night', 'Romance', 'Workout'].map((m, i) => <button className={i === 0 ? 'selected' : ''} key={m} onClick={() => i === 0 ? navigate('home') : search(`${m} music`)}>{i === 0 && <Sparkles size={12} style={{ display: 'inline', marginRight: 4, verticalAlign: '-1px' }} />}{m}</button>)}</div>
         {history.length > 0 && <section><SectionHead title="Back in your rotation" subtitle="SOUNDS LIKE YOU" action="History" onClick={() => navigate('history')}/><div className="quick-grid"><Tracks tracks={history.slice(0, 6)} numbered={false} currentId={currentId} isPlaying={isPlaying} likesSet={likesSet} onPlay={play} onLike={like} onMenu={setMenu}/></div></section>}
@@ -887,7 +612,7 @@ function App() {
         )}{error ? <div className="inline-error" role="alert">{error}<button onClick={() => search()}>Try again</button></div> : loading ? <div className="loading"><span/>Finding your sound…</div> : results.length ? <><SectionHead title="Songs" subtitle={`${results.length} RECORDINGS`}/><Tracks tracks={results} currentId={currentId} isPlaying={isPlaying} likesSet={likesSet} onPlay={play} onLike={like} onMenu={setMenu}/></> : query ? <Empty title="No songs here yet" text="Search for a song or artist. Try a different spelling if nothing comes back." action="Try Laufey" onClick={() => search('Laufey')}/> : <><SectionHead title="Where do you want to go?"/><div className="browse-grid">{[['Soft mornings', 'Acoustic', 'peach'], ['After hours', 'Late night jazz', 'purple'], ['In your feelings', 'Sad indie', 'blue'], ['A little energy', 'Indie pop', 'green']].map(([title, q, color]) => <button className={`browse-card ${color}`} key={title} onClick={() => search(q)}><span>{title}</span><Disc3 size={95}/><ArrowUpRight size={22}/></button>)}</div></>}</div> : page === 'audiolab' ? <AudioLab settings={audioLabSettings} onChange={setAudioLabSettings} onBack={() => navigate('settings')}/> : page === 'settings' ? <div className="page"><span className="eyebrow">MAKE YOURSELF AT HOME</span><h1>A little more you.</h1><p className="page-description">Your space, your way.</p><SectionHead title="Audio Processing & Sound"/><div className="settings-audiolab-card" onClick={() => navigate('audiolab')} role="button" tabIndex={0}><div className="sac-left"><div className="sac-icon"><SlidersHorizontal size={22}/></div><div className="sac-info"><strong>Audio Lab</strong><p>Equalizer, Audio Effects, Quality & Transitions</p></div></div><ChevronRight size={18} color="#71717a"/></div><SectionHead title="Appearance"/><div className="settings-group">
 <div className="setting"><div><strong>Background beat motion</strong><p>Adjust visual beat reactivity on full-screen background</p></div><select aria-label="Background beat motion" value={audioLabSettings.beatIntensity || 'normal'} onChange={e => setAudioLabSettings(old => ({ ...old, beatIntensity: e.target.value }))}><option value="low">Low (Gentle subtle pulse)</option><option value="normal">Normal (Balanced Apple Music rhythm)</option><option value="aggressive">Aggressive (Deep energetic expansion)</option><option value="off">Off (Static ambient)</option></select></div><div className="setting"><div><strong>Visual theme</strong><p>Choose your visual style & design system</p></div><select aria-label="Visual theme" value={theme} onChange={e => { const val = e.target.value; setTheme(val); setPureBlack(val === 'pure-black'); }}><option value="apple-dark">Apple Music (Dark)</option><option value="apple-light">Apple Music (Light)</option><option value="mochy">Mochy Warm</option><option value="pure-black">Pure Black</option></select></div>{theme.startsWith('apple-') ? <div className="setting"><div><strong>Apple Music color mode</strong><p>Switch between light canvas and dark mode</p></div><button className="secondary" onClick={() => setTheme(t => t === 'apple-light' ? 'apple-dark' : 'apple-light')}>{theme === 'apple-light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}</button></div> : <div className="setting"><div><strong>Pure black</strong><p>A darker home for your music</p></div><button className={`toggle ${pureBlack ? 'on' : ''}`} role="switch" aria-checked={pureBlack} aria-label="Pure black" onClick={() => { const next = !pureBlack; setPureBlack(next); setTheme(next ? 'pure-black' : 'mochy'); }}><span/></button></div>}<div className="setting"><div><strong>Player artwork</strong><p>A signature Mochy touch</p></div><select aria-label="Player artwork shape" value={shape} onChange={e => setShape(e.target.value)}><option value="clover">Clover</option><option value="rounded">Rounded</option><option value="circle">Circle</option></select></div><div className="setting"><div><strong>Beat sync atmosphere</strong><p>Always sync background ambient colors and fluid shader to the music rhythm</p></div><button className={`toggle ${tabBeatSync.active ? 'on' : ''}`} role="switch" aria-checked={tabBeatSync.active} aria-label="Always-on Beat sync" onClick={tabBeatSync.toggle}><span/></button></div></div><SectionHead title="Your music & data"/><div className="settings-group"><div className="setting"><div><strong>Import from Spotify</strong><p>Paste a public playlist, album, or track link to import songs</p></div><button className="secondary" onClick={() => { setSpotifyError(''); setSpotifyModal(true); }}><Link2 size={17}/>Import link</button></div><div className="setting"><div><strong>Import audio files</strong><p>Stored on this device for offline listening</p></div><button className="secondary" disabled={importing} onClick={() => input.current.click()}><Upload size={17}/>{importing ? 'Importing…' : 'Import'}</button></div><div className="setting"><div><strong>Export library backup</strong><p>Playlist and library metadata; audio files stay on your device</p></div><button className="secondary" onClick={() => { const blob = new Blob([JSON.stringify({ version: 1, library, likes, playlists, history }, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'xenn-library.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }}><Download size={17}/>Export</button></div></div><SectionHead title="Xenn for the web"/><div className="about-card"><img src="/icon.png" alt="Xenn"/><div><h3>Music, made yours.</h3><p>Web beta 0.1.0 · An independent port of Mochy Music.</p><a href="https://github.com/realidkroo/Mochy-Music" target="_blank" rel="noreferrer">Original project & GPL-3.0 license <ArrowUpRight size={14}/></a></div></div><p className="provider-note">Online tracks need a connection and may have regional or embedding restrictions. Background playback is controlled by your browser. Imported local music works offline after the app has loaded once. Install from your browser menu or use “Add to Home Screen” on iOS.</p></div> : <div className="page"><div className="library-title"><div><span className="eyebrow">{page === 'history' ? 'THE SOUNDTRACK SO FAR' : 'COLLECT THE GOOD STUFF'}</span><h1>{page === 'playlist' ? playlist?.name : page === 'likes' ? 'A little love.' : page === 'local' ? 'Always with you.' : page === 'history' ? 'On repeat, lately.' : 'Your little library.'}</h1><p className="page-description">{visibleTracks.length} songs{page === 'local' ? ' · Available offline on this device' : ' · A collection that sounds like you'}</p></div><div style={{ display: 'flex', gap: '10px' }}><button className="secondary" onClick={() => { setSpotifyError(''); setSpotifyModal(true); }}><Link2 size={17}/>Import Spotify</button><button className="secondary" onClick={() => input.current.click()}><Plus size={17}/>Import audio</button></div></div>{page === 'library' && <div className="library-shortcuts"><button onClick={() => navigate('likes')}><Heart/><strong>Liked songs</strong><small>{likes.length} favorites</small><ChevronRight/></button><button onClick={() => navigate('local')}><Download/><strong>On this device</strong><small>Yours, offline</small><ChevronRight/></button></div>}{page === 'library' && <><SectionHead title="Your playlists" action="Create playlist" onClick={() => setNewPlaylist(true)}/><div className="playlist-grid">{playlists.map(p => <button className="playlist-tile" key={p.id} onClick={() => openPlaylist(p.id)}><ListMusic size={28}/><strong>{p.name}</strong><small>{p.tracks.length} songs</small></button>)}<button className="playlist-tile add" onClick={() => setNewPlaylist(true)}><Plus size={28}/><strong>A new little collection</strong><small>Create a playlist</small></button></div><SectionHead title="All songs"/></>}{visibleTracks.length ? <><div className="list-actions"><button className="primary" onClick={() => play(visibleTracks[0], visibleTracks)}><Play size={17} fill="currentColor"/>Play all</button><button className="secondary" onClick={() => { player.setShuffle(true); play(visibleTracks[Math.floor(Math.random() * visibleTracks.length)], visibleTracks); }}><Shuffle size={17}/>Shuffle</button>{page === 'playlist' && <button className="text-button danger" onClick={() => { setPlaylists(old => old.filter(p => p.id !== selectedPlaylist)); navigate('library'); }}><Trash2 size={16}/>Delete playlist</button>}</div><Tracks tracks={visibleTracks} currentId={currentId} isPlaying={isPlaying} likesSet={likesSet} onPlay={play} onLike={like} onMenu={setMenu}/></> : <Empty title={page === 'history' ? 'Your story starts with a song.' : 'Room for all your favorites.'} text={page === 'playlist' ? 'Open a song’s options to add it to this playlist.' : 'Import music from your device or find something new in Search.'} action={page === 'playlist' || page === 'likes' ? 'Discover music' : 'Import music'} onClick={() => page === 'playlist' || page === 'likes' ? navigate('search') : input.current.click()}/>}</div>}
     </main>
-    <aside className={`player-panel ${current ? 'has-track' : ''}`}>{current && <AlbumAtmosphere artwork={displayCurrent.cover || ''} compact/>}<div className="player-heading"><span>{panel === 'queue' ? 'UP NEXT' : panel === 'lyrics' ? 'THE WORDS' : 'NOW PLAYING'}</span><IconButton icon={Maximize2} label="Apple Music Full Screen" disabled={!current} onClick={() => setFullScreen(true)}/><IconButton icon={ChevronDown} label="Close expanded player" className="close-player" onClick={() => setExpanded(false)}/><IconButton icon={MoreHorizontal} label="Current song options" disabled={!current} onClick={() => current && setMenu(current)}/></div>
+    <aside className={`player-panel ${current ? 'has-track' : ''}`}>{current && <AlbumAtmosphere artwork={displayCurrent.cover || ''} compact/>}<div className="player-heading"><span>{panel === 'queue' ? 'UP NEXT' : panel === 'lyrics' ? 'THE WORDS' : 'NOW PLAYING'}</span><IconButton icon={Maximize2} label="Full screen lyrics" disabled={!current} onClick={() => setFullScreen(true)}/><IconButton icon={ChevronDown} label="Close expanded player" className="close-player" onClick={() => setExpanded(false)}/><IconButton icon={MoreHorizontal} label="Current song options" disabled={!current} onClick={() => current && setMenu(current)}/></div>
 
       <div className={`player-content ${panel === 'lyrics' ? 'is-lyrics' : ''}`}>{panel === 'queue' ? <div className="queue-panel"><h2>A little more music.</h2><p>{player.queue.length} songs in your queue</p>{player.queue.map((track, i) => <div className={`queue-item ${i === player.index ? 'selected' : ''}`} key={`${track.id}-${i}`}><button onClick={() => player.start(track, player.queue, i)}><Cover track={track}/><span><strong>{track.title}</strong><small>{track.artist}</small></span></button>{i !== player.index && <IconButton icon={X} label={`Remove ${track.title} from queue`} onClick={() => { player.removeQueueItem(i); }}/>}</div>)}</div> : panel === 'lyrics' ? <div className="lyrics-panel" ref={panelLyricsRef}>{!current ? <p>Choose a song to find its words.</p> : lyricsLoading ? <p>Finding the words…</p> : lyrics?.error ? <p>{lyrics.error}</p> : lyrics?.instrumental ? <p>No words needed. This one is instrumental.</p> : synced.length ? synced.map((line, i) => <LyricItem key={i} line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? panelLyricRef : null} onSeek={seekLyric}/>) : <p className="plain-lyrics">{lyrics?.plainLyrics || 'No lyrics found for this recording.'}</p>}<span className="lyrics-credit">Lyrics from {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</span></div> : current ? <><div className={`player-art ${shape}`} onClick={() => current && setFullScreen(true)} role="button" tabIndex={0} title="Click to open Full Screen Lyrics & Album" style={{ cursor: 'pointer' }}><Cover track={displayCurrent}/></div><div className="playing-label">A LITTLE MOMENT, JUST FOR YOU</div><div className="now-title"><div><h2>{current.title}</h2><p>{current.artist}</p></div><IconButton icon={Heart} label="Like current song" active={likes.includes(current.id)} onClick={() => like(current)}/></div><div className="source-tag"><span/>{current.source === 'local' ? 'On this device · Offline ready' : 'YouTube · Online playback'}</div>{current.source === 'youtube' && <a className="youtube-link" href={`https://www.youtube.com/watch?v=${current.id}`} target="_blank" rel="noreferrer">Open on YouTube<ArrowUpRight size={13}/></a>}</> : <div className="player-empty"><div className="empty-record"><Disc3 size={90} strokeWidth={0.6}/><Sparkles size={16} style={{ position: 'absolute', top: 12, right: 12, color: 'var(--am-accent, var(--pink))' }} /></div><h2>Let something<br/>good play.</h2><p>Your next little obsession<br/>could be one song away.</p><button className="text-button" onClick={() => navigate('search')}>Find a song<ArrowUpRight size={16}/></button></div>}</div>
       <div className="player-controls"><div className="seek-bar"><input type="range" aria-label="Playback position" min="0" max={player.duration || 1} step="0.1" value={Math.min(player.position, player.duration || 1)} onChange={e => player.seek(Number(e.target.value))} disabled={!current}/><div><span>{time(player.position)}</span><span>{time(player.duration)}</span></div></div><div className="transport"><IconButton icon={Shuffle} label="Shuffle" active={player.shuffle} onClick={() => player.setShuffle(!player.shuffle)}/><IconButton icon={SkipBack} label="Previous song" disabled={!current} onClick={() => player.position > 3 ? player.seek(0) : player.advance(-1)}/><IconButton icon={player.playing ? Pause : Play} label={player.playing ? 'Pause' : 'Play'} className="play-button" disabled={!current} onClick={player.toggle}/><IconButton icon={SkipForward} label="Next song" disabled={!current} onClick={() => player.advance(1)}/><IconButton icon={player.repeat === 'one' ? Repeat1 : Repeat} label={`Repeat: ${player.repeat}`} active={player.repeat !== 'off'} onClick={() => player.setRepeat(({ off: 'all', all: 'one', one: 'off' })[player.repeat])}/></div><div className="volume"><Volume2 size={16}/><input type="range" aria-label="Volume" min="0" max="1" step="0.01" value={player.volume} onChange={e => player.setVolume(Number(e.target.value))}/><span>{Math.round(player.volume * 100)}%</span></div><div className="player-tabs"><button className={panel === 'playing' ? 'selected' : ''} onClick={() => setPanel('playing')}><Disc3 size={17}/>Playing</button><button className={panel === 'lyrics' ? 'selected' : ''} onClick={() => setPanel('lyrics')}><Mic2 size={17}/>Lyrics</button><button className={panel === 'queue' ? 'selected' : ''} onClick={() => setPanel('queue')}><ListMusic size={17}/>Queue</button></div></div></aside>
@@ -907,26 +632,14 @@ function App() {
             <ChevronDown size={14} />
             <span>Return to current lyric</span>
           </button>
-        )}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><Music2 size={28} style={{ opacity: 0.6, marginBottom: 8 }} /><p>Instrumental</p></div> : synced.length ? <div className="af-lyrics-scroll" ref={fullscreenLyricsRef}>{isPauseNow && lyricIndex === -1 && (
-                <div className="af-pause-indicator" aria-label="Instrumental intro">
-                  <span className="af-pause-dot dot-1" />
-                  <span className="af-pause-dot dot-2" />
-                  <span className="af-pause-dot dot-3" />
-                </div>
-              )}
+        )}{lyricsLoading ? <div className="af-lyrics-empty"><div className="loading"><span/>Loading lyrics…</div></div> : lyrics?.error ? <div className="af-lyrics-empty"><p>{lyrics.error}</p></div> : lyrics?.instrumental ? <div className="af-lyrics-empty"><Music2 size={28} style={{ opacity: 0.6, marginBottom: 8 }} /><p>Instrumental</p></div> : synced.length ? <div className="af-lyrics-scroll" tabIndex={0} aria-label="Synchronized lyrics" ref={fullscreenLyricsRef}>
               {synced.map((line, i) => (
                 <React.Fragment key={i}>
                   <LyricItem line={line} nextLine={synced[i + 1]} position={lyricPosition} distance={i - lyricIndex} isCurrent={i === lyricIndex} isPast={i < lyricIndex} activeRef={i === lyricIndex ? activeLyricRef : null} onSeek={seekLyric}/>
-                  {isPauseNow && i === lyricIndex && (
-                    <div className="af-pause-indicator" aria-label="Instrumental break">
-                      <span className="af-pause-dot dot-1" />
-                      <span className="af-pause-dot dot-2" />
-                      <span className="af-pause-dot dot-3" />
-                    </div>
-                  )}
+
                 </React.Fragment>
               ))}<div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : lyrics?.plainLyrics ? <div className="af-lyrics-scroll plain" ref={fullscreenLyricsRef}><p className="plain-lyrics">{lyrics.plainLyrics}</p><div className="af-lyrics-credit">Lyrics provided by {lyrics?.provider === 'youtube-music' ? 'YouTube Music' : lyrics?.provider === 'lyrics-ovh' ? 'Lyrics.ovh' : 'LRCLIB'}</div></div> : <div className="af-lyrics-empty"><p>No lyrics found for this song.</p></div>}</div></div></div>}
-  
+
     {/* Centered Floating Liquid Glass Player Capsule (Desktop) */}
     {current && (
       <div className="floating-player-capsule">

@@ -1,0 +1,112 @@
+/* XENN player: restrained material, clear typography, source-timed illumination. */
+.apple-fullscreen-player .af-lyric-line,
+.lyrics-panel .af-lyric-line {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 750;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  color: #fff !important;
+  opacity: .2 !important;
+  filter: none !important;
+  transform: none !important;
+  text-shadow: none !important;
+  transition: opacity 180ms ease;
+}
+.apple-fullscreen-player .af-lyric-line[data-distance="1"],
+.lyrics-panel .af-lyric-line[data-distance="1"] { opacity: .4 !important; }
+.apple-fullscreen-player .af-lyric-line.active,
+.lyrics-panel .af-lyric-line.active { opacity: 1 !important; }
+.apple-fullscreen-player .af-lyric-line .timed-word {
+  display: inline;
+  color: transparent !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  background: linear-gradient(90deg,#fff var(--word-progress),#ffffff60 var(--word-progress));
+  background-clip: text;
+  -webkit-background-clip: text;
+  transition: none;
+  white-space: pre-wrap;
+}
+.apple-fullscreen-player .timed-word:has(.af-grapheme) { background: none; }
+.af-grapheme {
+  display: inline-block;
+  white-space: pre;
+  color: transparent;
+  background: linear-gradient(90deg,#fff var(--fill),#ffffff60 var(--fill));
+  background-clip: text;
+  -webkit-background-clip: text;
+  transform: translateY(var(--lift));
+}
+.apple-fullscreen-player .af-lyrics-scroll {
+  scroll-behavior: auto;
+  padding-block: 40vh 60vh;
+  mask-image: linear-gradient(transparent,#000 12%,#000 86%,transparent);
+  -webkit-mask-image: linear-gradient(transparent,#000 12%,#000 86%,transparent);
+}
+.floating-player-capsule,
+.apple-fullscreen-player .af-controls-card,
+.apple-fullscreen-player .af-header-actions > button {
+  isolation: isolate;
+  position: relative;
+  background: #202329e0 !important;
+  border: 1px solid #ffffff20 !important;
+  box-shadow: inset 0 1px 0 #ffffff12,0 8px 24px #0002 !important;
+}
+.floating-player-capsule { position: fixed; }
+@supports ((backdrop-filter: blur(24px)) or (-webkit-backdrop-filter: blur(24px))) {
+  .floating-player-capsule,
+  .apple-fullscreen-player .af-controls-card,
+  .apple-fullscreen-player .af-header-actions > button {
+    background: #191c22a6 !important;
+    backdrop-filter: blur(24px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(115%) !important;
+  }
+}
+/* Perimeter-only optical impression: center remains clear, no arbitrary-content distortion. */
+.floating-player-capsule::before,
+.apple-fullscreen-player .af-controls-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  background: linear-gradient(145deg,#ffffff52,#ffffff06 34%,#0003 68%,#ffffff20);
+  mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+}
+.floating-player-capsule button:hover,
+.apple-fullscreen-player .af-header-actions button:hover { background-color: #ffffff15; }
+.floating-player-capsule button:active,
+.apple-fullscreen-player button:active { transform: none !important; opacity: .78 !important; }
+.floating-player-capsule button:focus-visible,
+.apple-fullscreen-player button:focus-visible { outline: 2px solid #fff9; outline-offset: 3px; }
+.floating-player-capsule .fpc-play-btn:hover { transform: none; box-shadow: 0 2px 8px #0003; }
+@supports not (mask-composite: exclude) {
+  .floating-player-capsule::before,.apple-fullscreen-player .af-controls-card::before { display:none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .af-grapheme { transform: none !important; }
+  .apple-fullscreen-player .af-lyric-line { transition: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .floating-player-capsule,.apple-fullscreen-player .af-controls-card,
+  .apple-fullscreen-player .af-header-actions > button {
+    background: #202329 !important; backdrop-filter: none !important; -webkit-backdrop-filter:none !important;
+  }
+  .floating-player-capsule::before,.apple-fullscreen-player .af-controls-card::before { display:none; }
+}
+@media(max-width:760px) {
+  .apple-fullscreen-player .af-lyric-line { font-size: clamp(26px,6.8vw,34px); }
+}
+.apple-fullscreen-player .af-lyrics-scroll .af-lyric-line[data-distance],
+.lyrics-panel .af-lyric-line[data-distance] {
+  color:#fff !important; opacity:.2 !important; transform:none !important;
+  filter:none !important; text-shadow:none !important;
+}
+.apple-fullscreen-player .af-lyrics-scroll .af-lyric-line[data-distance="1"],
+.lyrics-panel .af-lyric-line[data-distance="1"] { opacity:.4 !important; }
+.apple-fullscreen-player .af-lyrics-scroll .af-lyric-line.active[data-distance],
+.lyrics-panel .af-lyric-line.active[data-distance] { opacity:1 !important; }

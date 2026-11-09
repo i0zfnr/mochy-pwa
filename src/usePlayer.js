@@ -57,6 +57,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [position, setPosition] = useState(0);
+  const [seekRevision, setSeekRevision] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [shuffle, setShuffle] = useState(false);
@@ -321,7 +322,7 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
       youtube.current?.playVideo();
     }
   }
-  function seek(value) { if (!current) return; if (current.source === 'local') audio.current.currentTime = value; else youtube.current?.seekTo(value, true); setPosition(value); }
+  function seek(value) { if (!current) return; setSeekRevision(n => n + 1); if (current.source === 'local') audio.current.currentTime = value; else youtube.current?.seekTo(value, true); setPosition(value); }
   useEffect(() => {
     const el = audio.current;
     const update = () => { setPosition(el.currentTime || 0); setDuration(Number.isFinite(el.duration) ? el.duration : 0); };
@@ -417,5 +418,5 @@ export function usePlayer({ notify, onPlayed, audioLabSettings = DEFAULT_AUDIO_L
     for (const [name, handler] of Object.entries(actions)) try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
   }, [current]);
   function removeQueueItem(at) { if (at === index) return; setQueue(old => old.filter((_, i) => i !== at)); if (at < index) setIndex(old => old - 1); }
-  return { current, queue, index, playing, position, duration, volume, setVolume, shuffle, setShuffle, repeat, setRepeat, start, advance, toggle, seek, setQueue, removeQueueItem, analyserRef };
+  return { current, queue, index, playing, position, seekRevision, duration, volume, setVolume, shuffle, setShuffle, repeat, setRepeat, start, advance, toggle, seek, setQueue, removeQueueItem, analyserRef };
 }
